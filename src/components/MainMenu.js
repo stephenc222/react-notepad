@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 
 class MainMenu extends Component {
   onMenuSelection(item) {
-    console.log(item)
+    item.action()
   }
   render () {
     return (
-      <ul>
+      <ul className='menu'>
       {this.props.items.map((item, index) => {
       return (
        <li key={index} onClick={() => 

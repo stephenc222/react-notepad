@@ -9,23 +9,37 @@ class App extends Component {
     // menu items here 
     const fileItem = {
         label: 'File',
-        object: 'File MenuObject'
+        action: () => {
+          console.log (
+            `File menu sub-items: New, Open, Save, Save As..., 
+            Page Setup, Print..., Exit`)
+        }
       }       
     const editItem = {
         label: 'Edit',
-        object: 'Edit MenuObject'
+        action: () => {
+          console.log(
+            `Edit menu sub-items: Undo, Cut, Copy, Paste, Delete, Find, Find Next,Replace... 
+            Go To..., Select All, Time/Date`)
+        }
       }      
     const formatItem ={
         label: 'Format',
-        object: 'Format MenuObject'
+        action: () => {
+          console.log(`Format menu sub-items: Word Wrap, Font`)
+        }
       }
     const viewItem = {
         label: 'View',
-        object: 'View MenuObject'
+        action: () => {
+          console.log(`View menu sub-item: Status Bar`)
+        }
       }
     const helpItem = {
         label: 'Help',
-        object: 'Help MenuObject'
+        action: () => {
+          console.log(`Help menu sub-items: View Help, About Notepad`)
+        }
       }
     this.state = {
       items: [fileItem,editItem,formatItem,viewItem,helpItem]
