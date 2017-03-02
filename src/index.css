@@ -13,6 +13,8 @@ ul {
   list-style: none;
   display: flex;
   justify-content: flex-start;
+  border-bottom: solid black 1px;
+  
 }
 
 li {
