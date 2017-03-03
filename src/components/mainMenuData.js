@@ -28,19 +28,87 @@ const mainMenu = {
       {
         label: 'File',
         onClick: 'toggleFileMenu',
-        menu: 'fileMenu'
+        menu: 'fileMenu',
+        subLevel: {
+          visible: false,
+          items: [
+            {
+              label: 'New',
+              onClick: 'fileNewMenu'
+            },
+            {
+              label: 'Save',
+              onClick: 'fileSaveMenu'
+            },
+            {
+              label: 'Open',
+              onClick: 'fileOpenMenu'
+            }
+          ]
+        }
       },
       {
         label: 'Edit',
-        menu: 'editMenu'
+        menu: 'editMenu',
+        subLevel: {
+          visible: false,
+          items: [
+            {
+              label: 'New',
+              onClick: 'fileNewMenu'
+            },
+            {
+              label: 'Save',
+              onClick: 'fileSaveMenu'
+            },
+            {
+              label: 'Open',
+              onClick: 'fileOpenMenu'
+            }
+          ]
+        }
       },
       {
         label: 'Format',
-        menu: 'formatMenu'
+        menu: 'formatMenu',
+        subLevel: {
+          visible: false,
+          items: [
+            {
+              label: 'New',
+              onClick: 'fileNewMenu'
+            },
+            {
+              label: 'Save',
+              onClick: 'fileSaveMenu'
+            },
+            {
+              label: 'Open',
+              onClick: 'fileOpenMenu'
+            }
+          ]
+        }
       },
       {
         label: 'View',
-        menu: 'viewMenu'
+        menu: 'viewMenu',
+        subLevel: {
+          visible: false,
+          items: [
+            {
+              label: 'New',
+              onClick: 'fileNewMenu'
+            },
+            {
+              label: 'Save',
+              onClick: 'fileSaveMenu'
+            },
+            {
+              label: 'Open',
+              onClick: 'fileOpenMenu'
+            }
+          ]
+        }
       }
     ]
   }

@@ -8,14 +8,27 @@ class App extends Component {
   constructor () {
     super()
     // menu items here 
+    this.toggleFileMenu = this.toggleFileMenu.bind(this)
     this.state = {
-      mainMenuData
+      mainMenuData,
+      pageContent: ''
     }
+  }
+
+  toggleFileMenu () {
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.fileMenu.visible = !mainMenuData.fileMenu.visible
+      return {mainMenuData}
+    })
   }
   render () {
     return (
       <div className="App">
-        <MainMenu menu={this.state.mainMenuData}/>
+        <MainMenu 
+          menu={this.state.mainMenuData}
+          toggleFileMenu={this.toggleFileMenu}
+        />
         <NotePad />
       </div>
     )
