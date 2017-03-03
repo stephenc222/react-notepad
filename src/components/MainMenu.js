@@ -1,19 +1,28 @@
 import React, { Component } from 'react'
 
 class MainMenu extends Component {
-  onMenuSelection(item) {
-    item.action()
+  constructor(props) {
+    super(props)
+    this.onMenuSelection = this.onMenuSelection.bind(this)
+  }
+  onMenuSelection(menuItem) {
+    console.log(menuItem)
+  }
+
+  TopLevelMenu(menu) {
+    return (
+      <li key={menu.label} onClick={() => 
+        this.onMenuSelection(menu)}>{menu.label}</li>
+    )
+
   }
   render () {
     return (
+      <div>
       <ul className='menu'>
-      {this.props.items.map((item, index) => {
-      return (
-       <li key={index} onClick={() => 
-         this.onMenuSelection(item)}>{item.label}</li>
-      )
-      })}
+      {this.props.menu.topLevel.items.map(this.TopLevelMenu)}
       </ul>
+      </div>
     )
   }
 }
