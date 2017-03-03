@@ -12,21 +12,20 @@ class MainMenu extends Component {
     console.log(menuItem)
   }
 
-  renderSubLevelMenu(subMenu) {
+  renderSubLevelMenu(subMenu,index) {
     return (
-      <ul>
-        <li>{subMenu.label}</li>
-      </ul>
+        <li key={index}>{subMenu.label}</li>
     )
 
   }
 
   topLevelMenu(menu) {
     //const subLevel = menu.subLevel
-    menu.subLevel.items.map((x) => console.log(x.label))
     return (
       <li key={menu.label} onClick={() => console.log('clickHandlerHere')}>
         {menu.label}
+        <ul>{menu.subLevel.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}</ul>
+        
       </li>
     )
 
