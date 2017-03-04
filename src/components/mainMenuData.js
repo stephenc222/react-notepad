@@ -22,7 +22,7 @@ const mainMenu = {
             },
             {
               label: 'Save As...',
-              onClick: 'fileSaveAsnMenu'
+              onClick: 'fileSaveAsMenu'
             },
             {
               label: 'Page Setup...',
