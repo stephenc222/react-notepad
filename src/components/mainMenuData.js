@@ -1,28 +1,4 @@
 const mainMenu = {
-  fileMenu: {
-    visible: false,
-    items: [
-      {
-        label: 'New',
-        onClick: 'fileNewMenu'
-      },
-      {
-        label: 'Save',
-        onClick: 'fileSaveMenu'
-      },
-      {
-        label: 'Open',
-        onClick: 'fileOpenMenu'
-      }
-    ]
-  },
-  
-  editMenu: {
-  },
-  
-  viewMenu: {
-  },
-  
   topLevel: {
     items: [
       {
