@@ -9,16 +9,34 @@ class App extends Component {
     super()
     // menu items here 
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
+    this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.state = {
       mainMenuData,
       pageContent: ''
     }
   }
 
+  fileNewMenu (menuItem) {
+    console.log(`fileNewMenu is clicked here`)
+    console.log(menuItem)
+  }
+
+  fileOpenMenu (menuItem) {
+    console.log(`fileOpenMenu is clicked here`)
+    console.log(menuItem)
+  }
+
+  onMainMenuClick (event, menuItem) {
+    event.stopPropagation()
+    console.warn(menuItem)
+    const callback = this[menuItem.onClick]
+    callback && callback(menuItem)
+  }
+
   toggleFileMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.fileMenu.visible = !mainMenuData.fileMenu.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
     })
   }
@@ -27,7 +45,7 @@ class App extends Component {
       <div className="App">
         <MainMenu 
           menu={this.state.mainMenuData}
-          toggleFileMenu={this.toggleFileMenu}
+          onClick={this.onMainMenuClick}
         />
         <NotePad />
       </div>

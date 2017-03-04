@@ -3,19 +3,16 @@ import React, { Component } from 'react'
 class MainMenu extends Component {
   constructor(props) {
     super(props)
-    //this.onMenuSelection = this.onMenuSelection.bind(this)
     this.topLevelMenu = this.topLevelMenu.bind(this)
     this.renderSubLevelMenu = this.renderSubLevelMenu.bind(this)
     
   }
-  onMenuSelection(menuItem) {
-    console.log(menuItem)
-  }
 
   renderSubLevelMenu(subMenu,index) {
+    //console.log(`props inside of renderSubLevelMenu: ${JSON.stringify(this.props.menu)}`)
     return (
         // first attempt at adding individual clickHandlers, names are right
-        <li key={index} onClick={() => console.log(subMenu.onClick)}>{subMenu.label}</li>
+        <li key={index} onClick={(event) => this.props.onClick(event, subMenu)}>{subMenu.label}</li>
     )
 
   }
@@ -23,7 +20,7 @@ class MainMenu extends Component {
   topLevelMenu(menu) {
     //const subLevel = menu.subLevel
     return (
-      <li key={menu.label} onClick={() => console.log(menu.menu)}>
+      <li key={menu.label} onClick={(event) => this.props.onClick(event, menu)}>
         {menu.label}
         <ul className={menu.menu}>{menu.subLevel.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}</ul>
         
