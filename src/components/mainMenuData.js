@@ -37,12 +37,28 @@ const mainMenu = {
               onClick: 'fileNewMenu'
             },
             {
+              label: 'Open...',
+              onClick: 'fileOpenMenu'
+            },
+            {
               label: 'Save',
               onClick: 'fileSaveMenu'
             },
             {
-              label: 'Open',
-              onClick: 'fileOpenMenu'
+              label: 'Save As...',
+              onClick: 'fileSaveAsnMenu'
+            },
+            {
+              label: 'Page Setup...',
+              onClick: 'pageSetUpMenu'
+            },
+            {
+              label: 'Print...',
+              onClick: 'printMenu'
+            },
+            {
+              label: 'Exit',
+              onClick: 'exitReact'
             }
           ]
         }
@@ -54,16 +70,48 @@ const mainMenu = {
           visible: false,
           items: [
             {
-              label: 'New',
-              onClick: 'fileNewMenu'
+              label: 'Undo',
+              onClick: 'undoOption'
             },
             {
-              label: 'Save',
-              onClick: 'fileSaveMenu'
+              label: 'Cut',
+              onClick: 'cutOption'
             },
             {
-              label: 'Open',
-              onClick: 'fileOpenMenu'
+              label: 'Copy',
+              onClick: 'copyOption'
+            },
+            {
+              label: 'Paste',
+              onClick: 'pasteOption'
+            },
+            {
+              label: 'Delete',
+              onClick: 'deleteOption'
+            },
+            {
+              label: 'Find...',
+              onClick: 'FindOption'
+            },
+            {
+              label: 'Find Next',
+              onClick: 'findNextOption'
+            },
+            {
+              label: 'Replace...',
+              onClick: 'ReplaceOption'
+            },
+            {
+              label: 'Go To...',
+              onClick: 'goToOption'
+            },
+            {
+              label: 'Select All',
+              onClick: 'undoMenu'
+            },
+            {
+              label: 'Time/Date',
+              onClick: 'timeDateOption'
             }
           ]
         }
@@ -75,16 +123,12 @@ const mainMenu = {
           visible: false,
           items: [
             {
-              label: 'New',
-              onClick: 'fileNewMenu'
+              label: 'Word Wrap',
+              onClick: 'wordWrapOption'
             },
             {
-              label: 'Save',
-              onClick: 'fileSaveMenu'
-            },
-            {
-              label: 'Open',
-              onClick: 'fileOpenMenu'
+              label: 'Font...',
+              onClick: 'fontOption'
             }
           ]
         }
@@ -96,16 +140,25 @@ const mainMenu = {
           visible: false,
           items: [
             {
-              label: 'New',
-              onClick: 'fileNewMenu'
+              label: 'Status Bar',
+              onClick: 'statusBarMenu'
+            }
+          ]
+        }
+      },
+      {
+        label: 'Help',
+        menu: 'helpMenu',
+        subLevel: {
+          visible: false,
+          items: [
+            {
+              label: 'View Help',
+              onClick: 'helpMenu'
             },
             {
-              label: 'Save',
-              onClick: 'fileSaveMenu'
-            },
-            {
-              label: 'Open',
-              onClick: 'fileOpenMenu'
+              label: 'About Notepad',
+              onClick: 'aboutNotepadMenu'
             }
           ]
         }

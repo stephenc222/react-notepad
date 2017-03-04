@@ -14,7 +14,8 @@ class MainMenu extends Component {
 
   renderSubLevelMenu(subMenu,index) {
     return (
-        <li key={index}>{subMenu.label}</li>
+        // first attempt at adding individual clickHandlers, names are right
+        <li key={index} onClick={() => console.log(subMenu.onClick)}>{subMenu.label}</li>
     )
 
   }
@@ -22,9 +23,9 @@ class MainMenu extends Component {
   topLevelMenu(menu) {
     //const subLevel = menu.subLevel
     return (
-      <li key={menu.label} onClick={() => console.log('clickHandlerHere')}>
+      <li key={menu.label} onClick={() => console.log(menu.menu)}>
         {menu.label}
-        <ul>{menu.subLevel.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}</ul>
+        <ul className='subMenuItems'>{menu.subLevel.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}</ul>
         
       </li>
     )
