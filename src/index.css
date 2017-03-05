@@ -27,6 +27,15 @@ li {
   padding-right: 1%;
 }
 
-ul.fileMenu {
+.menuItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.subMenu {
   visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
