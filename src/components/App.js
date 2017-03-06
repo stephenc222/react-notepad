@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import './App.css'
 import MainMenu from './MainMenu'
 import NotePad from './Notepad'
 import mainMenuData from './mainMenuData'
@@ -8,12 +7,70 @@ class App extends Component {
   constructor () {
     super()
     // menu items here 
+    this.onMainMenuClick = this.onMainMenuClick.bind(this)    
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
-    this.onMainMenuClick = this.onMainMenuClick.bind(this)
+    this.toggleEditMenu = this.toggleEditMenu.bind(this)
+    this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
+    this.toggleViewMenu = this.toggleViewMenu.bind(this)
+    this.toggleHelpMenu = this.toggleHelpMenu.bind(this)
+    
     this.state = {
       mainMenuData,
       pageContent: ''
     }
+  }
+
+  onMainMenuClick (event, menuItem) {
+    
+    event.stopPropagation()
+    console.warn(menuItem)
+    const callback = this[menuItem.onClick]
+    callback && callback(menuItem)
+  }
+
+  toggleFileMenu () {
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
+    console.log('hey, this runs inside toggleFileMenu!')
+  }
+
+  toggleEditMenu () {
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[1].subLevel.visible = !prevState.mainMenuData.topLevel.items[1].subLevel.visible
+      return {mainMenuData}
+    })
+    console.log('hey, this runs inside toggleEditMenu!')
+  }
+
+  toggleFormatMenu () {
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[2].subLevel.visible = !prevState.mainMenuData.topLevel.items[2].subLevel.visible
+      return {mainMenuData}
+    })
+    console.log('hey, this runs inside toggleFormatMenu!')
+  }
+
+  toggleViewMenu () {
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[3].subLevel.visible = !prevState.mainMenuData.topLevel.items[3].subLevel.visible
+      return {mainMenuData}
+    })
+    console.log('hey, this runs inside toggleViewMenu!')
+  }
+
+  toggleHelpMenu () {
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[4].subLevel.visible = !prevState.mainMenuData.topLevel.items[4].subLevel.visible
+      return {mainMenuData}
+    })
+    console.log('hey, this runs inside toggleHelpMenu!')
   }
 
   fileNewMenu (menuItem) {
@@ -128,20 +185,6 @@ class App extends Component {
     // basic about this application stuff
   }
 
-  onMainMenuClick (event, menuItem) {
-    event.stopPropagation()
-    console.warn(menuItem)
-    const callback = this[menuItem.onClick]
-    callback && callback(menuItem)
-  }
-
-  toggleFileMenu () {
-    const mainMenuData = {...this.state.mainMenuData}
-    this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
-    })
-  }
   render () {
     return (
       <div className="App">

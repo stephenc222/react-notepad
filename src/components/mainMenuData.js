@@ -41,6 +41,7 @@ const mainMenu = {
       },
       {
         label: 'Edit',
+        onClick: 'toggleEditMenu',
         menu: 'editMenu',
         subLevel: {
           visible: false,
@@ -94,6 +95,7 @@ const mainMenu = {
       },
       {
         label: 'Format',
+        onClick: 'toggleFormatMenu',
         menu: 'formatMenu',
         subLevel: {
           visible: false,
@@ -111,6 +113,7 @@ const mainMenu = {
       },
       {
         label: 'View',
+        onClick: 'toggleViewMenu',
         menu: 'viewMenu',
         subLevel: {
           visible: false,
@@ -124,6 +127,7 @@ const mainMenu = {
       },
       {
         label: 'Help',
+        onClick: 'toggleHelpMenu',
         menu: 'helpMenu',
         subLevel: {
           visible: false,
