@@ -85,38 +85,42 @@ li {
   visibility: hidden;
   border-color: blue;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
+  display: none;
+  overflow-y: auto;
+  
 }
 
 .editMenuHidden {
   visibility: hidden;
   border-color: blue;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
+  display: none;
+  overflow-y: auto;
+  
 }
 
 .formatMenuHidden {
   visibility: hidden;
   border-color: blue;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
+  display: none;
+  overflow-y: auto;
+  
 }
 
 .viewMenuHidden {
   visibility: hidden;
   border-color: blue;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
+  display: none;
+  overflow-y: auto;
+  
 }
 
 .helpMenuHidden {
   visibility: hidden;
   border-color: blue;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
+  display: none;
+  overflow-y: auto;
 }
