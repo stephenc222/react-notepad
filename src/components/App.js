@@ -98,11 +98,11 @@ class App extends Component {
     console.log(`fileSaveAsMenu is clicked here`)
     console.log(menuItem)
   }
-  // pageSetUpMenu (menuItem) {
-  //   // 
-  //   console.log(`pageSetUpMenu is clicked here`)
-  //   console.log(menuItem)
-  // }
+  pageSetUpMenu (menuItem) {
+    // page set up for print, *may* take out
+    console.log(`pageSetUpMenu is clicked here`)
+    console.log(menuItem)
+  }
 
   // NOTE: possibly pull out printing all together...
   printMenu (menuItem) {
@@ -118,71 +118,104 @@ class App extends Component {
 
   editUndo (menuItem){
     // undo last action
+    console.log('editUndo clicked here')
+    console.log(menuItem)
+            
   }
 
   editCut  (menuItem){
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
+    console.log('editCut clicked here')        
+    console.log(menuItem)    
   }
 
   editCopy (menuItem){
     // virtual clipboard copy 
     // ditto
+    console.log('editCopy clicked here')   
+    console.log(menuItem)         
   }
 
   editPaste (menuItem){
     // virtual clipboard paste
+    console.log('editPaste clicked here')   
+    console.log(menuItem)         
   }
 
   editDelete  (menuItem) {
     // delete selection
+    console.log('editDelete clicked here')   
+    console.log(menuItem)         
   }
 
   editFind (menuItem) {
     // open up Find dialog, then finds character sequence 
+    console.log('helpAboutNotepad clicked here')  
+    console.log(menuItem)          
   }
 
   editFindNext (menuItem) {
     // finds next occurrence of current selection
+    console.log('helpAboutNotepad clicked here')  
+    console.log(menuItem)          
   }
 
   editReplace (menuItem) {
     // open up find and replace dialog
+    console.log('helpAboutNotepad clicked here')  
+    console.log(menuItem)          
   }
 
   editGoTo (menuItem) {
     // goes to specific line number if word wrap NOT selected
+    console.log('helpAboutNotepad clicked here')     
+    console.log(menuItem)       
   }
 
   editSelectAll (menuItem) {
     // select all text
+    console.log('editSelectAll clicked here')  
+    console.log(menuItem)          
   }
 
   editTimeDate (menuItem) {
     // inputs current time stamp at current cursor position
+    console.log('editTimeDate clicked here')  
+    console.log(menuItem)        
   }
 
-  FormatWordWrap (menuItem) {
+  formatWordWrap (menuItem) {
     // wraps text to fit inside current viewable area
+    console.log('formatWordWrap clicked here')  
+    console.log(menuItem)          
   }
 
-  FormatFont  (menuItem) {
+  formatFont  (menuItem) {
     // change font of entire text including font type, font style type, and font size 
     // also includes "Script Type:", which includes "Western", "Greek", "Turkish", etc.,
+    console.log('formatFont clicked here') 
+    console.log(menuItem)       
   }
 
   viewStatusBar (menuItem) {
     // if word Wrap NOT checked, then creates a bottom display of 
     // where the cursor is, e.g., "Ln 11, Col 17"
     // displays checked box also
+    console.log('viewStatusBar clicked here')  
+    console.log(menuItem)          
   }
 
   helpViewHelp (menuItem) {
     // opens up new searchable help tab 
+    console.log('helpViewHelp clicked here')   
+    console.log(menuItem)     
   }
 
   helpAboutNotepad (menuItem) {
     // basic about this application stuff
+    console.log('helpAboutNotepad clicked here')
+    console.log(menuItem)    
   }
 
   render () {

@@ -34,7 +34,7 @@ const mainMenu = {
             },
             {
               label: 'Exit',
-              onClick: 'exitReact'
+              onClick: 'exitNotepad'
             }
           ]
         }
@@ -48,47 +48,47 @@ const mainMenu = {
           items: [
             {
               label: 'Undo',
-              onClick: 'undoOption'
+              onClick: 'editUndo'
             },
             {
               label: 'Cut',
-              onClick: 'cutOption'
+              onClick: 'editCut'
             },
             {
               label: 'Copy',
-              onClick: 'copyOption'
+              onClick: 'editCopy'
             },
             {
               label: 'Paste',
-              onClick: 'pasteOption'
+              onClick: 'editPaste'
             },
             {
               label: 'Delete',
-              onClick: 'deleteOption'
+              onClick: 'editDelete'
             },
             {
               label: 'Find...',
-              onClick: 'FindOption'
+              onClick: 'editFind'
             },
             {
               label: 'Find Next',
-              onClick: 'findNextOption'
+              onClick: 'editFindNext'
             },
             {
               label: 'Replace...',
-              onClick: 'ReplaceOption'
+              onClick: 'editReplace'
             },
             {
               label: 'Go To...',
-              onClick: 'goToOption'
+              onClick: 'editGoTo'
             },
             {
               label: 'Select All',
-              onClick: 'undoMenu'
+              onClick: 'editSelectAll'
             },
             {
               label: 'Time/Date',
-              onClick: 'timeDateOption'
+              onClick: 'editTimeDate'
             }
           ]
         }
@@ -102,11 +102,11 @@ const mainMenu = {
           items: [
             {
               label: 'Word Wrap',
-              onClick: 'wordWrapOption'
+              onClick: 'formatWordWrap'
             },
             {
               label: 'Font...',
-              onClick: 'fontOption'
+              onClick: 'formatFont'
             }
           ]
         }
@@ -120,7 +120,7 @@ const mainMenu = {
           items: [
             {
               label: 'Status Bar',
-              onClick: 'statusBarMenu'
+              onClick: 'viewStatusBar'
             }
           ]
         }
@@ -134,11 +134,11 @@ const mainMenu = {
           items: [
             {
               label: 'View Help',
-              onClick: 'helpMenu'
+              onClick: 'helpViewHelp'
             },
             {
               label: 'About Notepad',
-              onClick: 'aboutNotepadMenu'
+              onClick: 'helpAboutNotepad'
             }
           ]
         }
