@@ -151,25 +151,25 @@ class App extends Component {
 
   editFind (menuItem) {
     // open up Find dialog, then finds character sequence 
-    console.log('helpAboutNotepad clicked here')  
+    console.log('editFind clicked here')  
     console.log(menuItem)          
   }
 
   editFindNext (menuItem) {
     // finds next occurrence of current selection
-    console.log('helpAboutNotepad clicked here')  
+    console.log('editFindNext clicked here')  
     console.log(menuItem)          
   }
 
   editReplace (menuItem) {
     // open up find and replace dialog
-    console.log('helpAboutNotepad clicked here')  
+    console.log('editReplace clicked here')  
     console.log(menuItem)          
   }
 
   editGoTo (menuItem) {
     // goes to specific line number if word wrap NOT selected
-    console.log('helpAboutNotepad clicked here')     
+    console.log('editGoTo clicked here')     
     console.log(menuItem)       
   }
 
