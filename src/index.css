@@ -46,6 +46,8 @@ li {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: absolute;
+  z-index: 1;
 }
 
 .editMenu {
@@ -54,6 +56,8 @@ li {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: absolute;
+  z-index: 1;
 }
 
 .formatMenu {
@@ -61,7 +65,9 @@ li {
   border-color: blue;
   padding: 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  
+  position: absolute;
+  z-index: 1;
 }
 
 .viewMenu {
@@ -70,6 +76,8 @@ li {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: absolute;
+  z-index: 1;
 }
 
 .helpMenu {
@@ -78,6 +86,8 @@ li {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: absolute;
+  z-index: 1;
 }
 
 
