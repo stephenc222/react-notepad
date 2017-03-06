@@ -1,3 +1,7 @@
+* {
+  border: solid 1px red;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -7,6 +11,7 @@ body {
 div {
   display: flex;
   flex-direction: column;
+  padding: 10px;
 }
 
 ul {
@@ -20,4 +25,98 @@ ul {
 li {
   display: flex;
   padding-right: 1%;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.subMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fileMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.editMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formatMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.helpMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.fileMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.editMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formatMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.helpMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
