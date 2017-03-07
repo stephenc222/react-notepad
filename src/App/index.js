@@ -44,8 +44,8 @@ const CURSOR_KEYS = [
 ]
 
 class App extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     // menu items here 
     this.onMainMenuClick = this.onMainMenuClick.bind(this)    
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
@@ -53,10 +53,55 @@ class App extends Component {
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
     this.toggleViewMenu = this.toggleViewMenu.bind(this)
     this.toggleHelpMenu = this.toggleHelpMenu.bind(this)
+    // key press events here
+    this.onKeyDown = this.onKeyDown.bind(this)
+    this.onKeyPress = this.onKeyPress.bind(this)
+
+    this.moveToStartOfLine = this.moveToStartOfLine.bind(this)
+    this.moveToEndOfLine = this.moveToEndOfLine.bind(this)
+    this.moveToTopOfDocument = this.moveToTopOfDocument.bind(this)
+    this.moveToBottomOfDocument = this.moveToBottomOfDocument.bind(this)
+    this.moveUp = this.moveUp.bind(this)
+    this.moveDown = this.moveDown.bind(this)
+    this.moveLeft = this.moveLeft.bind(this)
+    this.moveRight = this.moveRight.bind(this)
+    this.insertCarriageReturn = this.insertCarriageReturn.bind(this)
+    this.insertBackspace = this.insertBackspace.bind(this)
+    this.insertDelete = this.insertDelete.bind(this)
+    this.insertCharacter = this.insertCharacter.bind(this)
+
+    // audio object
+    this.audioContext = new window.AudioContext()
+    this.audioGainNode = this.audioContext.createGain()
+    this.audioGainNode.connect(this.audioContext.destination)
+    this.audioGainNode.gain.value = 0.15
+
+    // beep sound effect when backspace is pressed and cursor at
+    // the beginning of a line
+    this.beep = () => {
+      const oscillator = this.audioContext.createOscillator()
+      oscillator.type = 'square'
+      oscillator.frequency.value = 120
+      oscillator.connect(this.audioGainNode)
+      oscillator.start()
+      oscillator.stop(this.audioContext.currentTime + 0.15)
+    }
     
     this.state = {
       mainMenuData,
-      pageContent: ''
+      documentCursor: CURSOR_HOME,
+      documentContent: mockData,
+      documentSelection: {
+        selection: null,
+        selectionStart: {
+          row: 0,
+          column: 0
+        },
+        selectionEnd: {
+          row: 0,
+          column: 0
+        }
+      }
     }
   }
 
@@ -258,14 +303,245 @@ class App extends Component {
     console.log(menuItem)    
   }
 
+  componentDidMount () {
+    this.topLevel.focus()
+  }
+
+  moveToStartOfLine (documentCursor, documentContent) {
+    documentCursor.column = 0
+    console.log(`moveToStartOfLine called,
+      documentCursor: ${documentCursor}
+      documentContent: ${documentContent}`)
+  }
+
+  moveToEndOfLine (documentCursor, documentContent) {
+    console.log(`moveToEndOfLine called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  moveToTopOfDocument (documentCursor, documentContent) {
+    console.log(`moveToTopOfDocument called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  moveToBottomOfDocument (documentCursor, documentContent) {
+    console.log(`moveToBottomOfDocument called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  moveUp (documentCursor, documentContent) {
+    console.log(`moveUp called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  moveDown (documentCursor, documentContent) {
+    console.log(`moveDown called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }  
+  
+  moveLeft (documentCursor, documentContent) {
+    console.log(`moveLeft called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }  
+  
+  moveRight (documentCursor, documentContent) {
+    console.log(`moveRight called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  insertCarriageReturn (documentCursor, documentContent) {
+    console.log(`moveUp called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  insertBackspace (documentCursor, documentContent) {
+    console.log(`moveUp called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  insertDelete (documentCursor, documentContent) {
+    console.log(`moveUp called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+
+  insertCharacter (documentCursor, documentContent) {
+    console.log(`moveUp called, 
+      documentCursor: ${documentCursor}, 
+      documentContent: ${documentContent}`)
+  }
+  onKeyDown (event) {
+    console.log(`keyCode inside onKeyDown: ${event.keyCode}`)
+
+    const documentCursor = {...this.state.documentCursor}
+    const documentContent = this.state.documentContent.slice()
+
+    let updateCursor = false
+    let updateDocument = false
+
+    // implementation of cursor movement with arrow keys and 
+    // alphanumeric character key down events
+
+    const moveToStartOfLine = () => this.moveToStartOfLine(documentCursor, documentContent)
+    const moveToEndOfLine = () => this.moveToEndOfLine(documentCursor, documentContent)
+    const moveToTopOfDocument = () => this.moveToTopOfDocument(documentCursor, documentContent)
+    const moveToBottomOfDocument = () => this.moveToBottomOfDocument(documentCursor, documentContent)
+    const moveUp = () => this.moveUp(documentCursor, documentContent)
+    const moveDown = () => this.moveDown(documentCursor, documentContent)
+    const moveLeft = () => this.moveLeft(documentCursor, documentContent)
+    const moveRight = () => this.moveRight(documentCursor, documentContent)
+
+    const {
+      altKey,
+      ctrlKey,
+      key,
+      locale,
+      location,
+      metaKey,
+      repeat,
+      which,
+      charCode,
+      keyCode,
+      shiftkey
+    } = event
+
+    const isKey = (keyMatch) => keyCode === keyMatch
+
+    if (CURSOR_KEYS.indexOf(keyCode) !== -1) {
+      updateCursor = true
+    }
+
+    // TODO: make into switch statement
+
+    // switch (key) {
+    //   case value:
+        
+    //     break;
+    
+    //   default:
+    //     break;
+    // }
+    if (isKey(KEY.BACKSPACE)) {
+      event.preventDefault()
+      this.insertBackspace(documentCursor, documentContent)
+      updateCursor = true
+      updateDocument = true
+    } else if (isKey(KEY.DELETE)) {
+      event.preventDefault()
+      this.insertDelete(documentCursor, documentContent)
+      updateCursor = true
+      updateDocument = true
+    } else if (isKey(KEY.END)) {
+      event.preventDefault()
+      moveToEndOfLine()
+      updateCursor = true
+    } else if (isKey(KEY.HOME)) {
+      event.preventDefault()
+      moveToStartOfLine()
+      updateCursor = true
+    } else if (isKey(KEY.LEFT)) {
+      if (metaKey) {
+        moveToStartOfLine()
+      } else {
+        moveLeft()
+      }
+    } else if (isKey(KEY.RIGHT)) {
+      if (metaKey) {
+        moveToEndOfLine()
+      } else {
+        moveRight()
+      }
+    } else if (isKey(KEY.DOWN)) {
+      if (metaKey) {
+        moveToBottomOfDocument()
+      } else {
+        moveDown()
+      }
+    } else if (isKey(KEY.UP)) {
+      if (metaKey) {
+        moveToTopOfDocument()
+      } else {
+        moveUp()
+      }
+    }
+
+    const nextState = {}
+
+    if (updateDocument) {
+      console.log ('updateDocument is true here')
+      nextState.documentContent = documentContent
+    }
+
+    if (updateCursor) {
+      console.log ('updateCursor is true here')
+      nextState.documentCursor = documentCursor
+    }
+
+    this.setState(nextState)
+  }
+
+  onKeyPress (event) {
+    console.log(`charCode inside onKeyPress: ${event.charCode}`)
+    const {
+      altKey,
+      ctrlKey,
+      key,
+      locale,
+      location,
+      metaKey,
+      repeat,
+      which,
+      charCode,
+      keyCode,
+      shiftKey
+    } = event
+
+    let updateDocument = false
+
+    const documentContent = this.state.documentContent.slice()
+    const documentCursor = {...this.state.documentCursor}
+
+    if (charCode === KEY.ENTER) {
+      updateDocument = true
+      this.insertCarriageReturn(documentCursor, documentContent)
+    } else if (charCode && !keyCode) {
+      updateDocument = true
+      const character = String.fromCharCode(charCode)
+      this.insertCharacter(shiftKey
+        ? character.toUpperCase()
+        : character,
+        documentCursor, documentContent)
+      documentCursor.column += 1
+    }
+  }
+
   render () {
     return (
-      <div className="App">
+      <div 
+        className="top-level-window"
+        tabIndex={0}
+        onKeyDown={this.onKeyDown}
+        onKeyPress={this.onKeyPress}
+        ref={(element) => {this.topLevel = element}}
+        >
         <MainMenu 
           menu={this.state.mainMenuData}
           onClick={this.onMainMenuClick}
         />
-        <NotePad />
+        <NotePad
+          cursor={this.state.documentCursor}
+          content={this.state.documentContent}
+          {...this.props}
+        />
         {/*<StatusBar />*/}
       </div>
     )
