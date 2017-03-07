@@ -1,7 +1,47 @@
 import React, { Component } from 'react'
+// also import PropTypes
 import MainMenu from './MainMenu'
-import NotePad from './Notepad'
 import mainMenuData from './mainMenuData'
+import NotePad from './Notepad'
+//import StatusBar from './StatusBar'
+import './index.css'
+
+const mockData = [
+  'Testing this App text input area',
+  'This is the second line',
+  'And a third line of more text also',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+]
+
+const CURSOR_HOME = { row: 0, column: 0}
+
+const KEY = {
+  END: 35,
+  HOME: 36,
+  LEFT: 37,
+  RIGHT: 39,
+  UP: 38,
+  DOWN: 40,
+  BACKSPACE: 8,
+  DELETE: 46,
+  ENTER: 13
+}
+
+const CURSOR_KEYS = [
+  KEY.UP,
+  KEY.DOWN,
+  KEY.LEFT,
+  KEY.RIGHT
+]
 
 class App extends Component {
   constructor () {
@@ -77,7 +117,7 @@ class App extends Component {
     // pop up dialog    
     // set document content to empty
     console.log(`fileNewMenu is clicked here`)
-    //console.log(menuItem)
+    console.log(menuItem)
   }
 
   fileOpenMenu (menuItem) {
@@ -226,6 +266,7 @@ class App extends Component {
           onClick={this.onMainMenuClick}
         />
         <NotePad />
+        {/*<StatusBar />*/}
       </div>
     )
   }

@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
-class InputTextArea extends Component {
+class StatusBar extends Component {
   render () {
     return (
       <div>
-        
+        StatusBar
       </div>
     )
   }
 }
 
-export default InputTextArea
+export default StatusBar
