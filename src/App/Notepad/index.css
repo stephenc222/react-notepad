@@ -45,4 +45,14 @@
 .notepadArea__cursor {
   box-sizing: border-box;
   border-left: 1px solid black;
+  animation: 1s blink-cursor step-end infinite;
+}
+
+@keyframes 'blink-cursor' {
+  from, to {
+    border-left-color: black;
+  }
+  50% {
+    border-left-color: transparent;
+  }
 }

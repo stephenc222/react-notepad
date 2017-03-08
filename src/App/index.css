@@ -11,8 +11,9 @@ body {
 .top-level-window {
   border: 4px solid black;
   box-sizing: border-box;
-  width: 100vw;
-  height: 100vh;
+  /* TODO: fix the height and width so scroll bars don't appear*/
+  width: 99vw;
+  height: 99vh;
   display: flex;
   flex-direction: column;
 }
@@ -178,7 +179,6 @@ li {
 
 .app__document-container {
   display: flex;
-  height: 40vh;
   flex-grow: 1;
   justify-content: flex-start;
   flex-direction: column;

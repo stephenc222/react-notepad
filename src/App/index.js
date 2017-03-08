@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
 import NotePad from './Notepad'
-//import StatusBar from './StatusBar'
+// import StatusBar from './StatusBar'
 import './index.css'
 
 const mockData = [
@@ -101,7 +101,9 @@ class App extends Component {
           row: 0,
           column: 0
         }
-      }
+      },
+      undoStack: [],
+      redoStack: []
     }
   }
 
@@ -315,6 +317,11 @@ class App extends Component {
   }
 
   moveToEndOfLine (documentCursor, documentContent) {
+    if (documentContent[documentCursor.row].length) {
+      documentCursor.column = documentContent[documentCursor.row].length
+    } else {
+      documentCursor.column = 0
+    }
     console.log(`moveToEndOfLine called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
