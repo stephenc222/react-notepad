@@ -18,11 +18,11 @@ body {
 }
 
 
-div {
+/*div {
   display: flex;
   flex-direction: column;
   padding: 10px;
-}
+}*/
 
 ul {
   list-style: none;
@@ -181,5 +181,4 @@ li {
   height: 40vh;
   flex-grow: 1;
   flex-direction: column;
-  justify-content: flex-start;
 }

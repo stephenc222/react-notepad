@@ -24,7 +24,6 @@
   display: flex;
   line-height: 1.5;
   flex-wrap: wrap;
-  flex-grow: 1;
 }
 
 .notepadArea__row--highlight {
