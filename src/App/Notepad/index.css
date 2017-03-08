@@ -1,9 +1,9 @@
 .notepadArea {
-  box-shadow: inset 10px 10px 32px -12px rgba(0,0,0,0.4);
-  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: inset 10px 10px 30px -12px rgba(0,0,0,0.4);
+  font-family: monospace;
   /* this needs to be dynamically overriden possibly in-line in the Notepad Component */
-  font-size: 16px; 
-  background: ghostwhite; /* for now */
+  font-size: 18px; 
+  background: ghostwhite;
   cursor: text;
   user-select: none;
   border: 2px solid black;
@@ -16,7 +16,7 @@
   text-align: right;
   padding: 4px;
   margin-right: 8px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: monospace;
   cursor: default;
 }
 
@@ -24,6 +24,9 @@
   display: flex;
   line-height: 1.5;
   flex-wrap: wrap;
+  flex-grow: 1;  
+  /*border: 1px solid red;*/
+
 }
 
 .notepadArea__row--highlight {
@@ -35,6 +38,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  /*border: 1px solid red;*/
   border-left: 1px solid green;
 }
 
