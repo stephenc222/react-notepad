@@ -357,25 +357,25 @@ class App extends Component {
   }
 
   insertCarriageReturn (documentCursor, documentContent) {
-    console.log(`moveUp called, 
+    console.log(`insertCarriageReturn called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertBackspace (documentCursor, documentContent) {
-    console.log(`moveUp called, 
+    console.log(`insertBackspace called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertDelete (documentCursor, documentContent) {
-    console.log(`moveUp called, 
+    console.log(`insertDelete called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertCharacter (documentCursor, documentContent) {
-    console.log(`moveUp called, 
+    console.log(`insertCharacter called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
@@ -542,7 +542,7 @@ class App extends Component {
           content={this.state.documentContent}
           {...this.props}
         />
-        {/*<StatusBar />*/}
+        {/*<StatusBar /> */}
       </div>
     )
   }
