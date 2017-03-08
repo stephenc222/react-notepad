@@ -401,14 +401,14 @@ class App extends Component {
     const moveRight = () => this.moveRight(documentCursor, documentContent)
 
     const {
-      altKey,
-      ctrlKey,
-      key,
-      locale,
-      location,
+      // altKey,
+      // ctrlKey,
+      // key,
+      // locale,
+      // location,
       metaKey,
-      repeat,
-      which,
+      // repeat,
+      // which,
       charCode,
       keyCode,
       shiftkey
@@ -492,14 +492,14 @@ class App extends Component {
   onKeyPress (event) {
     console.log(`charCode inside onKeyPress: ${event.charCode}`)
     const {
-      altKey,
-      ctrlKey,
-      key,
-      locale,
-      location,
-      metaKey,
-      repeat,
-      which,
+      // altKey,
+      // ctrlKey,
+      // key,
+      // locale,
+      // location,
+      // metaKey,
+      // repeat,
+      // which,
       charCode,
       keyCode,
       shiftKey
@@ -533,16 +533,22 @@ class App extends Component {
         onKeyPress={this.onKeyPress}
         ref={(element) => {this.topLevel = element}}
         >
-        <MainMenu 
-          menu={this.state.mainMenuData}
-          onClick={this.onMainMenuClick}
-        />
-        <NotePad
-          cursor={this.state.documentCursor}
-          content={this.state.documentContent}
-          {...this.props}
-        />
-        {/*<StatusBar /> */}
+        <div className='app__header'>React Notepad - Untitled.txt</div>
+        <div className='app__main-container'>
+          <div className='app__menu-bar-container'>
+            <MainMenu menu={this.state.mainMenuData} onClick={this.onMainMenuClick} />
+          </div>
+          <div className="app__document-container">
+            <NotePad
+              cursor={this.state.documentCursor}
+              content={this.state.documentContent}
+              {...this.props}
+            />
+          </div>
+          <div className="app__status-container">
+            {/*<StatusBar /> */}
+          </div>
+        </div>
       </div>
     )
   }
