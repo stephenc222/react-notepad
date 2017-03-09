@@ -328,24 +328,39 @@ class App extends Component {
   }
 
   moveToTopOfDocument (documentCursor, documentContent) {
+    documentCursor.row = 0
+    documentCursor.column = 0
     console.log(`moveToTopOfDocument called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   moveToBottomOfDocument (documentCursor, documentContent) {
+    documentCursor.row = documentContent.length - 1
+    documentCursor.column = 0
     console.log(`moveToBottomOfDocument called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   moveUp (documentCursor, documentContent) {
+    documentCursor.row -= 1
+    if (documentCursor.row < 0) {
+      documentCursor.row = 0
+    }
+    if (documentCursor.column > documentContent[documentCursor.row].length - 1) {
+      this.moveToEndOfLine(documentCursor, documentContent)
+    }
     console.log(`moveUp called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   moveDown (documentCursor, documentContent) {
+    documentCursor.row += 1
+    if (documentCursor.row > documentContent.length - 1) {
+      documentCursor.row = documentContent.length - 1
+    }
     console.log(`moveDown called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
