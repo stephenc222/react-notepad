@@ -492,10 +492,22 @@ class App extends Component {
       documentContent: ${documentContent}`)
   }
 
-  insertCharacter (documentCursor, documentContent) {
+  insertCharacter (character, documentCursor, documentContent) {
     // TODO: implement a track pattern inside here to push to undoStack
+    const rowContent = documentContent[documentCursor.row]
 
-        
+    const changeRow = changes => { documentContent[documentCursor.row] = changes }
+
+    if (documentCursor.column === 0) {
+      changeRow(`${character}${rowContent}`)
+    } else if (documentCursor.column === rowContent.length - 1 ) {
+      changeRow(`${rowContent}${character}`)
+    } else {
+      const pre = rowContent.slice(0, documentCursor.column)
+      const post = rowContent.slice(documentCursor.column)
+      changeRow(`${pre}${character}${post}`)
+    }
+
     console.log(`insertCharacter called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
@@ -541,16 +553,6 @@ class App extends Component {
       updateCursor = true
     }
 
-    // TODO: make into switch statement
-
-    // switch (key) {
-    //   case value:
-        
-    //     break;
-    
-    //   default:
-    //     break;
-    // }
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
       this.insertBackspace(documentCursor, documentContent)
