@@ -1,3 +1,7 @@
+/* TODO: remove this red border around everything to get rid of
+  scroll bars on start
+
+  */
 * {
   border: solid 1px red;
 }
@@ -12,8 +16,8 @@ body {
   border: 4px solid black;
   box-sizing: border-box;
   /* TODO: fix the height and width so scroll bars don't appear*/
-  width: 99vw;
-  height: 99vh;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
