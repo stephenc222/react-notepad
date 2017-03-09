@@ -1,34 +1,3 @@
-/* TODO: remove this red border around everything to get rid of
-  scroll bars on start
-
-  */
-* {
-  border: solid 1px red;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-.top-level-window {
-  border: 4px solid black;
-  box-sizing: border-box;
-  /* TODO: fix the height and width so scroll bars don't appear*/
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-
-/*div {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}*/
-
 ul {
   list-style: none;
   display: flex;
@@ -49,7 +18,8 @@ li {
 
 .subMenu {
   visibility: visible;
-  border-color: blue;
+  border: solid 1px blue;
+  /*border-color: blue;*/
   padding: 20px;
   display: flex;
   flex-direction: column;

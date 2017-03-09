@@ -361,42 +361,141 @@ class App extends Component {
     if (documentCursor.row > documentContent.length - 1) {
       documentCursor.row = documentContent.length - 1
     }
+    if (documentCursor.column > documentContent[documentCursor.row].length -1) {
+      this.moveToEndOfLine(documentCursor, documentContent)
+    }
     console.log(`moveDown called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }  
   
   moveLeft (documentCursor, documentContent) {
+    documentCursor.column -= 1
+    if (documentCursor.column < 0) {
+      if (documentCursor.row > 0) {
+        this.moveUp(documentCursor, documentContent)
+        this.moveToEndOfLine(documentCursor, documentContent)
+      } else {
+        this.moveToStartOfLine(documentCursor, documentContent)
+      }
+    }
     console.log(`moveLeft called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }  
   
   moveRight (documentCursor, documentContent) {
+    documentCursor.column += 1
+    if (documentCursor.column > documentContent[documentCursor.row].length) {
+      if (documentCursor.row < documentContent.length -1) {
+        this.moveDown(documentCursor, documentContent)
+        this.moveToStartOfLine(documentCursor, documentContent)
+      } else {
+        this.moveToEndOfLine(documentCursor, documentContent)
+      }
+    }
     console.log(`moveRight called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertCarriageReturn (documentCursor, documentContent) {
+    const EMPTY_LINE = ''
+    const rowContent = documentContent[documentCursor.row]
+    const pre = rowContent.slice(0, documentCursor.column)
+    const post = rowContent.slice(documentCursor.column)
+
+    if (documentCursor.row === 0) {
+      // top row
+      documentContent.splice(0, 0, EMPTY_LINE)
+      documentCursor.row += 1
+    } else if (documentCursor.row < documentContent.length -1) {
+      // middle rows
+      documentContent.splice(documentCursor.row, 0, EMPTY_LINE)
+      documentCursor.row += 1
+    } else {
+      // bottom row
+      documentContent.push(EMPTY_LINE)
+      documentCursor.row += 1
+    }
+
+    if (documentCursor.column > 0 && rowContent.length > 0) {
+      documentContent[documentCursor.row -1] = pre
+      documentContent[documentCursor.row] = post
+    }
+
+    documentCursor.column = 0
+
     console.log(`insertCarriageReturn called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertBackspace (documentCursor, documentContent) {
+    // TODO: implement a track pattern inside here to push to undoStack    
+    const changeRow = changes => { documentContent[documentCursor.row] = changes }
+
+    const rowContent = documentContent[documentCursor.row]
+
+    if (documentCursor.column > 0) {
+      documentCursor.column -= 1
+
+      const pre = rowContent.slice(0, documentCursor.column)
+      const post = rowContent.slice(documentCursor.column + 1)
+      changeRow(`${pre}${post}`)
+    } else {
+      if (documentCursor.row === 0 && documentCursor.column === 0) {
+        this.beep()
+      } else if (documentContent.length > 1 && rowContent.length === 0) {
+        documentContent.splice(documentCursor.row, 1)
+        documentCursor.row -= 1
+        if (documentCursor.row < 0) {
+          documentCursor.row = 0
+        }
+        this.moveToEndOfLine(documentCursor, documentContent)
+      } else if (documentCursor.row > 0 && rowContent.length > 0) {
+        documentCursor.row -= 1
+        this.moveToEndOfLine(documentCursor, documentContent)
+
+        const rowAboveContent = documentContent[documentCursor.row]
+        changeRow(`${rowAboveContent}${rowContent}`)
+        documentContent.splice(documentCursor.row + 1, 1)
+      }
+    }
+
+
     console.log(`insertBackspace called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertDelete (documentCursor, documentContent) {
+    // TODO: implement a track pattern inside here to push to undoStack
+    const rowContent = documentContent[documentCursor.row]
+
+    const changeRow = changes => { documentContent[documentCursor.row] = changes }
+
+    const pre = rowContent.slice(0, documentCursor.column)
+    const post = rowContent.slice(documentCursor.column + 1)
+
+    if (post.length) {
+      changeRow(`${pre}${post}`)
+    } else if (documentCursor.row < documentCursor.length - 1) {
+      const nextRowContent = documentContent[documentCursor.row + 1]
+
+      changeRow(`${rowContent}${nextRowContent}`)
+      documentContent.splice(documentCursor.row + 1, 1)
+    }
+
     console.log(`insertDelete called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
   }
 
   insertCharacter (documentCursor, documentContent) {
+    // TODO: implement a track pattern inside here to push to undoStack
+
+        
     console.log(`insertCharacter called, 
       documentCursor: ${documentCursor}, 
       documentContent: ${documentContent}`)
@@ -533,6 +632,7 @@ class App extends Component {
     const documentCursor = {...this.state.documentCursor}
 
     if (charCode === KEY.ENTER) {
+      console.warn('KEY: ENTER is pressed here')
       updateDocument = true
       this.insertCarriageReturn(documentCursor, documentContent)
     } else if (charCode && !keyCode) {
@@ -543,6 +643,10 @@ class App extends Component {
         : character,
         documentCursor, documentContent)
       documentCursor.column += 1
+    }
+
+    if (updateDocument) {
+      this.setState({documentContent, documentCursor})
     }
   }
 
