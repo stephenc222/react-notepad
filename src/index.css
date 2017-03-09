@@ -1,3 +1,7 @@
+ /*TODO: remove this red border around everything to get rid of
+  scroll bars on start
+
+  */
 * {
   border: solid 1px red;
 }
@@ -8,115 +12,12 @@ body {
   font-family: sans-serif;
 }
 
-div {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}
-
-ul {
-  list-style: none;
-  display: flex;
-  justify-content: flex-start;
-  border-bottom: solid black 1px;
-  
-}
-
-li {
-  display: flex;
-  padding-right: 1%;
-}
-
-.menuItem {
-  display: flex;
-  flex-direction: column;
-}
-
-.subMenu {
-  visibility: visible;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.fileMenu {
-  visibility: visible;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.editMenu {
-  visibility: visible;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.formatMenu {
-  visibility: visible;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.viewMenu {
-  visibility: visible;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.helpMenu {
-  visibility: visible;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.fileMenuHidden {
-  visibility: hidden;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.editMenuHidden {
-  visibility: hidden;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.formatMenuHidden {
-  visibility: hidden;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.viewMenuHidden {
-  visibility: hidden;
-  border-color: blue;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.helpMenuHidden {
-  visibility: hidden;
-  border-color: blue;
-  padding: 20px;
+.top-level-window {
+  border: 4px solid black;
+  box-sizing: border-box;
+  /* TODO: fix the height and width so scroll bars don't appear*/
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }

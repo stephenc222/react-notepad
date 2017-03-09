@@ -1,0 +1,58 @@
+.notepadArea {
+  box-shadow: inset 10px 10px 30px -12px rgba(0,0,0,0.4);
+  font-family: monospace;
+  /* this needs to be dynamically overriden possibly in-line in the Notepad Component */
+  font-size: 18px; 
+  background: ghostwhite;
+  cursor: text;
+  user-select: none;
+  border: 2px solid black;
+}
+
+.notepadArea__line-number {
+  width: 30px;
+  border-right: 2px solid black;
+  background: rgba(0,0,0,0.4);
+  text-align: right;
+  padding: 4px;
+  margin-right: 8px;
+  font-family: monospace;
+  cursor: default;
+}
+
+.notepadArea__row {
+  display: flex;
+  line-height: 1.5;
+  flex-wrap: wrap;
+  flex-grow: 1;  
+  /*border: 1px solid red;*/
+
+}
+
+.notepadArea__row--highlight {
+  background: rgba(0,255,255,0.2)
+}
+
+.notepadArea__column {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*border: 1px solid red;*/
+  border-left: 1px solid green;
+}
+
+.notepadArea__cursor {
+  box-sizing: border-box;
+  border-left: 1px solid black;
+  animation: 1s blink-cursor step-end infinite;
+}
+
+@keyframes 'blink-cursor' {
+  from, to {
+    border-left-color: black;
+  }
+  50% {
+    border-left-color: transparent;
+  }
+}

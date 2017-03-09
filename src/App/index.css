@@ -1,0 +1,159 @@
+ul {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: solid black 1px;
+}
+
+li {
+  display: flex;
+  padding-right: 1%;
+  user-select: none;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.subMenu {
+  visibility: visible;
+  border: solid 1px blue;
+  /*border-color: blue;*/
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fileMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.editMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.formatMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;  
+  position: absolute;
+  z-index: 1;
+}
+
+.viewMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.helpMenu {
+  visibility: visible;
+  border-color: blue;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+
+.fileMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: none;
+  
+}
+
+.editMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: none;
+  
+}
+
+.formatMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: none;
+  
+}
+
+.viewMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: none;
+  
+}
+
+.helpMenuHidden {
+  visibility: hidden;
+  border-color: blue;
+  padding: 20px;
+  display: none;
+}
+
+.app__header {
+  letter-spacing: 8px;
+  text-shadow: -1px 2px 0px rgba(150, 150, 150, 0.52);
+  font-size: 24px;
+  background: linear-gradient(to right, rgba(52,75,124,1) 0%,rgba(50,160,211,1) 50%,rgba(0,158,216,1) 51%,rgba(4,178,242,1) 100%);
+  color: white;
+  padding: 8px 0;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 4px solid black;
+  cursor: default;
+}
+
+.app__main-menu-bar {
+  height: 32px;
+  max-height: 32px;
+  min-height: 32px;
+  background: lightslategrey;
+  color: black;
+  font-family: monospace;
+  font-size: 24px;
+
+  display: flex;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-sizing: border-box;
+}
+
+.app__main-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__document-container {
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-start;
+  flex-direction: column;
+}

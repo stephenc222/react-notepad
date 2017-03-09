@@ -4,7 +4,7 @@ class StatusBar extends Component {
   render () {
     return (
       <div>
-        
+        StatusBar
       </div>
     )
   }
