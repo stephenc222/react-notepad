@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import './index.css'
 
 class MainMenu extends Component {
   constructor(props) {
@@ -17,10 +18,15 @@ class MainMenu extends Component {
 
   }
 
-  topLevelMenu(menu) {
+  topLevelMenu(menu, index) {
     //const subLevel = menu.subLevel
     return (
-      <li className='menuItem' key={menu.label} onClick={(event) => this.props.onClick(event, menu)}>
+      <li 
+        className={`menuItem main${menu.label}Item${menu.subLevel.hover ? 'Hover':''}`} 
+        key={menu.label} 
+        onClick={(event) => this.props.onClick(event, menu)}
+        onMouseOver={(event) => this.props.onMouseOver(event, menu, index)}
+        onMouseOut={(event) => this.props.onMouseOut(event, menu, index)}>
         {menu.label}
         <ul className={`subMenu ${menu.subLevel.visible ? menu.menu : menu.menu + 'Hidden'}`}>{menu.subLevel.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}</ul>
         

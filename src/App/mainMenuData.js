@@ -7,6 +7,7 @@ const mainMenu = {
         menu: 'fileMenu',
         subLevel: {
           visible: false,
+          hover: false,
           items: [
             {
               label: 'New',
@@ -45,6 +46,7 @@ const mainMenu = {
         menu: 'editMenu',
         subLevel: {
           visible: false,
+          hover: false,          
           items: [
             {
               label: 'Undo',
@@ -99,6 +101,7 @@ const mainMenu = {
         menu: 'formatMenu',
         subLevel: {
           visible: false,
+          hover: false,          
           items: [
             {
               label: 'Word Wrap',
@@ -117,6 +120,7 @@ const mainMenu = {
         menu: 'viewMenu',
         subLevel: {
           visible: false,
+          hover: false,
           items: [
             {
               label: 'Status Bar',
@@ -131,6 +135,7 @@ const mainMenu = {
         menu: 'helpMenu',
         subLevel: {
           visible: false,
+          hover: false,
           items: [
             {
               label: 'View Help',
