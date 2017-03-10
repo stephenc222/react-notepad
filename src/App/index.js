@@ -3,7 +3,12 @@ import React, { Component } from 'react'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
 import NotePad from './Notepad'
-// import StatusBar from './StatusBar'
+import StatusBar from './StatusBar'
+
+// components for development purposes
+import RedoStackView from './RedoStackView'
+import UndoStackView from './UndoStackView'
+
 import './index.css'
 
 const mockData = [
@@ -102,8 +107,8 @@ class App extends Component {
           column: 0
         }
       },
-      undoStack: [],
-      redoStack: []
+      undoStack: ['This is the undoStack object', 'and item #2'],
+      redoStack: ['This is the redoStack object', 'and item #2']
     }
   }
 
@@ -542,9 +547,9 @@ class App extends Component {
       metaKey,
       // repeat,
       // which,
-      charCode,
+      //charCode,
       keyCode,
-      shiftkey
+      //shiftkey
     } = event
 
     const isKey = (keyMatch) => keyCode === keyMatch
@@ -675,9 +680,17 @@ class App extends Component {
               content={this.state.documentContent}
               {...this.props}
             />
+            <div className="dev__stack-view-container">
+              <UndoStackView
+                undoStackObject={this.state.undoStack}
+              />
+              <RedoStackView
+                redoStackObject={this.state.redoStack}
+              />
+            </div>
           </div>
           <div className="app__status-container">
-            {/*<StatusBar /> */}
+            <StatusBar />
           </div>
         </div>
       </div>

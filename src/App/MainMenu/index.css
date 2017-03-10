@@ -19,15 +19,15 @@ li {
 }
 
 .menuItem:hover {
-  background-color: green;
+  background-color: #E8E8EE;
 }
 
 /*.fileMenu :hover {
 
-  background-color: green;
+  background-color: #E8E8EE;
 }*/
 
-/* TODO: change green hover colors to more of a grey color */
+/* TODO: change #E8E8EE hover colors to more of a grey color */
 
 .subMenu {
   visibility: visible;
@@ -40,7 +40,7 @@ li {
 }
 
 .subMenu :hover {
-  background-color: green;
+  background-color: #E8E8EE;
 }
 
 

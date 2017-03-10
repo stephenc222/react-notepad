@@ -1,0 +1,6 @@
+.redoStackView {
+  border: solid 1px red;
+  flex-grow: 1;
+  background-color: #D5F0D5;  
+
+}
