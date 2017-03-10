@@ -48,8 +48,6 @@ class App extends Component {
     super(props)
     // menu items here 
     this.onMainMenuClick = this.onMainMenuClick.bind(this)    
-    this.onMainMenuMouseOver = this.onMainMenuMouseOver.bind(this)    
-    this.onMainMenuMouseOut = this.onMainMenuMouseOut.bind(this)    
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
@@ -115,33 +113,6 @@ class App extends Component {
     console.warn(menuItem)
     const callback = this[menuItem.onClick]
     callback && callback(menuItem)
-  }
-
-  onMainMenuMouseOver (event, menuItem, index) {
-    event.stopPropagation()
-    // menuItem.subLevel.hover = true
-    console.log(`index inside onMainMenuMouseOver: ${index}`)
-    const mainMenuData = {...this.state.mainMenuData}
-    this.setState((prevState) => {
-      mainMenuData.topLevel.items[index].subLevel.hover = true
-      console.log(`hover inside onMainMenuMouseOver: ${mainMenuData.topLevel.items[index].subLevel.hover}`)
-      return {mainMenuData}
-    })
-    // console.log(menuItem)
-  }
-  
-  onMainMenuMouseOut (event, menuItem, index) {
-    event.stopPropagation()
-    menuItem.subLevel.hover = false
-    console.log(`index inside onMainMenuMouseOut: ${index}`)
-    const mainMenuData = {...this.state.mainMenuData}
-    this.setState((prevState) => {
-      mainMenuData.topLevel.items[index].subLevel.hover = false
-      console.log(`hover inside onMainMenuMouseOut: ${mainMenuData.topLevel.items[index].subLevel.hover}`)
-      return {mainMenuData}
-    })
-    // console.log(`hover inside onMainMenuMouseOut: ${menuItem.subLevel.hover}`) 
-    // console.log(menuItem)   
   }
 
   toggleFileMenu () {
@@ -696,8 +667,7 @@ class App extends Component {
             <MainMenu 
               menu={this.state.mainMenuData} 
               onClick={this.onMainMenuClick}
-              onMouseOver={this.onMainMenuMouseOver}
-              onMouseOut={this.onMainMenuMouseOut} />
+            />
           </div>
           <div className="app__document-container">
             <NotePad

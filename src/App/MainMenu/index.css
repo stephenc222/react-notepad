@@ -18,10 +18,14 @@ li {
   cursor: default;
 }
 
-.fileMenu :hover {
-
+.menuItem:hover {
   background-color: green;
 }
+
+/*.fileMenu :hover {
+
+  background-color: green;
+}*/
 
 /* TODO: change green hover colors to more of a grey color */
 
@@ -60,21 +64,6 @@ li {
   background-color: white;
 }
 
-.mainFileItemHover {
-  background-color: green;
-}
-.mainEditItemHover {
-  background-color: green;
-}
-.mainFormatItemHover {
-  background-color: green;
-}
-.mainViewItemHover {
-  background-color: green;
-}
-.mainHelpItemHover {
-  background-color: green;
-}
 .fileMenu {
   visibility: visible;
   border-color: blue;
