@@ -500,7 +500,7 @@ class App extends Component {
   insertCharacter (character, documentCursor, documentContent) {
     // TODO: implement a track pattern inside here to push to undoStack
     const rowContent = documentContent[documentCursor.row]
-
+    
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     if (documentCursor.column === 0) {
@@ -513,9 +513,9 @@ class App extends Component {
       changeRow(`${pre}${character}${post}`)
     }
 
-    console.log(`insertCharacter called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`insertCharacter called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
   onKeyDown (event) {
     console.log(`keyCode inside onKeyDown: ${event.keyCode}`)
@@ -637,6 +637,7 @@ class App extends Component {
 
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
+    const undoStack = this.state.undoStack.slice()
 
     if (charCode === KEY.ENTER) {
       console.warn('KEY: ENTER is pressed here')
@@ -650,10 +651,14 @@ class App extends Component {
         : character,
         documentCursor, documentContent)
       documentCursor.column += 1
+      const nextStackItemIndex = undoStack.length
+      const nextStackItem = {}
+      nextStackItem[nextStackItemIndex] = character
+      undoStack.push(nextStackItem)
     }
 
     if (updateDocument) {
-      this.setState({documentContent, documentCursor})
+      this.setState({documentContent,documentCursor, undoStack})
     }
   }
 
