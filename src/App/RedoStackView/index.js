@@ -7,8 +7,8 @@ class RedoStackView extends Component {
     this.renderStackItem = this.renderStackItem.bind(this)
   }
 
-  renderStackItem (item) {
-    return (<div className="redoStack-Item" key={item}>{item}</div>)
+  renderStackItem (item, index) {
+    return (<div className="redoStack-Item" key={index}>{item[index]}</div>)
   }
   render () {
     return (
