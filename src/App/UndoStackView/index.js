@@ -7,7 +7,7 @@ class UndoStackView extends Component {
   }
 
   renderStackItem (item) {
-    return (<div>{item}</div>)
+    return (<div className="undoStack-Item" key={item}>{item}</div>)
   }
   render () {
     return (

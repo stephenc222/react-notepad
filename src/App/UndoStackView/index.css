@@ -5,3 +5,10 @@
 
 }
 
+.undoStack-Title {
+  border-bottom: solid 1px black;
+}
+
+.undoStack-Item {
+  border-bottom: solid 1px seagreen;
+}

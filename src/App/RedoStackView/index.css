@@ -2,5 +2,12 @@
   border: solid 1px red;
   flex-grow: 1;
   background-color: #D5F0D5;  
+}
 
+.redoStack-Title {
+  border-bottom: solid 1px black;
+}
+
+.redoStack-Item {
+  border-bottom: solid 1px blue;
 }
