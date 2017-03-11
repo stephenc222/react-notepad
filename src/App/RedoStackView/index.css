@@ -17,10 +17,11 @@
 .redoStack-container {
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  flex-grow: 1;
 }
 
 
 .redoStack-Item {
-  border: solid 1px blue;
+  border: solid 1px blue; 
 }

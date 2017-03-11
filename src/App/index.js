@@ -108,18 +108,50 @@ class App extends Component {
         }
       },
       undoStack: [
-        {0:'This is the undoStack object'}, 
+        {0:'item #1 -undo'}, 
         {1:'and item #2'},
         {2: 'item #3'},
         {3: 'four'},
-        {4: '5-five'},
-        {5: '6-six last item'}
+        // {4: '5-item'},
+        // {5: '6-item'},
+        // {6: '7-item'},
+        // {7: '8-item'},
+        // {8: '9-item'},
+        // {9: '10-item'},
+        // {10: '11-item'},
+        // {11: '12-item'},
+        // {12: '8-item'},
+        // {13: '9-item'},
+        // {14: '10-item'},
+        // {15: '11-item'},
+        // {16: '12-item'},
+        // {17: '8-item'},
+        // {18: '9-item'},
+        // {19: '10-item'},
+        // {20: '11-item'},
+        // {21: '12-item'},
+        // {22: '8-item'},
+        // {23: '9-item'},
+        // {24: '10-item'},
+        // {25: '11-item'},
+        // {26: '12-item'},
+        // {27: '8-item'},
+        // {28: '9-item'},
+        // {29: '10-item'}
       ],
       redoStack: [
-        {0:'This is the redoStack object'}, 
+        {0:'item #1 -redo'}, 
         {1:'and item #2'},
         {2: 'item #3'},
-        {3: 'jack'}
+        {3: 'jack'}, 
+        // {4: '5-item'},
+        // {5: '6-item'},
+        // {6: '7-item'},
+        // {7: '8-item'},
+        // {8: '9-item'},
+        // {9: '10-item'},
+        // {10: '11-item'},
+        // {11: '12-item'}
       ]
     }
   }

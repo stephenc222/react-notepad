@@ -17,11 +17,11 @@
 .undoStack-container {
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  flex-grow: 1;
 }
 
 
 .undoStack-Item {
   border: solid 1px seagreen;
-  flex-grow:1;
 }
