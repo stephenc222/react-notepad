@@ -1,13 +1,26 @@
 .redoStackView {
   border: solid 1px red;
+  display: flex;
   flex-grow: 1;
   background-color: #D5F0D5;  
+  flex-direction: column;
+
 }
 
 .redoStack-Title {
   border-bottom: solid 1px black;
+  font-size: 16px;
+  font-weight: bold;
+  font-style: italic;
 }
 
+.redoStack-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+
 .redoStack-Item {
-  border-bottom: solid 1px blue;
+  border: solid 1px blue;
 }

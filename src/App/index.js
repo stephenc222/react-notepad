@@ -110,12 +110,16 @@ class App extends Component {
       undoStack: [
         {0:'This is the undoStack object'}, 
         {1:'and item #2'},
-        {2: 'item #3'}
+        {2: 'item #3'},
+        {3: 'four'},
+        {4: '5-five'},
+        {5: '6-six last item'}
       ],
       redoStack: [
         {0:'This is the redoStack object'}, 
         {1:'and item #2'},
-        {2: 'item #3'}
+        {2: 'item #3'},
+        {3: 'jack'}
       ]
     }
   }
