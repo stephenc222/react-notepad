@@ -566,6 +566,7 @@ class App extends Component {
 
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
+    const undoStack = this.state.undoStack.slice()
 
     let updateCursor = false
     let updateDocument = false
@@ -602,9 +603,14 @@ class App extends Component {
       updateCursor = true
     }
 
+    const nextStackItem = {}
+    const nextStackItemIndex = undoStack.length
+
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
       this.insertBackspace(documentCursor, documentContent)
+      nextStackItem[nextStackItemIndex] = 'bs-key'
+      undoStack.push(nextStackItem)
       updateCursor = true
       updateDocument = true
     } else if (isKey(KEY.DELETE)) {
@@ -612,6 +618,8 @@ class App extends Component {
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
+      nextStackItem[nextStackItemIndex] = 'del-key'
+      undoStack.push(nextStackItem)
     } else if (isKey(KEY.END)) {
       event.preventDefault()
       moveToEndOfLine()
@@ -651,6 +659,7 @@ class App extends Component {
     if (updateDocument) {
       console.log ('updateDocument is true here')
       nextState.documentContent = documentContent
+      nextState.undoStack = undoStack
     }
 
     if (updateCursor) {
