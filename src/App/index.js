@@ -609,6 +609,7 @@ class App extends Component {
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
       this.insertBackspace(documentCursor, documentContent)
+      // bs-k: undoStack character pattern for 'backspace' key
       nextStackItem[nextStackItemIndex] = 'bs-K'
       nextStackItem.position = documentCursor      
       undoStack.push(nextStackItem)
@@ -619,6 +620,7 @@ class App extends Component {
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
+      // del-k: undoStack character pattern for 'delete' key
       nextStackItem[nextStackItemIndex] = 'del-K'
       nextStackItem.position = documentCursor            
       undoStack.push(nextStackItem)
