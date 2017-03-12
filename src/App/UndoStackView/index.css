@@ -24,4 +24,6 @@
 
 .undoStack-Item {
   border: solid 1px seagreen;
+  flex-shrink: 1;
+  
 }

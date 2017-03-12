@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './index.css'
-
 class RedoStackView extends Component {
   constructor() {
     super()
@@ -9,7 +8,7 @@ class RedoStackView extends Component {
 
   renderStackItem (item, index) {
     return (<div className="redoStack-Item" key={index}>{
-      `val: ${item[index]} pos: ${JSON.stringify(item.position)}`}</div>)
+            `redoStack-Item[${index}]: ${JSON.stringify(item)}`}</div>)
   }
   render () {
     return (

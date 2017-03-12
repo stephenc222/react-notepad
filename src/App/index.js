@@ -54,10 +54,16 @@ class App extends Component {
     // menu items here 
     this.onMainMenuClick = this.onMainMenuClick.bind(this)    
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
+
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
+    this.editUndo = this.editUndo.bind(this)
+
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
+
     this.toggleViewMenu = this.toggleViewMenu.bind(this)
+
     this.toggleHelpMenu = this.toggleHelpMenu.bind(this)
+
     // key press events here
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onKeyPress = this.onKeyPress.bind(this)
@@ -255,7 +261,39 @@ class App extends Component {
   editUndo (menuItem){
     // undo last action
     console.log('editUndo clicked here')
-    console.log(menuItem)
+    const documentCursor = {...this.state.documentCursor}
+    // console.log(menuItem)
+    const documentContent = this.state.documentContent.slice()
+    const undoStack = this.state.undoStack.slice() 
+    const redoStack = this.state.redoStack.slice()   
+    console.log ('New editUndo logs here:')
+    // console.log(documentCursor, documentContent,undoStack)    
+    //console.log(redoStack) 
+    const tempStack = undoStack.pop()
+    console.log('tempStack and pop:')
+    console.log(tempStack)
+    redoStack.push(tempStack)
+
+    let updateCursor = true
+    let updateDocument = true
+
+    const nextState = {}
+    if (updateDocument) {
+      // console.log ('editUndo - updateDocument is true here')
+      nextState.documentContent = documentContent
+      nextState.undoStack = undoStack
+      nextState.redoStack = redoStack
+    }
+
+    if (updateCursor) {
+      //console.log ('editUndo - updateCursor is true here')
+      nextState.documentCursor = documentCursor
+    }
+
+    // console.log('editUndo -nextState:')
+    //console.log(nextState)
+    this.setState(nextState)
+    
             
   }
 
