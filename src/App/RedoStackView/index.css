@@ -24,4 +24,5 @@
 
 .redoStack-Item {
   border: solid 1px blue; 
+  flex-shrink: 1;
 }
