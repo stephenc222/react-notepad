@@ -108,10 +108,10 @@ class App extends Component {
         }
       },
       undoStack: [
-        {0:'item #1 -undo'}, 
-        {1:'and item #2'},
-        {2: 'item #3'},
-        {3: 'four'},
+        {0:'item #1 -undo', position: 10}, 
+        {1:'and item #2', position: 25},
+        {2: 'item #3', position: 34},
+        {3: 'four', position: 54},
         // {4: '5-item'},
         // {5: '6-item'},
         // {6: '7-item'},
@@ -140,10 +140,10 @@ class App extends Component {
         // {29: '10-item'}
       ],
       redoStack: [
-        {0:'item #1 -redo'}, 
-        {1:'and item #2'},
-        {2: 'item #3'},
-        {3: 'jack'}, 
+        {0:'item #1 -redo', position: 90}, 
+        {1:'and item #2', position: 20},
+        {2: 'item #3', position: 30},
+        {3: 'jack', position: 34},
         // {4: '5-item'},
         // {5: '6-item'},
         // {6: '7-item'},
@@ -609,7 +609,8 @@ class App extends Component {
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
       this.insertBackspace(documentCursor, documentContent)
-      nextStackItem[nextStackItemIndex] = 'bs-key'
+      nextStackItem[nextStackItemIndex] = 'bs-K'
+      nextStackItem.position = documentCursor      
       undoStack.push(nextStackItem)
       updateCursor = true
       updateDocument = true
@@ -618,7 +619,8 @@ class App extends Component {
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
-      nextStackItem[nextStackItemIndex] = 'del-key'
+      nextStackItem[nextStackItemIndex] = 'del-K'
+      nextStackItem.position = documentCursor            
       undoStack.push(nextStackItem)
     } else if (isKey(KEY.END)) {
       event.preventDefault()
@@ -707,6 +709,7 @@ class App extends Component {
       const nextStackItemIndex = undoStack.length
       const nextStackItem = {}
       nextStackItem[nextStackItemIndex] = character
+      nextStackItem.position = documentCursor            
       undoStack.push(nextStackItem)
     }
 

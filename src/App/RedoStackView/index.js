@@ -8,7 +8,8 @@ class RedoStackView extends Component {
   }
 
   renderStackItem (item, index) {
-    return (<div className="redoStack-Item" key={index}>{item[index]}</div>)
+    return (<div className="redoStack-Item" key={index}>{
+      `val: ${item[index]} pos: ${JSON.stringify(item.position)}`}</div>)
   }
   render () {
     return (
