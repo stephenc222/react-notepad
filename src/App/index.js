@@ -233,8 +233,26 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
-    console.log ('New editUndo logs here:')
-    
+    //console.log ('New editUndo logs here:')
+    //console.log(undoStack)
+
+    // TODO: contains top layer of stack before pop
+
+    // peek, ops then pop
+    const peekLayer = undoStack.slice(undoStack.length - 1)
+    function stackOps (stackLayer) {
+      /**
+       * @param {Array} peekLayer - 
+       */
+      if (!!stackLayer.length - 1)
+        return
+      console.log("stackOps:")
+      console.log(stackLayer)
+      console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])} , 
+        pos: ${JSON.stringify(stackLayer[stackLayer.length -1].position)}`)
+    }
+    // console.log(peekLayer[0].position)
+    stackOps(peekLayer)
     
     undoStack.length !== 0 && redoStack.push(undoStack.pop())
     
@@ -597,7 +615,7 @@ class App extends Component {
     //   documentContent: ${documentContent}`)
   }
   onKeyDown (event) {
-    console.log(`keyCode inside onKeyDown: ${event.keyCode}`)
+    // console.log(`keyCode inside onKeyDown: ${event.keyCode}`)
 
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
@@ -696,13 +714,13 @@ class App extends Component {
     const nextState = {}
 
     if (updateDocument) {
-      console.log ('updateDocument is true here')
+      // console.log ('updateDocument is true here')
       nextState.documentContent = documentContent
       nextState.undoStack = undoStack
     }
 
     if (updateCursor) {
-      console.log ('updateCursor is true here')
+      // console.log ('updateCursor is true here')
       nextState.documentCursor = documentCursor
     }
 
@@ -710,7 +728,7 @@ class App extends Component {
   }
 
   onKeyPress (event) {
-    console.log(`charCode inside onKeyPress: ${event.charCode}`)
+    // console.log(`charCode inside onKeyPress: ${event.charCode}`)
     const {
       // altKey,
       // ctrlKey,
