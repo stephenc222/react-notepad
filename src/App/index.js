@@ -242,7 +242,7 @@ class App extends Component {
     const peekLayer = undoStack.slice(undoStack.length - 1)
     function stackOps (stackLayer) {
       /**
-       * @param {Array} peekLayer - 
+       * @param {Array} stackLayer - stack of layer to perform ops on
        */
       if (!!stackLayer.length - 1)
         return
