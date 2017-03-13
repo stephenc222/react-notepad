@@ -57,6 +57,7 @@ class App extends Component {
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
     this.editUndo = this.editUndo.bind(this)
+    this.editRedo = this.editRedo.bind(this)
 
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
 
@@ -113,52 +114,18 @@ class App extends Component {
           column: 0
         }
       },
-      undoStack: [
-        {0:'item #1 -undo', position: 10}, 
-        {1:'and item #2', position: 25},
-        {2: 'item #3', position: 34},
-        {3: 'four', position: 54},
-        // {4: '5-item'},
-        // {5: '6-item'},
-        // {6: '7-item'},
-        // {7: '8-item'},
-        // {8: '9-item'},
-        // {9: '10-item'},
-        // {10: '11-item'},
-        // {11: '12-item'},
-        // {12: '8-item'},
-        // {13: '9-item'},
-        // {14: '10-item'},
-        // {15: '11-item'},
-        // {16: '12-item'},
-        // {17: '8-item'},
-        // {18: '9-item'},
-        // {19: '10-item'},
-        // {20: '11-item'},
-        // {21: '12-item'},
-        // {22: '8-item'},
-        // {23: '9-item'},
-        // {24: '10-item'},
-        // {25: '11-item'},
-        // {26: '12-item'},
-        // {27: '8-item'},
-        // {28: '9-item'},
-        // {29: '10-item'}
-      ],
-      redoStack: [
-        {0:'item #1 -redo', position: 90}, 
-        {1:'and item #2', position: 20},
-        {2: 'item #3', position: 30},
-        {3: 'jack', position: 34},
-        // {4: '5-item'},
-        // {5: '6-item'},
-        // {6: '7-item'},
-        // {7: '8-item'},
-        // {8: '9-item'},
-        // {9: '10-item'},
-        // {10: '11-item'},
-        // {11: '12-item'}
-      ]
+      undoStack: [],
+        // {0:'item #1 -undo', position: 10}, 
+        // {1:'and item #2', position: 25},
+        // {2: 'item #3', position: 34},
+        // {3: 'four', position: 54},
+      // ],
+      redoStack: []
+        // {0:'item #1 -redo', position: 90}, 
+        // {1:'and item #2', position: 20},
+        // {2: 'item #3', position: 30},
+        // {3: 'jack', position: 34},
+      //]
     }
   }
 
@@ -267,12 +234,10 @@ class App extends Component {
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
     console.log ('New editUndo logs here:')
-    // console.log(documentCursor, documentContent,undoStack)    
-    //console.log(redoStack) 
-    const tempStack = undoStack.pop()
-    console.log('tempStack and pop:')
-    console.log(tempStack)
-    redoStack.push(tempStack)
+    
+    
+    undoStack.length !== 0 && redoStack.push(undoStack.pop())
+    
 
     let updateCursor = true
     let updateDocument = true
@@ -295,6 +260,38 @@ class App extends Component {
     this.setState(nextState)
     
             
+  }
+
+  editRedo (menuItem) {
+
+    console.log('editRedo called here')    
+    const documentCursor = {...this.state.documentCursor}
+    // console.log(menuItem)
+    const documentContent = this.state.documentContent.slice()
+    const undoStack = this.state.undoStack.slice() 
+    const redoStack = this.state.redoStack.slice()   
+    console.log ('New editUndo logs here:')
+
+    
+    redoStack.length !== 0 && undoStack.push(redoStack.pop())
+    
+
+    let updateCursor = true
+    let updateDocument = true
+
+    const nextState = {}
+    if (updateDocument) {
+      nextState.documentContent = documentContent
+      nextState.undoStack = undoStack
+      nextState.redoStack = redoStack
+    }
+
+    if (updateCursor) {
+      nextState.documentCursor = documentCursor
+    }
+
+    this.setState(nextState)
+
   }
 
   editCut  (menuItem){

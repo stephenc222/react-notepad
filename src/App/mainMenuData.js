@@ -49,6 +49,10 @@ const mainMenu = {
             {
               label: 'Undo',
               onClick: 'editUndo'
+            }, 
+            {
+              label: 'Redo',
+              onClick: 'editRedo'
             },
             {
               label: 'Cut',
