@@ -12,9 +12,12 @@ import UndoStackView from './UndoStackView'
 import './index.css'
 
 const mockData = [
-  'Testing this App text input area',
-  'This is the second line',
-  'And a third line of more text also',
+  '',
+  '',
+  '',
+  // 'Testing this App text input area',
+  // 'This is the second line',
+  // 'And a third line of more text also',
   '',
   '',
   '',
@@ -242,16 +245,21 @@ class App extends Component {
     const peekLayer = undoStack.slice(undoStack.length - 1)
     function stackOps (stackLayer) {
       /**
-       * @param {Array} stackLayer - stack of layer to perform ops on
-       */
-      if (!!stackLayer.length - 1)
-        return
-      console.log("stackOps:")
-      console.log(stackLayer)
-      console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+      * @param {Array} stackLayer - stack of layer to perform ops on
+      */
+      
+      if (undoStack.length) {
+        console.log("Undo - stackOps:")
+        console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+
+        const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
+
+        console.log('Undo test: ')
+        console.log(test)
+        console.log(test[stackLayer[stackLayer.length-1].position.column -1])
+      }
 
     }
-    // console.log(peekLayer[0].position)
     stackOps(peekLayer)
     
     undoStack.length !== 0 && redoStack.push(undoStack.pop())
@@ -293,15 +301,21 @@ class App extends Component {
     const peekLayer = redoStack.slice(redoStack.length - 1)
     function stackOps (stackLayer) {
       /**
-       * @param {Array} stackLayer - stack of layer to perform ops on
-       */
-      if (!!stackLayer.length - 1)
-        return
-      console.log("stackOps:")
-      console.log(stackLayer)
-      console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+      * @param {Array} stackLayer - stack of layer to perform ops on
+      */
+
+      if (redoStack.length) {
+        console.log("Redo - stackOps:")
+        console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+
+        const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
+
+        console.log('Redo test: ')
+        console.log(test)
+        console.log(test[stackLayer[stackLayer.length-1].position.column -1])
+      }
+
     }
-    // console.log(peekLayer[0].position)
     stackOps(peekLayer)
 
     redoStack.length !== 0 && undoStack.push(redoStack.pop())
