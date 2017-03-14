@@ -265,8 +265,8 @@ class App extends Component {
         return
       console.log("stackOps:")
       console.log(stackLayer)
-      console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])} , 
-        pos: ${JSON.stringify(stackLayer[stackLayer.length -1].position)}`)
+      console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+
     }
     // console.log(peekLayer[0].position)
     stackOps(peekLayer)
@@ -305,12 +305,24 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
-    console.log ('New editUndo logs here:')
+    // console.log ('New editRedo logs here:')
 
-    
+    const peekLayer = redoStack.slice(redoStack.length - 1)
+    function stackOps (stackLayer) {
+      /**
+       * @param {Array} stackLayer - stack of layer to perform ops on
+       */
+      if (!!stackLayer.length - 1)
+        return
+      console.log("stackOps:")
+      console.log(stackLayer)
+      console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+    }
+    // console.log(peekLayer[0].position)
+    stackOps(peekLayer)
+
     redoStack.length !== 0 && undoStack.push(redoStack.pop())
     
-
     let updateCursor = true
     let updateDocument = true
 
