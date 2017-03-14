@@ -249,14 +249,40 @@ class App extends Component {
       */
       
       if (undoStack.length) {
-        console.log("Undo - stackOps:")
-        console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+        console.log("Undo - stackOps:")        
+        if(stackLayer[stackLayer.length- 1].event === 'insertCharacter') {
+          console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
 
-        const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
+          const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
 
-        console.log('Undo test: ')
-        console.log(test)
-        console.log(test[stackLayer[stackLayer.length-1].position.column -1])
+          console.log('Undo test: ')
+          console.log(test[stackLayer[stackLayer.length-1].position.column -1])
+        } else if (stackLayer[stackLayer.length - 1].event === 'insertBackspace') {
+          /*
+          TODO: implement this here to 'undo' insertBackspace
+          $r.state.documentContent
+          ["abc", "", "", "", "", "", "", "", "", "", "", "", ""]
+          const nextState = {}
+          undefined
+          const test = $r.state.documentContent[0].split('')
+          undefined
+          test.push('z')
+          4
+          test
+          ["a", "b", "c", "z"]
+          $r.state.documentContent[0] = test.join('')
+          "abcz"
+          $r.state.documentContent
+          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
+          nextState.documentContent = $r.state.documentContent
+          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
+          $r.setState(nextState) // updates documentContent correctly
+          */
+          console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
+        } else if (stackLayer[stackLayer.length - 1].event === 'insertDelete') {
+          // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
+          console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
+        }
       }
 
     }
@@ -305,14 +331,40 @@ class App extends Component {
       */
 
       if (redoStack.length) {
-        console.log("Redo - stackOps:")
-        console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+        console.log("Redo - stackOps:")        
+        if(stackLayer[stackLayer.length - 1].event === 'insertCharacter') {
+          console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+          const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
 
-        const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
+          console.log('Redo test: ')
+          console.log(test[stackLayer[stackLayer.length-1].position.column -1])
 
-        console.log('Redo test: ')
-        console.log(test)
-        console.log(test[stackLayer[stackLayer.length-1].position.column -1])
+        } else if (stackLayer[stackLayer.length - 1].event === 'insertBackspace') {
+          /*
+          TODO: implement this here to 'undo' insertBackspace
+          $r.state.documentContent
+          ["abc", "", "", "", "", "", "", "", "", "", "", "", ""]
+          const nextState = {}
+          undefined
+          const test = $r.state.documentContent[0].split('')
+          undefined
+          test.push('z')
+          4
+          test
+          ["a", "b", "c", "z"]
+          $r.state.documentContent[0] = test.join('')
+          "abcz"
+          $r.state.documentContent
+          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
+          nextState.documentContent = $r.state.documentContent
+          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
+          $r.setState(nextState) // updates documentContent correctly
+          */
+          console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
+        } else if (stackLayer[stackLayer.length - 1].event === 'insertDelete') {
+          // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
+          console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
+        }
       }
 
     }
@@ -593,8 +645,8 @@ class App extends Component {
 
 
     console.log(`insertBackspace called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+      documentCursor: ${JSON.stringify(documentCursor)}, 
+      documentContent: ${JSON.stringify(documentContent)}`)
   }
 
   insertDelete (documentCursor, documentContent) {
@@ -690,7 +742,8 @@ class App extends Component {
       this.insertBackspace(documentCursor, documentContent)
       // bs-k: undoStack character pattern for 'backspace' key
       nextStackItem[nextStackItemIndex] = 'bs-K'
-      nextStackItem.position = documentCursor      
+      nextStackItem.position = documentCursor            
+      nextStackItem.event = 'insertBackspace'           
       undoStack.push(nextStackItem)
       updateCursor = true
       updateDocument = true
@@ -701,7 +754,8 @@ class App extends Component {
       updateDocument = true
       // del-k: undoStack character pattern for 'delete' key
       nextStackItem[nextStackItemIndex] = 'del-K'
-      nextStackItem.position = documentCursor            
+      nextStackItem.position = documentCursor    
+      nextStackItem.event = 'insertDelete'                   
       undoStack.push(nextStackItem)
     } else if (isKey(KEY.END)) {
       event.preventDefault()
@@ -790,7 +844,8 @@ class App extends Component {
       const nextStackItemIndex = undoStack.length
       const nextStackItem = {}
       nextStackItem[nextStackItemIndex] = character
-      nextStackItem.position = documentCursor            
+      nextStackItem.position = documentCursor 
+      nextStackItem.event = 'insertCharacter'           
       undoStack.push(nextStackItem)
     }
 
