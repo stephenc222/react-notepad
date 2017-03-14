@@ -48,23 +48,6 @@ const CURSOR_KEYS = [
   KEY.RIGHT
 ]
 
-// stack data structure helper class
-class Stack {
-    constructor (stack) {
-      this.stack = stack
-      this.peek = this.peek.bind(this)
-    }
-    peek () {
-      const peekLayer = this.stack.slice(this.stack.length - 1)
-      return peekLayer
-    }
-}
-
-const jack = new Stack([0,1,2,3,4,'a','b'])
-console.log(jack)
-console.log(jack.peek())
-console.log(jack)
-
 class App extends Component {
   constructor (props) {
     super(props)
