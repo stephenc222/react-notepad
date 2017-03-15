@@ -268,67 +268,45 @@ class App extends Component {
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
 
-      const top = stackLayer.length - 1
-      
+      const top = undoStack.length - 1 //stackLayer.length - 1
+      console.log(`top is: ${top}`)
       if (undoStack.length) {
+        // const peekLayer = undoStack[undoStack.length - 2]        
         console.log("Undo - stackOps:")        
         if(stackLayer[stackLayer.length- 1].event === 'insertCharacter') {
-          console.log(`stack value: ${JSON.stringify(stackLayer[top])}`)
-
-          const test = documentContent[stackLayer[top].position.row].split('')
-
+          console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
           console.log('Undo test: ')
-          console.log(test[stackLayer[top].position.column -1])
-          console.log(test)
 
-        } else if (stackLayer[top].event === 'insertBackspace') {
-          /*
-          TODO: implement this here to 'undo' insertBackspace
-          $r.state.documentContent
-          ["abc", "", "", "", "", "", "", "", "", "", "", "", ""]
-          const nextState = {}
-          undefined
-          const test = $r.state.documentContent[0].split('')
-          undefined
-          test.push('z')
-          4
-          test
-          ["a", "b", "c", "z"]
-          $r.state.documentContent[0] = test.join('')
-          "abcz"
-          $r.state.documentContent
-          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
-          nextState.documentContent = $r.state.documentContent
-          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
-          $r.setState(nextState) // updates documentContent correctly
-          */
+        } else if (stackLayer[0].event === 'insertBackspace') {
+
           console.log(`UNDO - inside insertBackspace if block: 
-            ${JSON.stringify(stackLayer[top])}`)
+            ${JSON.stringify(stackLayer[0])}`)
           
-          const peekLayer = undoStack[undoStack.length - 2]
-          console.log(undoStack[undoStack.length - 2])
-          console.log(peekLayer[undoStack.length -2])
-          console.log('row: ' + peekLayer.position.row)
-          console.log('column: ' + peekLayer.position.column)
-          console.log(JSON.stringify(documentContent))
-          console.log(JSON.stringify(documentCursor))
+          // console.log(undoStack[undoStack.length - 2])
+          // console.log(peekLayer[undoStack.length -2])
+          // console.log('row: ' + peekLayer.position.row)
+          // console.log('column: ' + peekLayer.position.column)
+          // console.log(JSON.stringify(documentContent))
+          // console.log(JSON.stringify(documentCursor))
 
-          const addBackChar = documentContent[peekLayer.position.row].split('')
-          addBackChar.splice(peekLayer.position.column -1,0,peekLayer[undoStack.length -2])
+          const addBackChar = documentContent[stackLayer[0].position.row].split('')
+          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          console.log('after splice: ')
+          console.log(addBackChar)
 
-          documentContent[peekLayer.position.row] = addBackChar.join('')
+          documentContent[stackLayer[0].position.row] = addBackChar.join('')
 
           console.log ('new docContent:')
           console.log(documentContent)
           undoStack.length !== 0 && redoStack.push(undoStack.pop())
     
-        } else if (stackLayer[top].event === 'insertDelete') {
+        } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
-          console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
+          //console.log(`Event is: ${stackLayer[stackLayer.length - 1].event}`)
         }
       }
       
-      undoStack.length !== 0 && redoStack.push(undoStack.pop())
+      //undoStack.length !== 0 && redoStack.push(undoStack.pop())
       
     }
 
@@ -375,47 +353,29 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
-      const top = stackLayer.length - 1
+      const top = redoStack.length - 1
+      console.log(`top inside Redo: ${top}`)
 
       if (redoStack.length) {
         console.log("Redo - stackOps:")        
-        if(stackLayer[top].event === 'insertCharacter') {
-          console.log(`stack value: ${JSON.stringify(stackLayer[top])}`)
-          const test = documentContent[stackLayer[top].position.row].split('')
+        if(stackLayer[0].event === 'insertCharacter') {
+          console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
+          const test = documentContent[stackLayer[0].position.row].split('')
 
           console.log('Redo test: ')
-          console.log(test[stackLayer[top].position.column -1])
+          console.log(test[stackLayer[0].position.column -1])
           console.log(test)
 
-        } else if (stackLayer[top].event === 'insertBackspace') {
-          /*
-          TODO: implement this here to 'undo' insertBackspace
-          $r.state.documentContent
-          ["abc", "", "", "", "", "", "", "", "", "", "", "", ""]
-          const nextState = {}
-          undefined
-          const test = $r.state.documentContent[0].split('')
-          undefined
-          test.push('z')
-          4
-          test
-          ["a", "b", "c", "z"]
-          $r.state.documentContent[0] = test.join('')
-          "abcz"
-          $r.state.documentContent
-          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
-          nextState.documentContent = $r.state.documentContent
-          ["abcz", "", "", "", "", "", "", "", "", "", "", "", ""]
-          $r.setState(nextState) // updates documentContent correctly
-          */ 
+        } else if (stackLayer[0].event === 'insertBackspace') {
           console.log(`REDO - inside insertBackspace if block: 
-            ${JSON.stringify(stackLayer[top])}`)
+            ${JSON.stringify(stackLayer[0])}`)
           console.log(redoStack[redoStack.length - 2])
           console.log(JSON.stringify(documentContent))
           console.log(JSON.stringify(documentCursor))
-        } else if (stackLayer[top].event === 'insertDelete') {
+          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+        } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
-          console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
+          console.log(`Event is: ${stackLayer[0].event}`)
         }
       }
 
@@ -671,7 +631,6 @@ class App extends Component {
 
     if (documentCursor.column > 0) {
       documentCursor.column -= 1
-
       const pre = rowContent.slice(0, documentCursor.column)
       const post = rowContent.slice(documentCursor.column + 1)
       changeRow(`${pre}${post}`)
@@ -791,9 +750,9 @@ class App extends Component {
 
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
+      nextStackItem[nextStackItemIndex] = documentContent[documentCursor.row][documentCursor.column - 1]      
       this.insertBackspace(documentCursor, documentContent)
       // bs-k: undoStack character pattern for 'backspace' key
-      nextStackItem[nextStackItemIndex] = 'bs-K'
       nextStackItem.position = documentCursor            
       nextStackItem.event = 'insertBackspace'           
       undoStack.push(nextStackItem)

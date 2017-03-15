@@ -25,5 +25,6 @@
 .undoStack-Item {
   border: solid 1px seagreen;
   flex-shrink: 1;
+  font-size: 14px;
   
 }
