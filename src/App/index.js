@@ -267,17 +267,20 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
+
+      const top = stackLayer.length - 1
       
       if (undoStack.length) {
         console.log("Undo - stackOps:")        
         if(stackLayer[stackLayer.length- 1].event === 'insertCharacter') {
-          console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
+          console.log(`stack value: ${JSON.stringify(stackLayer[top])}`)
 
-          const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
+          const test = documentContent[stackLayer[top].position.row].split('')
 
           console.log('Undo test: ')
-          console.log(test[stackLayer[stackLayer.length-1].position.column -1])
-        } else if (stackLayer[stackLayer.length - 1].event === 'insertBackspace') {
+          console.log(test[stackLayer[top].position.column -1])
+          console.log(test)
+        } else if (stackLayer[top].event === 'insertBackspace') {
           /*
           TODO: implement this here to 'undo' insertBackspace
           $r.state.documentContent
@@ -299,7 +302,7 @@ class App extends Component {
           $r.setState(nextState) // updates documentContent correctly
           */
           console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
-        } else if (stackLayer[stackLayer.length - 1].event === 'insertDelete') {
+        } else if (stackLayer[top].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
         }
@@ -349,17 +352,18 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
+      const top = stackLayer.length - 1
 
       if (redoStack.length) {
         console.log("Redo - stackOps:")        
-        if(stackLayer[stackLayer.length - 1].event === 'insertCharacter') {
-          console.log(`stack value: ${JSON.stringify(stackLayer[stackLayer.length - 1])}`)
-          const test = documentContent[stackLayer[stackLayer.length-1].position.row].split('')
+        if(stackLayer[top].event === 'insertCharacter') {
+          console.log(`stack value: ${JSON.stringify(stackLayer[top])}`)
+          const test = documentContent[stackLayer[top].position.row].split('')
 
           console.log('Redo test: ')
-          console.log(test[stackLayer[stackLayer.length-1].position.column -1])
+          console.log(test[stackLayer[top].position.column -1])
 
-        } else if (stackLayer[stackLayer.length - 1].event === 'insertBackspace') {
+        } else if (stackLayer[top].event === 'insertBackspace') {
           /*
           TODO: implement this here to 'undo' insertBackspace
           $r.state.documentContent
@@ -381,7 +385,7 @@ class App extends Component {
           $r.setState(nextState) // updates documentContent correctly
           */
           console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
-        } else if (stackLayer[stackLayer.length - 1].event === 'insertDelete') {
+        } else if (stackLayer[top].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`Event is: ${stackLayer[stackLayer.length-1].event}`)
         }
