@@ -143,6 +143,10 @@ class App extends Component {
   toggleFileMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
+      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
     })
@@ -152,6 +156,10 @@ class App extends Component {
   toggleEditMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
+      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       mainMenuData.topLevel.items[1].subLevel.visible = !prevState.mainMenuData.topLevel.items[1].subLevel.visible
       return {mainMenuData}
     })
@@ -161,6 +169,10 @@ class App extends Component {
   toggleFormatMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
+      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       mainMenuData.topLevel.items[2].subLevel.visible = !prevState.mainMenuData.topLevel.items[2].subLevel.visible
       return {mainMenuData}
     })
@@ -170,6 +182,10 @@ class App extends Component {
   toggleViewMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
+      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       mainMenuData.topLevel.items[3].subLevel.visible = !prevState.mainMenuData.topLevel.items[3].subLevel.visible
       return {mainMenuData}
     })
@@ -179,6 +195,10 @@ class App extends Component {
   toggleHelpMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       mainMenuData.topLevel.items[4].subLevel.visible = !prevState.mainMenuData.topLevel.items[4].subLevel.visible
       return {mainMenuData}
     })
