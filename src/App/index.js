@@ -365,24 +365,44 @@ class App extends Component {
           console.log('Redo test: ')
           console.log(test[stackLayer[0].position.column -1])
           console.log(test)
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())
 
         } else if (stackLayer[0].event === 'insertBackspace') {
+
           console.log(`REDO - inside insertBackspace if block: 
             ${JSON.stringify(stackLayer[0])}`)
           console.log(redoStack[redoStack.length - 2])
           console.log(JSON.stringify(documentContent))
           console.log(JSON.stringify(documentCursor))
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+
+          const deleteBackCharArray = documentContent[stackLayer[0].position.row]
+            .split('')
+            .slice()
+            
+          const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
+          //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          //console.log('after splice: ')
+          console.log('deleteBackCharArray: ')
+          console.log(deleteBackCharArray)
+          console.log('removeChar: ')
+          console.log(removeChar)
+
+          documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
+
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`Event is: ${stackLayer[0].event}`)
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          
         }
       }
 
     }
     stackOps(topLayer)
 
-    redoStack.length !== 0 && undoStack.push(redoStack.pop())
+    // redoStack.length !== 0 && undoStack.push(redoStack.pop())
     
     let updateCursor = true
     let updateDocument = true
@@ -503,9 +523,9 @@ class App extends Component {
 
   moveToStartOfLine (documentCursor, documentContent) {
     documentCursor.column = 0
-    console.log(`moveToStartOfLine called,
-      documentCursor: ${documentCursor}
-      documentContent: ${documentContent}`)
+    // console.log(`moveToStartOfLine called,
+    //   documentCursor: ${documentCursor}
+    //   documentContent: ${documentContent}`)
   }
 
   moveToEndOfLine (documentCursor, documentContent) {
@@ -514,25 +534,25 @@ class App extends Component {
     } else {
       documentCursor.column = 0
     }
-    console.log(`moveToEndOfLine called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveToEndOfLine called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
 
   moveToTopOfDocument (documentCursor, documentContent) {
     documentCursor.row = 0
     documentCursor.column = 0
-    console.log(`moveToTopOfDocument called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveToTopOfDocument called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
 
   moveToBottomOfDocument (documentCursor, documentContent) {
     documentCursor.row = documentContent.length - 1
     documentCursor.column = 0
-    console.log(`moveToBottomOfDocument called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveToBottomOfDocument called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
 
   moveUp (documentCursor, documentContent) {
@@ -543,9 +563,9 @@ class App extends Component {
     if (documentCursor.column > documentContent[documentCursor.row].length - 1) {
       this.moveToEndOfLine(documentCursor, documentContent)
     }
-    console.log(`moveUp called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveUp called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
 
   moveDown (documentCursor, documentContent) {
@@ -556,9 +576,9 @@ class App extends Component {
     if (documentCursor.column > documentContent[documentCursor.row].length -1) {
       this.moveToEndOfLine(documentCursor, documentContent)
     }
-    console.log(`moveDown called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveDown called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }  
   
   moveLeft (documentCursor, documentContent) {
@@ -571,9 +591,9 @@ class App extends Component {
         this.moveToStartOfLine(documentCursor, documentContent)
       }
     }
-    console.log(`moveLeft called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveLeft called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }  
   
   moveRight (documentCursor, documentContent) {
@@ -586,9 +606,9 @@ class App extends Component {
         this.moveToEndOfLine(documentCursor, documentContent)
       }
     }
-    console.log(`moveRight called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`moveRight called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
 
   insertCarriageReturn (documentCursor, documentContent) {
@@ -618,13 +638,12 @@ class App extends Component {
 
     documentCursor.column = 0
 
-    console.log(`insertCarriageReturn called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
+    // console.log(`insertCarriageReturn called, 
+    //   documentCursor: ${documentCursor}, 
+    //   documentContent: ${documentContent}`)
   }
 
-  insertBackspace (documentCursor, documentContent) {
-    // TODO: implement a track pattern inside here to push to undoStack    
+  insertBackspace (documentCursor, documentContent) {   
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     const rowContent = documentContent[documentCursor.row]
