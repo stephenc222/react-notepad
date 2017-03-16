@@ -56,6 +56,7 @@ class App extends Component {
     super(props)
     // menu items here 
     this.onMainMenuClick = this.onMainMenuClick.bind(this)    
+    this.onTextSelection = this.onTextSelection.bind(this)
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
@@ -138,6 +139,32 @@ class App extends Component {
     console.warn(menuItem)
     const callback = this[menuItem.onClick]
     callback && callback(menuItem)
+  }
+
+  onTextSelection (event) {
+    //TODO: update state documentSelection object here, possibly
+    // hint: possible starting place...
+
+    // var flag = 0;
+    // var document = this.document;
+    // document.addEventListener("mousedown", function(event){
+    //     console.log(`mousedown element: ${event.target}`)
+    //   flag = 0;
+    // }, false);
+    // document.addEventListener("mousemove", function(event){
+    //     flag = 1;
+    // }, false);
+    // document.addEventListener("mouseup", function(event){
+    //     if(flag === 0){
+    //         console.log("click");
+    //     }
+    //     else if(flag === 1){
+    //         console.log("drag");
+    //     console.log(`mouseup element: ${event.target}`)
+
+    //     }
+    // }, false);
+
   }
 
   toggleFileMenu () {
@@ -306,12 +333,21 @@ class App extends Component {
     
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
-          //console.log(`Event is: ${stackLayer[stackLayer.length - 1].event}`)
+          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+
+        } else if (stackLayer[0].event === 'editCut') {
+
+          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+          
+        } else if (stackLayer[0].event === 'editPaste') {
+
+          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+          
         }
-      }
-      
-      //undoStack.length !== 0 && redoStack.push(undoStack.pop())
-      
+      } 
     }
 
     stackOps(topLayer)
@@ -395,12 +431,22 @@ class App extends Component {
 
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
-          console.log(`Event is: ${stackLayer[0].event}`)
+          console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
+                    
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          
+        } else if (stackLayer[0].event === 'editCut') {
+
+          console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())          
+          
+        } else if (stackLayer[0].event === 'editPaste') {
+          
+          console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
         }
       }
-
     }
     stackOps(topLayer)
 
@@ -921,6 +967,7 @@ class App extends Component {
             <NotePad
               cursor={this.state.documentCursor}
               content={this.state.documentContent}
+              selection={this.state.documentSelection}
               {...this.props}
             />
             <div className="dev__stack-view-container">

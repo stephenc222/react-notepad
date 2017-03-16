@@ -42,6 +42,11 @@
   border-left: 1px solid red;
 }
 
+.notepadArea__column--selected {
+  /*TODO: this css rule will govern the appearance of selected text*/
+  background-color: darkviolet;
+}
+
 .notepadArea__cursor {
   box-sizing: border-box;
   border-left: 1px solid black;
