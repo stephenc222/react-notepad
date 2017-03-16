@@ -256,13 +256,8 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
-    //console.log ('New editUndo logs here:')
-    //console.log(undoStack)
-
-    // TODO: contains top layer of stack before pop
-
-    // peek, ops then pop
     const topLayer = undoStack.slice(undoStack.length - 1)
+
     function stackOps (stackLayer) {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
@@ -273,21 +268,30 @@ class App extends Component {
       if (undoStack.length) {
         // const peekLayer = undoStack[undoStack.length - 2]        
         console.log("Undo - stackOps:")        
-        if(stackLayer[stackLayer.length- 1].event === 'insertCharacter') {
+        if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
-          console.log('Undo test: ')
+          console.log('Undo test: insertCharacter')
+          
+          const deleteBackCharArray = documentContent[stackLayer[0].position.row]
+            .split('')
+            .slice()
+
+          const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column - 1, 1)
+          //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          //console.log('after splice: ')
+          console.log('deleteBackCharArray: ')
+          console.log(deleteBackCharArray)
+          console.log('removeChar: ')
+          console.log(removeChar)
+
+          documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
+
+          undoStack.length !== 0 && redoStack.push(undoStack.pop())          
 
         } else if (stackLayer[0].event === 'insertBackspace') {
 
           console.log(`UNDO - inside insertBackspace if block: 
             ${JSON.stringify(stackLayer[0])}`)
-          
-          // console.log(undoStack[undoStack.length - 2])
-          // console.log(peekLayer[undoStack.length -2])
-          // console.log('row: ' + peekLayer.position.row)
-          // console.log('column: ' + peekLayer.position.column)
-          // console.log(JSON.stringify(documentContent))
-          // console.log(JSON.stringify(documentCursor))
 
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
           addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
@@ -346,8 +350,6 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
-    // console.log ('New editRedo logs here:')
-
     const topLayer = redoStack.slice(redoStack.length - 1)
     function stackOps (stackLayer) {
       /**
@@ -378,7 +380,7 @@ class App extends Component {
           const deleteBackCharArray = documentContent[stackLayer[0].position.row]
             .split('')
             .slice()
-            
+
           const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
           //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
           //console.log('after splice: ')
@@ -425,6 +427,7 @@ class App extends Component {
   editCut  (menuItem){
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
+    // TODO: editCut needs to be added to the undo and redo stacks
     console.log('editCut clicked here')        
     console.log(menuItem)    
   }
@@ -438,12 +441,14 @@ class App extends Component {
 
   editPaste (menuItem){
     // virtual clipboard paste
+    // TODO: editPaste needs to be added to the undo and redo stacks    
     console.log('editPaste clicked here')   
     console.log(menuItem)         
   }
 
   editDelete  (menuItem) {
     // delete selection
+    // TODO: editDelete needs to be added to the undo and redo stacks    
     console.log('editDelete clicked here')   
     console.log(menuItem)         
   }
@@ -462,6 +467,7 @@ class App extends Component {
 
   editReplace (menuItem) {
     // open up find and replace dialog
+    // TODO: eitReplace needs to be added to the undo and redo stacks    
     console.log('editReplace clicked here')  
     console.log(menuItem)          
   }
@@ -680,22 +686,30 @@ class App extends Component {
   }
 
   insertDelete (documentCursor, documentContent) {
-    // TODO: implement a track pattern inside here to push to undoStack
     const rowContent = documentContent[documentCursor.row]
 
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     const pre = rowContent.slice(0, documentCursor.column)
+    console.log('pre')
+    console.log(pre)
     const post = rowContent.slice(documentCursor.column + 1)
+    console.log('post')
+    console.log(post)
+    // console.log('${pre}${post}')
+    console.log(`${pre}${post}`)
 
-    if (post.length) {
-      changeRow(`${pre}${post}`)
-    } else if (documentCursor.row < documentCursor.length - 1) {
-      const nextRowContent = documentContent[documentCursor.row + 1]
+    // TODO: this if statement seems to be preventing correct delete events,
+    // check to see if null values for 'post' don't mess anything up!
+    changeRow(`${pre}${post}`)
+    // if (post.length) {
+    //   changeRow(`${pre}${post}`)
+    // } else if (documentCursor.row < documentCursor.length) {
+    //   const nextRowContent = documentContent[documentCursor.row]
 
-      changeRow(`${rowContent}${nextRowContent}`)
-      documentContent.splice(documentCursor.row + 1, 1)
-    }
+    //   changeRow(`${rowContent}${nextRowContent}`)
+    //   documentContent.splice(documentCursor.row, 1)
+    // }
 
     console.log(`insertDelete called, 
       documentCursor: ${documentCursor}, 
@@ -703,7 +717,6 @@ class App extends Component {
   }
 
   insertCharacter (character, documentCursor, documentContent) {
-    // TODO: implement a track pattern inside here to push to undoStack
     const rowContent = documentContent[documentCursor.row]
     
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
@@ -771,22 +784,25 @@ class App extends Component {
       event.preventDefault()
       nextStackItem[nextStackItemIndex] = documentContent[documentCursor.row][documentCursor.column - 1]      
       this.insertBackspace(documentCursor, documentContent)
-      // bs-k: undoStack character pattern for 'backspace' key
       nextStackItem.position = documentCursor            
-      nextStackItem.event = 'insertBackspace'           
-      undoStack.push(nextStackItem)
+      nextStackItem.event = 'insertBackspace' 
+      if (nextStackItem[nextStackItemIndex]) {
+        undoStack.push(nextStackItem)
+      }          
+      //undoStack.push(nextStackItem)
       updateCursor = true
       updateDocument = true
     } else if (isKey(KEY.DELETE)) {
       event.preventDefault()
+      nextStackItem[nextStackItemIndex] = documentContent[documentCursor.row][documentCursor.column]      
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
-      // del-k: undoStack character pattern for 'delete' key
-      nextStackItem[nextStackItemIndex] = 'del-K'
       nextStackItem.position = documentCursor    
       nextStackItem.event = 'insertDelete'                   
-      undoStack.push(nextStackItem)
+      if (nextStackItem[nextStackItemIndex]) {
+        undoStack.push(nextStackItem)
+      }
     } else if (isKey(KEY.END)) {
       event.preventDefault()
       moveToEndOfLine()
