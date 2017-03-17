@@ -320,8 +320,6 @@ class App extends Component {
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
 
-      const top = undoStack.length - 1 //stackLayer.length - 1
-      console.log(`top is: ${top}`)
       if (undoStack.length) {
         // const peekLayer = undoStack[undoStack.length - 2]        
         console.log("Undo - stackOps:")        
@@ -332,7 +330,8 @@ class App extends Component {
             .split('')
             .slice()
 
-          const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column - 1, 1)
+          const removeChar = deleteBackCharArray
+            .splice(stackLayer[0].position.column - 1, 1)
           //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
           //console.log('after splice: ')
           console.log('deleteBackCharArray: ')
@@ -340,6 +339,7 @@ class App extends Component {
           console.log('removeChar: ')
           console.log(removeChar)
 
+          documentCursor.column -= 1
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
 
           undoStack.length !== 0 && redoStack.push(undoStack.pop())          
@@ -350,7 +350,7 @@ class App extends Component {
             ${JSON.stringify(stackLayer[0])}`)
 
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
-          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0].value)
           console.log('after splice: ')
           console.log(addBackChar)
 
@@ -366,7 +366,7 @@ class App extends Component {
 
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
           
-          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0].value)
           console.log('after splice: ')
           console.log(addBackChar)
           documentContent[stackLayer[0].position.row] = addBackChar.join('')
@@ -429,8 +429,6 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
-      const top = undoStack.length >= 0 ? undoStack.length : 0
-      console.log(`top inside Redo: ${top}`)
 
       if (redoStack.length) {
         console.log("Redo - stackOps:")        
@@ -440,9 +438,11 @@ class App extends Component {
           //const addBackChar = stackLayer[0][top]
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
           
-          addBackChar.splice(stackLayer[0].position.column - 1, 0, stackLayer[0][top])
+          addBackChar.splice(stackLayer[0].position.column - 1, 0, stackLayer[0].value)
           console.log('after splice: ')
           console.log(addBackChar)
+
+          documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = addBackChar.join('')
 
           // console.log(documentContent[stackLayer[0].position.row])
@@ -452,6 +452,8 @@ class App extends Component {
 
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          // redoStack.length !== 0 && redoStack.pop()
+          
 
         } else if (stackLayer[0].event === 'insertBackspace') {
 
@@ -476,6 +478,8 @@ class App extends Component {
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          // redoStack.length !== 0 && redoStack.pop()
+          
 
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
@@ -495,6 +499,8 @@ class App extends Component {
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
                     
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          // redoStack.length !== 0 && redoStack.pop()
+          
           
         } else if (stackLayer[0].event === 'editCut') {
 
@@ -885,15 +891,14 @@ class App extends Component {
     }
 
     const nextStackItem = {}
-    const nextStackItemIndex = undoStack.length
 
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
-      nextStackItem[nextStackItemIndex] = documentContent[documentCursor.row][documentCursor.column - 1]      
+      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column - 1]      
       this.insertBackspace(documentCursor, documentContent)
       nextStackItem.position = documentCursor            
       nextStackItem.event = 'insertBackspace' 
-      if (nextStackItem[nextStackItemIndex]) {
+      if (nextStackItem.value) {
         undoStack.push(nextStackItem)
       }          
       //undoStack.push(nextStackItem)
@@ -901,13 +906,13 @@ class App extends Component {
       updateDocument = true
     } else if (isKey(KEY.DELETE)) {
       event.preventDefault()
-      nextStackItem[nextStackItemIndex] = documentContent[documentCursor.row][documentCursor.column]      
+      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column]      
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
       nextStackItem.position = documentCursor    
       nextStackItem.event = 'insertDelete'                   
-      if (nextStackItem[nextStackItemIndex]) {
+      if (nextStackItem.value) {
         undoStack.push(nextStackItem)
       }
     } else if (isKey(KEY.END)) {
@@ -993,13 +998,12 @@ class App extends Component {
         ? character.toUpperCase()
         : character,
         documentCursor, documentContent)
-      documentCursor.column += 1
-      const nextStackItemIndex = undoStack.length
       const nextStackItem = {}
-      nextStackItem[nextStackItemIndex] = character
+      nextStackItem.value = character
       nextStackItem.position = documentCursor 
-      nextStackItem.event = 'insertCharacter'           
-      undoStack.push(nextStackItem)
+      nextStackItem.event = 'insertCharacter'  
+      undoStack.push(nextStackItem)         
+      documentCursor.column += 1            
     }
 
     if (updateDocument) {
