@@ -66,7 +66,7 @@ class Notepad extends Component {
       return (
         <div 
           key={column} className="notepadArea__column"
-          onMouseDown={(event) => this.props.onMouseDown(event)}>
+          onMouseDown={() => this.props.onMouseDown()}>
           {glyph}
         </div>
       )

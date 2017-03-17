@@ -171,10 +171,15 @@ class App extends Component {
 
   //}
 
-  onNotepadMouseDown (event) {
-    console.log('onNotepadMouseDown event.target:')
+  onNotepadMouseDown () {
+    console.log('onNotepadMouseDown')
     // console.log(event.target.innerHTML) // how to get the actual character
-    console.log(event.target)
+    // console.log(event.target)
+    console.log('cursor: ')
+    console.log(this.state.documentCursor)
+    console.log('content: ')
+    console.log(this.state.documentContent)
+
   }
 
   onNotepadMouseEnter (event) {
