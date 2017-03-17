@@ -354,6 +354,7 @@ class App extends Component {
           console.log('after splice: ')
           console.log(addBackChar)
 
+          documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = addBackChar.join('')
 
           console.log ('new docContent:')
@@ -474,7 +475,8 @@ class App extends Component {
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
           console.log(removeChar)
-
+          
+          //documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
