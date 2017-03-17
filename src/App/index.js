@@ -56,7 +56,10 @@ class App extends Component {
     super(props)
     // menu items here 
     this.onMainMenuClick = this.onMainMenuClick.bind(this)    
-    this.onTextSelection = this.onTextSelection.bind(this)
+    this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
+    this.onNotepadMouseEnter = this.onNotepadMouseEnter.bind(this)
+    this.onNotepadMouseLeave = this.onNotepadMouseLeave.bind(this)
+    this.onNotepadMouseUp = this.onNotepadMouseUp.bind(this)
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
@@ -108,6 +111,7 @@ class App extends Component {
       documentCursor: CURSOR_HOME,
       documentContent: mockData,
       documentSelection: {
+        isSelected: false,
         selection: null,
         selectionStart: {
           row: 0,
@@ -141,7 +145,7 @@ class App extends Component {
     callback && callback(menuItem)
   }
 
-  onTextSelection (event) {
+  //onTextSelection (event) {
     //TODO: update state documentSelection object here, possibly
     // hint: possible starting place...
 
@@ -165,6 +169,27 @@ class App extends Component {
     //     }
     // }, false);
 
+  //}
+
+  onNotepadMouseDown (event) {
+    console.log('onNotepadMouseDown event.target:')
+    // console.log(event.target.innerHTML) // how to get the actual character
+    console.log(event.target)
+  }
+
+  onNotepadMouseEnter (event) {
+    console.log('onNotepadMouseEnter event.target:')
+    console.log(event.target)
+  }
+
+  onNotepadMouseLeave (event) {
+    console.log('onNotepadMouseLeave event.target:')
+    console.log(event.target)
+  }
+
+  onNotepadMouseUp (event) {
+    console.log('onNotepadMouseUp event.target:')
+    console.log(event.target)
   }
 
   toggleFileMenu () {
@@ -968,6 +993,10 @@ class App extends Component {
               cursor={this.state.documentCursor}
               content={this.state.documentContent}
               selection={this.state.documentSelection}
+              onMouseDown={this.onNotepadMouseDown}
+              onMouseEnter={this.onNotepadMouseEnter}
+              onMouseLeave={this.onNotepadMouseLeave}
+              onMouseUp={this.onNotepadMouseUp}
               {...this.props}
             />
             <div className="dev__stack-view-container">

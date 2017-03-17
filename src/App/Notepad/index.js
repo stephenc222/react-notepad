@@ -56,13 +56,17 @@ class Notepad extends Component {
 
     if (cursor.row === row && cursor.column === column) {
       return (
-        <div key={column} className="notepadArea__column notepadArea__cursor">
+        <div 
+          key={column} className="notepadArea__column notepadArea__cursor"
+          onMouseDown={(event) => this.props.onMouseDown(event)}>
           {glyph}
         </div>
       )
     } else {
       return (
-        <div key={column} className="notepadArea__column">
+        <div 
+          key={column} className="notepadArea__column"
+          onMouseDown={(event) => this.props.onMouseDown(event)}>
           {glyph}
         </div>
       )
