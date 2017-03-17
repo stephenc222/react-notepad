@@ -328,7 +328,6 @@ class App extends Component {
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
           console.log('Undo test: insertCharacter')
-          
           const deleteBackCharArray = documentContent[stackLayer[0].position.row]
             .split('')
             .slice()
@@ -364,6 +363,15 @@ class App extends Component {
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+
+          const addBackChar = documentContent[stackLayer[0].position.row].split('')
+          
+          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          console.log('after splice: ')
+          console.log(addBackChar)
+          documentContent[stackLayer[0].position.row] = addBackChar.join('')
+
+
           undoStack.length !== 0 && redoStack.push(undoStack.pop())
 
         } else if (stackLayer[0].event === 'editCut') {
@@ -472,6 +480,19 @@ class App extends Component {
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
+          const deleteBackCharArray = documentContent[stackLayer[0].position.row]
+            .split('')
+            .slice()
+
+          const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
+          //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
+          //console.log('after splice: ')
+          console.log('deleteBackCharArray: ')
+          console.log(deleteBackCharArray)
+          console.log('removeChar: ')
+          console.log(removeChar)
+
+          documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
                     
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
