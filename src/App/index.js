@@ -421,18 +421,28 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
-      const top = redoStack.length - 1
+      const top = undoStack.length >= 0 ? undoStack.length : 0
       console.log(`top inside Redo: ${top}`)
 
       if (redoStack.length) {
         console.log("Redo - stackOps:")        
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
-          const test = documentContent[stackLayer[0].position.row].split('')
 
-          console.log('Redo test: ')
-          console.log(test[stackLayer[0].position.column -1])
-          console.log(test)
+          //const addBackChar = stackLayer[0][top]
+          const addBackChar = documentContent[stackLayer[0].position.row].split('')
+          
+          addBackChar.splice(stackLayer[0].position.column - 1, 0, stackLayer[0][top])
+          console.log('after splice: ')
+          console.log(addBackChar)
+          documentContent[stackLayer[0].position.row] = addBackChar.join('')
+
+          // console.log(documentContent[stackLayer[0].position.row])
+
+          console.log ('new docContent:')
+          console.log(documentContent)
+
+
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
 
         } else if (stackLayer[0].event === 'insertBackspace') {
