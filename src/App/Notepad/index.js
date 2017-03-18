@@ -58,7 +58,10 @@ class Notepad extends Component {
       return (
         <div 
           key={column} className="notepadArea__column notepadArea__cursor"
-          onMouseDown={(event) => this.props.onMouseDown(event)}>
+          onMouseDown={() => this.props.onMouseDown()}
+          onMouseEnter={(event) => this.props.onMouseEnter(event)}
+          onMouseLeave={(event) => this.props.onMouseLeave(event)}
+          onMouseUp={() => this.props.onMouseUp()}>
           {glyph}
         </div>
       )
@@ -66,7 +69,10 @@ class Notepad extends Component {
       return (
         <div 
           key={column} className="notepadArea__column"
-          onMouseDown={() => this.props.onMouseDown()}>
+          onMouseDown={() => this.props.onMouseDown()}
+          onMouseEnter={(event) => this.props.onMouseEnter(event)}
+          onMouseLeave={(event) => this.props.onMouseLeave(event)}
+          onMouseUp={() => this.props.onMouseUp()}>
           {glyph}
         </div>
       )
@@ -77,8 +83,9 @@ class Notepad extends Component {
     const {content} = this.props
 
     return (
-      <div className="notepadArea">
-        {content.map(this.renderContentRow)}
+      <div className="notepadArea"
+        onMouseUp={() => this.props.onMouseUp()}>
+          {content.map(this.renderContentRow)}
       </div>
     )
   }

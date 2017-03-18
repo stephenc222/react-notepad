@@ -175,26 +175,63 @@ class App extends Component {
     console.log('onNotepadMouseDown')
     // console.log(event.target.innerHTML) // how to get the actual character
     // console.log(event.target)
-    console.log('cursor: ')
-    console.log(this.state.documentCursor)
-    console.log('content: ')
-    console.log(this.state.documentContent)
+    const documentSelection = {...this.state.documentSelection}
+    const documentCursor = {...this.state.documentCursor}
+    const documentContent = this.state.documentContent.slice()
+
+
+    // change css and data back of previous selection back to not selected
+    documentSelection.isSelected = true
+    
+
+    this.setState({documentSelection})
 
   }
 
   onNotepadMouseEnter (event) {
-    console.log('onNotepadMouseEnter event.target:')
-    console.log(event.target)
+    // console.log('onNotepadMouseEnter')
+    // *hint* this seems to miss the first item to be captured by the selection object    
+    const documentSelection = {...this.state.documentSelection}
+    const documentCursor = {...this.state.documentCursor}
+    const documentContent = this.state.documentContent.slice()
+    if (documentSelection.isSelected) {
+      console.log ('Enter - isSelected true and event.target is: ')
+      console.log(event.target)
+      // change css class here or some kind of flag
+      // also move the cursor here
+      
+    }
+    this.setState({documentSelection})
+    
+
   }
 
   onNotepadMouseLeave (event) {
-    console.log('onNotepadMouseLeave event.target:')
-    console.log(event.target)
+    // console.log('onNotepadMouseLeave')
+    // *hint* this seems to non-duplicately capture all items that are supposed to be selected
+    const documentSelection = {...this.state.documentSelection}
+    const documentCursor = {...this.state.documentCursor}
+    const documentContent = this.state.documentContent.slice()
+    if (documentSelection.isSelected) {
+      console.log ('Leave - isSelected true and event.target is: ')
+      console.log(event.target)
+      // change css class here or some kind of flag
+      
+    }
+    // console.log(event.target)
+    this.setState({documentSelection})
+    
   }
 
   onNotepadMouseUp (event) {
-    console.log('onNotepadMouseUp event.target:')
-    console.log(event.target)
+    // console.log('onNotepadMouseUp')
+    const documentSelection = {...this.state.documentSelection}
+    const documentCursor = {...this.state.documentCursor}
+    const documentContent = this.state.documentContent.slice()
+
+    documentSelection.isSelected = false
+    this.setState({documentSelection})
+
   }
 
   toggleFileMenu () {
@@ -1020,6 +1057,7 @@ class App extends Component {
         tabIndex={0}
         onKeyDown={this.onKeyDown}
         onKeyPress={this.onKeyPress}
+        onMouseUp={this.onNotepadMouseUp}
         ref={(element) => {this.topLevel = element}}
         >
         <div className='app__header'>React Notepad - Untitled.txt</div>
@@ -1028,6 +1066,7 @@ class App extends Component {
             <MainMenu 
               menu={this.state.mainMenuData} 
               onClick={this.onMainMenuClick}
+              onMouseUp={this.onNotepadMouseUp}              
             />
           </div>
           <div className="app__document-container">

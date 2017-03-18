@@ -33,8 +33,9 @@ class MainMenu extends Component {
   render () {
     return (
       <div>
-      <ul className='menu'>
-      {this.props.menu.topLevel.items.map(this.topLevelMenu)}
+      <ul className='menu'
+        onMouseUp={() => this.props.onMouseUp()}>
+          {this.props.menu.topLevel.items.map(this.topLevelMenu)}
       </ul>
       </div>
     )
