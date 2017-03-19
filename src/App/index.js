@@ -123,17 +123,7 @@ class App extends Component {
         }
       },
       undoStack: [],
-        // {0:'item #1 -undo', position: 10}, 
-        // {1:'and item #2', position: 25},
-        // {2: 'item #3', position: 34},
-        // {3: 'four', position: 54},
-      // ],
       redoStack: []
-        // {0:'item #1 -redo', position: 90}, 
-        // {1:'and item #2', position: 20},
-        // {2: 'item #3', position: 30},
-        // {3: 'jack', position: 34},
-      //]
     }
   }
 
@@ -171,37 +161,63 @@ class App extends Component {
 
   //}
 
-  onNotepadMouseDown () {
-    console.log('onNotepadMouseDown')
+  onNotepadMouseDown (event, column, row) {
+    event.stopPropagation()    
     // console.log(event.target.innerHTML) // how to get the actual character
     // console.log(event.target)
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
 
-
-    // change css and data back of previous selection back to not selected
+    // successfully passing which column is selected and which row is selected
+    // on click
+    console.log('column + 1')
+    console.log(column + 1)
+    // NOTE: use column for the cursor but column + 1 for data stuff
+    documentCursor.column = column
+    documentSelection.selectionStart.column = column + 1
+    documentSelection.selectionStart.row = row
     documentSelection.isSelected = true
     
+    console.log('row')
+    console.log(row)
 
-    this.setState({documentSelection})
+    let updateCursor = true
+    let updateDocument = true
+
+    const nextState = {}
+    if (updateDocument) {
+      // console.log ('editUndo - updateDocument is true here')
+      nextState.documentContent = documentContent
+      nextState.documentSelection = documentSelection
+    }
+
+    if (updateCursor) {
+      //console.log ('editUndo - updateCursor is true here')
+      nextState.documentCursor = documentCursor
+    }
+
+    // console.log('editUndo -nextState:')
+    //console.log(nextState)
+    this.setState(nextState)
 
   }
 
   onNotepadMouseEnter (event) {
     // console.log('onNotepadMouseEnter')
     // *hint* this seems to miss the first item to be captured by the selection object    
+    event.stopPropagation()    
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
     if (documentSelection.isSelected) {
-      console.log ('Enter - isSelected true and event.target is: ')
-      console.log(event.target)
+      console.log ('Enter - isSelected true')
+      //documentCursor
       // change css class here or some kind of flag
       // also move the cursor here
       
     }
-    this.setState({documentSelection})
+    //this.setState({documentSelection})
     
 
   }
@@ -209,6 +225,7 @@ class App extends Component {
   onNotepadMouseLeave (event) {
     // console.log('onNotepadMouseLeave')
     // *hint* this seems to non-duplicately capture all items that are supposed to be selected
+    event.stopPropagation()    
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
@@ -219,18 +236,41 @@ class App extends Component {
       
     }
     // console.log(event.target)
-    this.setState({documentSelection})
+    // this.setState(documentSelection)
     
   }
 
-  onNotepadMouseUp (event) {
+  onNotepadMouseUp (event, column, row) {
     // console.log('onNotepadMouseUp')
+    event.stopPropagation()
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
 
+
+    documentSelection.selectionEnd.column = column + 1
+    documentSelection.selectionEnd.row = row
     documentSelection.isSelected = false
-    this.setState({documentSelection})
+    console.log('on mouse up:')
+    console.log(documentSelection.selectionEnd.column)
+    let updateCursor = true
+    let updateDocument = true
+
+    const nextState = {}
+    if (updateDocument) {
+      // console.log ('editUndo - updateDocument is true here')
+      nextState.documentContent = documentContent
+      nextState.documentSelection = documentSelection
+    }
+
+    if (updateCursor) {
+      //console.log ('editUndo - updateCursor is true here')
+      nextState.documentCursor = documentCursor
+    }
+
+    // console.log('editUndo -nextState:')
+    //console.log(nextState)
+    this.setState(nextState)
 
   }
 
