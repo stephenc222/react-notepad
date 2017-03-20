@@ -204,21 +204,23 @@ class App extends Component {
 
   }
 
-  onNotepadMouseEnter (event) {
+  onNotepadMouseEnter (event, column, row) {
     // console.log('onNotepadMouseEnter')
     // *hint* this seems to miss the first item to be captured by the selection object    
     event.stopPropagation()    
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
-    const documentContent = this.state.documentContent.slice()
+    //const documentContent = this.state.documentContent.slice()
     if (documentSelection.isSelected) {
       console.log ('Enter - isSelected true')
+      documentCursor.column = column 
+      documentCursor.row = row
       //documentCursor
       // change css class here or some kind of flag
       // also move the cursor here
       
     }
-    //this.setState({documentSelection})
+    this.setState({documentCursor})
     
 
   }
