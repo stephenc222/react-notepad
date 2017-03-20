@@ -174,7 +174,8 @@ class App extends Component {
     console.log('column + 1')
     console.log(column + 1)
     // NOTE: use column for the cursor but column + 1 for data stuff
-    documentCursor.column = column
+    documentCursor.column = column 
+    documentCursor.row = row
     documentSelection.selectionStart.column = column + 1
     documentSelection.selectionStart.row = row
     documentSelection.isSelected = true
