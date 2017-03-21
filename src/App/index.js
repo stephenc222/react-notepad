@@ -60,6 +60,7 @@ class App extends Component {
     this.onNotepadMouseEnter = this.onNotepadMouseEnter.bind(this)
     this.onNotepadMouseLeave = this.onNotepadMouseLeave.bind(this)
     this.onNotepadMouseUp = this.onNotepadMouseUp.bind(this)
+    this.isSelected = this.isSelected.bind(this)
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
@@ -176,8 +177,10 @@ class App extends Component {
     // NOTE: use column for the cursor but column + 1 for data stuff
     documentCursor.column = column 
     documentCursor.row = row
-    documentSelection.selectionStart.column = column + 1
+    documentSelection.selectionStart.column = column 
     documentSelection.selectionStart.row = row
+    documentSelection.selectionEnd.column = column 
+    documentSelection.selectionEnd.row = row
     documentSelection.isSelected = true
     
     console.log('row')
@@ -215,6 +218,8 @@ class App extends Component {
       console.log ('Enter - isSelected true')
       documentCursor.column = column 
       documentCursor.row = row
+      documentSelection.selectionEnd.column = column
+      documentSelection.selectionEnd.row = row
       //documentCursor
       // change css class here or some kind of flag
       // also move the cursor here
@@ -225,57 +230,49 @@ class App extends Component {
 
   }
 
-  onNotepadMouseLeave (event) {
+  onNotepadMouseLeave () {
     // console.log('onNotepadMouseLeave')
-    // *hint* this seems to non-duplicately capture all items that are supposed to be selected
-    event.stopPropagation()    
+    // *hint* this seems to non-duplicately capture all items that are supposed to be selected   
     const documentSelection = {...this.state.documentSelection}
-    const documentCursor = {...this.state.documentCursor}
-    const documentContent = this.state.documentContent.slice()
     if (documentSelection.isSelected) {
       console.log ('Leave - isSelected true and event.target is: ')
-      console.log(event.target)
+      // console.log(event.target) returns: <react></react> 
+      documentSelection.isSelected = false
       // change css class here or some kind of flag
+      this.setState({documentSelection})
       
     }
     // console.log(event.target)
-    // this.setState(documentSelection)
     
   }
 
-  onNotepadMouseUp (event, column, row) {
-    // console.log('onNotepadMouseUp')
-    event.stopPropagation()
+  onNotepadMouseUp () {
     const documentSelection = {...this.state.documentSelection}
-    const documentCursor = {...this.state.documentCursor}
-    const documentContent = this.state.documentContent.slice()
-
-
-    documentSelection.selectionEnd.column = column + 1
-    documentSelection.selectionEnd.row = row
+    // console.log('onNotepadMouseUp')
     documentSelection.isSelected = false
-    console.log('on mouse up:')
-    console.log(documentSelection.selectionEnd.column)
-    let updateCursor = true
+    const documentCursor = {...this.state.documentCursor}
     let updateDocument = true
-
     const nextState = {}
     if (updateDocument) {
-      // console.log ('editUndo - updateDocument is true here')
-      nextState.documentContent = documentContent
       nextState.documentSelection = documentSelection
     }
 
-    if (updateCursor) {
-      //console.log ('editUndo - updateCursor is true here')
-      nextState.documentCursor = documentCursor
-    }
-
-    // console.log('editUndo -nextState:')
-    //console.log(nextState)
     this.setState(nextState)
 
   }
+
+  isSelected (column, row) {
+    const documentSelection = {...this.state.documentSelection}
+    // TODO: closet I've gotten so far to creating the selection look in the currently implemented text area
+    // if (column >= documentSelection.selectionStart.column && column <= documentSelection.selectionEnd.column) {
+    if (row >= documentSelection.selectionStart.row && row < documentSelection.selectionEnd.row) {
+      return true
+    } else if (column >= documentSelection.selectionStart.column && column < documentSelection.selectionEnd.column && row === documentSelection.selectionEnd.row) {
+        return true
+      } else {
+        return false
+      }
+    }
 
   toggleFileMenu () {
     const mainMenuData = {...this.state.mainMenuData}
@@ -1100,7 +1097,6 @@ class App extends Component {
         tabIndex={0}
         onKeyDown={this.onKeyDown}
         onKeyPress={this.onKeyPress}
-        onMouseUp={this.onNotepadMouseUp}
         ref={(element) => {this.topLevel = element}}
         >
         <div className='app__header'>React Notepad - Untitled.txt</div>
@@ -1117,6 +1113,7 @@ class App extends Component {
               cursor={this.state.documentCursor}
               content={this.state.documentContent}
               selection={this.state.documentSelection}
+              isSelected={this.isSelected}
               onMouseDown={this.onNotepadMouseDown}
               onMouseEnter={this.onNotepadMouseEnter}
               onMouseLeave={this.onNotepadMouseLeave}

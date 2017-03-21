@@ -45,6 +45,10 @@
 .notepadArea__column--selected {
   /*TODO: this css rule will govern the appearance of selected text*/
   background-color: darkviolet;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .notepadArea__cursor {

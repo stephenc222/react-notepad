@@ -47,7 +47,7 @@ class Notepad extends Component {
     //     contentColumn:${contentColumn} 
     //     column: ${column}
     //     row: ${row}`)
-    const { cursor, selection } = this.props
+    const { cursor, selection, isSelected } = this.props
 
     // console.log(selection)
 
@@ -60,11 +60,10 @@ class Notepad extends Component {
       return (
         <div 
           key={column} 
-          className={`notepadArea__column notepadArea__cursor`}
+          className={`notepadArea__column${isSelected(column, row) ? '--selected' : ''} notepadArea__cursor`}
           onMouseDown={(event) => this.props.onMouseDown(event, column, row)}
           onMouseEnter={(event) => this.props.onMouseEnter(event, column, row)}
-          onMouseLeave={(event) => this.props.onMouseLeave(event, column, row)}
-          onMouseUp={(event) => this.props.onMouseUp(event, column, row)}>
+          onMouseUp={(event) => this.props.onMouseUp(event)}>
           {glyph}
         </div>
       )
@@ -72,11 +71,10 @@ class Notepad extends Component {
       return (
         <div 
           key={column} 
-          className={`notepadArea__column`}
+          className={`notepadArea__column${isSelected(column, row) ? '--selected' : ''}`}
           onMouseDown={(event) => this.props.onMouseDown(event, column, row)}
           onMouseEnter={(event) => this.props.onMouseEnter(event, column, row)}
-          onMouseLeave={(event) => this.props.onMouseLeave(event, column, row)}
-          onMouseUp={(event) => this.props.onMouseUp(event, column, row)}>
+          onMouseUp={(event) => this.props.onMouseUp(event)}>
           {glyph}
         </div>
       )
@@ -88,7 +86,7 @@ class Notepad extends Component {
 
     return (
       <div className="notepadArea"
-        onMouseUp={() => this.props.onMouseUp()}>
+        onMouseLeave={() => this.props.onMouseLeave()}>
           {content.map(this.renderContentRow)}
       </div>
     )
