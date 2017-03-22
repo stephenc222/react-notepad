@@ -113,6 +113,8 @@ class App extends Component {
       documentContent: mockData,
       documentSelection: {
         isSelected: false,
+        // TODO: figure out if this second flag, "isSelectedChanging", is actually necessary
+        isSelectedChanging: false,
         selection: null,
         selectionStart: {
           row: 0,
@@ -136,32 +138,6 @@ class App extends Component {
     callback && callback(menuItem)
   }
 
-  //onTextSelection (event) {
-    //TODO: update state documentSelection object here, possibly
-    // hint: possible starting place...
-
-    // var flag = 0;
-    // var document = this.document;
-    // document.addEventListener("mousedown", function(event){
-    //     console.log(`mousedown element: ${event.target}`)
-    //   flag = 0;
-    // }, false);
-    // document.addEventListener("mousemove", function(event){
-    //     flag = 1;
-    // }, false);
-    // document.addEventListener("mouseup", function(event){
-    //     if(flag === 0){
-    //         console.log("click");
-    //     }
-    //     else if(flag === 1){
-    //         console.log("drag");
-    //     console.log(`mouseup element: ${event.target}`)
-
-    //     }
-    // }, false);
-
-  //}
-
   onNotepadMouseDown (event, column, row) {
     event.stopPropagation()    
     // console.log(event.target.innerHTML) // how to get the actual character
@@ -182,6 +158,7 @@ class App extends Component {
     documentSelection.selectionEnd.column = column 
     documentSelection.selectionEnd.row = row
     documentSelection.isSelected = true
+    documentSelection.isSelectedChanging = true
     
     console.log('row')
     console.log(row)
@@ -200,9 +177,6 @@ class App extends Component {
       //console.log ('editUndo - updateCursor is true here')
       nextState.documentCursor = documentCursor
     }
-
-    // console.log('editUndo -nextState:')
-    //console.log(nextState)
     this.setState(nextState)
 
   }
@@ -214,7 +188,7 @@ class App extends Component {
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     //const documentContent = this.state.documentContent.slice()
-    if (documentSelection.isSelected) {
+    if (documentSelection.isSelected && documentSelection.isSelectedChanging) {
       console.log ('Enter - isSelected true')
       documentCursor.column = column 
       documentCursor.row = row
@@ -223,9 +197,9 @@ class App extends Component {
       //documentCursor
       // change css class here or some kind of flag
       // also move the cursor here
+      this.setState({documentCursor})
       
     }
-    this.setState({documentCursor})
     
 
   }
@@ -237,7 +211,7 @@ class App extends Component {
     if (documentSelection.isSelected) {
       console.log ('Leave - isSelected true and event.target is: ')
       // console.log(event.target) returns: <react></react> 
-      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
       // change css class here or some kind of flag
       this.setState({documentSelection})
       
@@ -249,7 +223,13 @@ class App extends Component {
   onNotepadMouseUp () {
     const documentSelection = {...this.state.documentSelection}
     // console.log('onNotepadMouseUp')
-    documentSelection.isSelected = false
+    //documentSelection.isSelected = false
+    if (documentSelection.isSelected) {
+      console.log ('Leave - isSelected true and event.target is: ')
+      documentSelection.isSelectedChanging = false
+      // console.log(event.target) returns: <react></react> 
+    }
+      //documentSelection.isSelectedChanging = false
     const documentCursor = {...this.state.documentCursor}
     let updateDocument = true
     const nextState = {}
@@ -266,6 +246,7 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
+    const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
     // var x = ['jack','bob','jill','went','up','a','hill'].reduce( function (index, column) { 
     // console.log(column.length)
     // return index += column.length }, 0)
@@ -303,7 +284,11 @@ class App extends Component {
     const endIndex = indexOfPosition(documentContent,end.column, end.row)
     //console.log('end index', endIndex)
 
-    return currentIndex >= startIndex && currentIndex <= endIndex
+      return documentSelection.isSelected && !startEndAreSame(start,end) && (
+        (currentIndex >= startIndex && currentIndex <= endIndex) || (
+          (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
+        )
+      )
     // TODO: closet I've gotten so far to creating the selection look in the currently implemented text area
     // if (column >= documentSelection.selectionStart.column && column <= documentSelection.selectionEnd.column) {
     // if (row >= documentSelection.selectionStart.row && row < documentSelection.selectionEnd.row) {
