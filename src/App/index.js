@@ -263,15 +263,56 @@ class App extends Component {
 
   isSelected (column, row) {
     const documentSelection = {...this.state.documentSelection}
+    const documentContent = this.state.documentContent.slice()
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
+    // var x = ['jack','bob','jill','went','up','a','hill'].reduce( function (index, column) { 
+    // console.log(column.length)
+    // return index += column.length }, 0)
+    if (!documentSelection.isSelected) {
+      return false
+    }
+    function indexOfPosition (content, column, row) {
+      let index = 0
+      let currentRow = 0
+
+      while (currentRow <= row) {
+        const rowData = content[currentRow]
+
+        if (rowData.length) {
+          for (let i = 0; i < rowData.length; i += 1) {
+            index += 1
+          }
+
+          if (currentRow === row) {
+            index -= (rowData.length - column)
+          }
+        }
+
+        currentRow += 1
+      }
+      return index
+    }
+
+    const startIndex = indexOfPosition(documentContent,start.column, start.row)
+    //console.log('start index', startIndex)
+
+    const currentIndex = indexOfPosition(documentContent, column, row)
+    //console.log('start index', currentIndex)
+
+    const endIndex = indexOfPosition(documentContent,end.column, end.row)
+    //console.log('end index', endIndex)
+
+    return currentIndex >= startIndex && currentIndex <= endIndex
     // TODO: closet I've gotten so far to creating the selection look in the currently implemented text area
     // if (column >= documentSelection.selectionStart.column && column <= documentSelection.selectionEnd.column) {
-    if (row >= documentSelection.selectionStart.row && row < documentSelection.selectionEnd.row) {
-      return true
-    } else if (column >= documentSelection.selectionStart.column && column < documentSelection.selectionEnd.column && row === documentSelection.selectionEnd.row) {
-        return true
-      } else {
-        return false
-      }
+    // if (row >= documentSelection.selectionStart.row && row < documentSelection.selectionEnd.row) {
+    //   return true
+    // } else if (column >= documentSelection.selectionStart.column && column < documentSelection.selectionEnd.column && row === documentSelection.selectionEnd.row) {
+    //     return true
+    //   } else {
+    //     return false
+    //   }
     }
 
   toggleFileMenu () {
