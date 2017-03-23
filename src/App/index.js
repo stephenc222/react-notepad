@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Request from 'superagent'
+// import Request from 'superagent'
+import 'whatwg-fetch'
 // also import PropTypes
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
@@ -378,13 +379,39 @@ class App extends Component {
     // invoke local file system
     // hint: fileInput element type === 'file'
     console.log(`fileOpenMenu is clicked here`)
-    console.log(menuItem)
+    //console.log(menuItem)
 
-    Request
-      .get('https://api.github.com/zen')
-      .end(function (err, res) {
-        console.log(res)
-      })
+    const myHeaders = new Headers()
+
+    const myInit = {
+      method: 'GET', // gonna be POST
+      headers: myHeaders
+    }
+
+    // myHeader
+
+    const url = 'https://api.github.com/users/defunkt'
+    // this {} is the options object, which can contain a header object, HTTP method and other stuff
+    fetch(url, myInit)
+    .then(response => {
+      console.log(response.headers.get('ETag'))
+      if (response.ok) {
+        return response.text().then(text => console.log(text))
+        // response.text().then(text => console.log(JSON.parse(text)))
+      }
+        throw new Error('problem with network response...')
+    })
+    .catch( error => {
+      console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
+    })
+
+
+
+    // Request
+    //   .get('https://api.github.com/users/defunkt')
+    //   .end(function (err, res) {
+    //     console.log(res)
+    //   })
       
   }
 
