@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Request from 'superagent'
 // also import PropTypes
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
@@ -230,7 +231,7 @@ class App extends Component {
       // console.log(event.target) returns: <react></react> 
     }
       //documentSelection.isSelectedChanging = false
-    const documentCursor = {...this.state.documentCursor}
+    //const documentCursor = {...this.state.documentCursor}
     let updateDocument = true
     const nextState = {}
     if (updateDocument) {
@@ -378,6 +379,13 @@ class App extends Component {
     // hint: fileInput element type === 'file'
     console.log(`fileOpenMenu is clicked here`)
     console.log(menuItem)
+
+    Request
+      .get('https://api.github.com/zen')
+      .end(function (err, res) {
+        console.log(res)
+      })
+      
   }
 
   fileSaveMenu (menuItem) {

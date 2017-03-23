@@ -47,7 +47,8 @@ class Notepad extends Component {
     //     contentColumn:${contentColumn} 
     //     column: ${column}
     //     row: ${row}`)
-    const { cursor, selection, isSelected } = this.props
+    const { cursor, isSelected } = this.props
+    // const { cursor, selection, isSelected } = this.props
 
     // console.log(selection)
 
