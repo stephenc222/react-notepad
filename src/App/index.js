@@ -11,6 +11,8 @@ import StatusBar from './StatusBar'
 import RedoStackView from './RedoStackView'
 import UndoStackView from './UndoStackView'
 
+// json data for testing authentication
+import myInfo from './mySecretStuff.js'
 import './index.css'
 
 const mockData = [
@@ -63,7 +65,9 @@ class App extends Component {
     this.onNotepadMouseLeave = this.onNotepadMouseLeave.bind(this)
     this.onNotepadMouseUp = this.onNotepadMouseUp.bind(this)
     this.isSelected = this.isSelected.bind(this)
+
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
+    this.fileOpenMenu = this.fileOpenMenu.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
     this.editUndo = this.editUndo.bind(this)
@@ -381,38 +385,65 @@ class App extends Component {
     console.log(`fileOpenMenu is clicked here`)
     //console.log(menuItem)
 
-    const myHeaders = new Headers()
+    // works
+    console.log(myInfo.username)
+    console.log(myInfo.password)
+    console.log(myInfo.TestToken)
 
-    const myInit = {
+    // this.setState((prevState) => {
+
+    //   mainMenuData.topLevel.items[0].subLevel.visible = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   return {mainMenuData}
+    // })
+
+
+    const options = {
       method: 'GET', // gonna be POST
-      headers: myHeaders
+      headers: {
+        'Authorization': `token ${myInfo.TestToken}`
+      }
     }
 
-    // myHeader
+    const openFileArray = []
 
-    const url = 'https://api.github.com/users/defunkt'
+    const url = `https://api.github.com/users/${myInfo.username}/gists`
     // this {} is the options object, which can contain a header object, HTTP method and other stuff
-    fetch(url, myInit)
+    fetch(url, options)
     .then(response => {
-      console.log(response.headers.get('ETag'))
+      //console.log(response.json())
       if (response.ok) {
-        return response.text().then(text => console.log(text))
+        // return response.json().then(json => console.log(json))
+        return response.json()
+          .then(gistArray => {
+            console.log(gistArray.length)
+            for (let gist in gistArray) {
+              if (gist) {
+                console.log(Object.keys(gistArray[gist].files))
+                openFileArray.push(Object.keys(gistArray[gist].files))
+                // console.log(JSON.parse(json[gist].files))
+              }
+            }
+            // TODO: this array will populate a div, with same styling as the main menu, 
+            // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
+            // the name of all of a user's gists will appear in the middle of the screen
+            // console.log(gistArray)
+            console.log(openFileArray)
+          })
         // response.text().then(text => console.log(JSON.parse(text)))
       }
         throw new Error('problem with network response...')
     })
+    .then (
+      this.setState((prevState) => {
+
+        mainMenuData.topLevel.items[0].subLevel.visible = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        return {mainMenuData}
+      })
+    )
     .catch( error => {
       console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
     })
 
-
-
-    // Request
-    //   .get('https://api.github.com/users/defunkt')
-    //   .end(function (err, res) {
-    //     console.log(res)
-    //   })
-      
   }
 
   fileSaveMenu (menuItem) {
