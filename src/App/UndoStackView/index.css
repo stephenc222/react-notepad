@@ -1,0 +1,30 @@
+.undoStackView {
+  border: solid 1px indigo;
+  display: flex;
+  flex-grow: 1;
+  background-color: lightyellow;
+  flex-direction: column;
+
+}
+
+.undoStack-Title {
+  border-bottom: solid 1px black;
+  font-size: 16px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.undoStack-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+
+.undoStack-Item {
+  border: solid 1px seagreen;
+  flex-shrink: 1;
+  font-size: 14px;
+  
+}

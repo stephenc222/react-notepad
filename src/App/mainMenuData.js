@@ -14,7 +14,13 @@ const mainMenu = {
             },
             {
               label: 'Open...',
-              onClick: 'fileOpenMenu'
+              onClick: 'fileOpenMenu',
+              showOpenFileBox: false,
+              disableOtherMenuHandlers: false,
+              gists: {
+                fileNames: [],
+                filePaths: []
+              }
             },
             {
               label: 'Save',
@@ -49,6 +55,10 @@ const mainMenu = {
             {
               label: 'Undo',
               onClick: 'editUndo'
+            }, 
+            {
+              label: 'Redo',
+              onClick: 'editRedo'
             },
             {
               label: 'Cut',

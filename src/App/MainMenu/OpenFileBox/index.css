@@ -1,0 +1,25 @@
+.fileOpenBox {
+  visibility: visible;
+  border-color: black;
+  background-color: lightgreen;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50px;
+  left: 60px;
+  z-index: 1;
+}
+
+.fileOpenBoxHidden {
+  visibility: hidden;
+  border-color: black;
+  background-color: lightgreen;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50px;
+  left: 60px;
+  z-index: 1;
+}

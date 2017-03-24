@@ -1,0 +1,148 @@
+ul {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: solid black 1px;
+}
+
+li {
+  display: flex;
+  padding-right: 1%;
+  user-select: none;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  cursor: default;
+}
+
+.menuItem:hover {
+  background-color: #E8E8EE;
+}
+
+.subMenu {
+  visibility: visible;
+  border: solid 1px black;
+  /*border-color: black;*/
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.subMenu :hover {
+  background-color: #E8E8EE;
+}
+
+
+.mainFileItem {
+  background-color:white;
+}
+
+/*.mainFileItem :hover {
+  background-color: black;
+}*/
+.mainEditItem {
+  background-color:white;
+}
+.mainFormatItem {
+  background-color: white;
+}
+.mainViewItem {
+  background-color: white;
+}
+.mainHelpItem {
+  background-color: white;
+}
+
+.fileMenu {
+  visibility: visible;
+  border-color: black;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.editMenu {
+  visibility: visible;
+  border-color: black;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.formatMenu {
+  visibility: visible;
+  border-color: black;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;  
+  position: absolute;
+  z-index: 1;
+}
+
+.viewMenu {
+  visibility: visible;
+  border-color: black;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.helpMenu {
+  visibility: visible;
+  border-color: black;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+
+.fileMenuHidden {
+  visibility: hidden;
+  border-color: black;
+  padding: 20px;
+  display: none;
+  
+}
+
+.editMenuHidden {
+  visibility: hidden;
+  border-color: black;
+  padding: 20px;
+  display: none;
+  
+}
+
+.formatMenuHidden {
+  visibility: hidden;
+  border-color: black;
+  padding: 20px;
+  display: none;
+  
+}
+
+.viewMenuHidden {
+  visibility: hidden;
+  border-color: black;
+  padding: 20px;
+  display: none;
+  
+}
+
+.helpMenuHidden {
+  visibility: hidden;
+  border-color: black;
+  padding: 20px;
+  display: none;
+}
