@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import OpenFileBox from './OpenFileBox'
 import './index.css'
 
 class MainMenu extends Component {
@@ -7,8 +8,8 @@ class MainMenu extends Component {
     this.topLevelMenu = this.topLevelMenu.bind(this)
     this.renderSubLevelMenu = this.renderSubLevelMenu.bind(this)
     this.renderOpenFileDialogue = this.renderOpenFileDialogue.bind(this)
-    this.renderAvailableFiles = this.renderAvailableFiles.bind(this)
-    this.renderEachGistFile = this.renderEachGistFile.bind(this)
+    //this.renderAvailableFiles = this.renderAvailableFiles.bind(this)
+    //this.renderEachGistFile = this.renderEachGistFile.bind(this)
     
   }
 
@@ -24,13 +25,7 @@ class MainMenu extends Component {
     return (<div><ul><li>{gists.map( (files, index) => this.renderAvailableFiles(files, index))}</li></ul></div>)
   }
 
-  renderAvailableFiles (files, index) {
-    return (<ul key={index}>{files.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
-  }
 
-  renderEachGistFile (file, index) {
-    return (<li key={index}>{file}</li>)
-  }
 
   topLevelMenu (menu, index) {
     //const subLevel = menu.subLevel
@@ -51,6 +46,8 @@ class MainMenu extends Component {
         onMouseUp={() => this.props.onMouseUp()}>
           {this.props.menu.topLevel.items.map(this.topLevelMenu)}
       </ul>
+      <OpenFileBox
+        openItems={this.props.menu.topLevel.items[0].subLevel.items[1]}/>
       </div>
     )
   }

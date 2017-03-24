@@ -441,6 +441,8 @@ class App extends Component {
               mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
               mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
               mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
+              mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+              mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
               
               return {mainMenuData}
             })

@@ -15,6 +15,8 @@ const mainMenu = {
             {
               label: 'Open...',
               onClick: 'fileOpenMenu',
+              showOpenFileBox: false,
+              disableOtherMenuHandlers: false,
               gists: {
                 fileNames: [],
                 filePaths: []
