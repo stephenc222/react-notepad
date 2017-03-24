@@ -404,40 +404,47 @@ class App extends Component {
       }
     }
 
-    const openFileArray = []
 
     const url = `https://api.github.com/users/${myInfo.username}/gists`
     // this {} is the options object, which can contain a header object, HTTP method and other stuff
     fetch(url, options)
     .then(response => {
-      //console.log(response.json())
+      const openFileNamesArray = []
+      const openFilePathsArray = []
+
       if (response.ok) {
-        // return response.json().then(json => console.log(json))
         return response.json()
           .then(gistArray => {
-            console.log(gistArray.length)
             for (let gist in gistArray) {
               if (gist) {
-                console.log(Object.keys(gistArray[gist].files))
-                openFileArray.push(Object.keys(gistArray[gist].files))
-                // console.log(JSON.parse(json[gist].files))
-              }
+              let multiFilePaths = []                              
+              openFileNamesArray.push(Object.keys(gistArray[gist].files))
+              for (let filePath in gistArray[gist].files) {
+                if (Object.keys(gistArray[gist].files).length > 1) {
+                    multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
+                  } else {
+                    openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
+                  }
+                }
+                if (multiFilePaths.length) {
+                  openFilePathsArray.push(multiFilePaths)     
+                }                           
+              }               
             }
             // TODO: this array will populate a div, with same styling as the main menu, 
             // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
             // the name of all of a user's gists will appear in the middle of the screen
-            // console.log(gistArray)
-            console.log(openFileArray)
+
           })
           .then (
             this.setState((prevState) => {
-              console.log('in promise chain')
-              console.log(openFileArray)
               mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              mainMenuData.topLevel.items[0].subLevel.items[1].gists = openFileArray
+              mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
+              mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
+              
               return {mainMenuData}
             })
-    )
+          )
         // response.text().then(text => console.log(JSON.parse(text)))
       }
         throw new Error('problem with network response...')
