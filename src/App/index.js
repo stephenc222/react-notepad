@@ -429,17 +429,20 @@ class App extends Component {
             // console.log(gistArray)
             console.log(openFileArray)
           })
+          .then (
+            this.setState((prevState) => {
+              console.log('in promise chain')
+              console.log(openFileArray)
+              mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              mainMenuData.topLevel.items[0].subLevel.items[1].files = openFileArray
+                return {mainMenuData}
+            })
+    )
         // response.text().then(text => console.log(JSON.parse(text)))
       }
         throw new Error('problem with network response...')
     })
-    .then (
-      this.setState((prevState) => {
 
-        mainMenuData.topLevel.items[0].subLevel.visible = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-        return {mainMenuData}
-      })
-    )
     .catch( error => {
       console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
     })

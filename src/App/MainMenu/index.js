@@ -10,10 +10,9 @@ class MainMenu extends Component {
   }
 
   renderSubLevelMenu(subMenu,index) {
-    //console.log(`props inside of renderSubLevelMenu: ${JSON.stringify(this.props.menu)}`)
+
     return (
-        // first attempt at adding individual clickHandlers, names are right
-        <li key={index} onClick={(event) => this.props.onClick(event, subMenu)}>{subMenu.label}</li>
+      <li key={index} onClick={(event) => this.props.onClick(event, subMenu)}>{subMenu.label}</li>
     )
 
   }
