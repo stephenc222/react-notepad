@@ -15,7 +15,7 @@ const mainMenu = {
             {
               label: 'Open...',
               onClick: 'fileOpenMenu',
-              files: []
+              gists: []
             },
             {
               label: 'Save',

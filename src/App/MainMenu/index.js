@@ -6,18 +6,33 @@ class MainMenu extends Component {
     super(props)
     this.topLevelMenu = this.topLevelMenu.bind(this)
     this.renderSubLevelMenu = this.renderSubLevelMenu.bind(this)
+    this.renderOpenFileDialogue = this.renderOpenFileDialogue.bind(this)
+    this.renderAvailableFiles = this.renderAvailableFiles.bind(this)
+    this.renderEachGistFile = this.renderEachGistFile.bind(this)
     
   }
 
-  renderSubLevelMenu(subMenu,index) {
+  renderSubLevelMenu (subMenu,index) {
 
     return (
       <li key={index} onClick={(event) => this.props.onClick(event, subMenu)}>{subMenu.label}</li>
     )
-
   }
 
-  topLevelMenu(menu, index) {
+  renderOpenFileDialogue (gists) {
+    // maybe render the open file dialogue here?
+    return (<div><ul><li>{gists.map( (files, index) => this.renderAvailableFiles(files, index))}</li></ul></div>)
+  }
+
+  renderAvailableFiles (files, index) {
+    return (<ul key={index}>{files.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
+  }
+
+  renderEachGistFile (file, index) {
+    return (<li key={index}>{file}</li>)
+  }
+
+  topLevelMenu (menu, index) {
     //const subLevel = menu.subLevel
     return (
       <li className={'menuItem'} key={menu.label} onClick={(event) => this.props.onClick(event, menu)}> {menu.label}

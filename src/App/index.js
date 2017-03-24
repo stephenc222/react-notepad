@@ -434,8 +434,8 @@ class App extends Component {
               console.log('in promise chain')
               console.log(openFileArray)
               mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              mainMenuData.topLevel.items[0].subLevel.items[1].files = openFileArray
-                return {mainMenuData}
+              mainMenuData.topLevel.items[0].subLevel.items[1].gists = openFileArray
+              return {mainMenuData}
             })
     )
         // response.text().then(text => console.log(JSON.parse(text)))
