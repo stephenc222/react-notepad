@@ -4,6 +4,8 @@ import 'whatwg-fetch'
 // also import PropTypes
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
+import OpenFileBox from './OpenFileBox'
+
 import NotePad from './Notepad'
 import StatusBar from './StatusBar'
 
@@ -415,6 +417,7 @@ class App extends Component {
       if (response.ok) {
         return response.json()
           .then(gistArray => {
+            // console.log(gistArray)
             for (let gist in gistArray) {
               if (gist) {
               let multiFilePaths = []                              
@@ -438,12 +441,14 @@ class App extends Component {
           })
           .then (
             this.setState((prevState) => {
-              mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
               mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
               mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
               mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
               mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
-              
+              mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              // console.log('what the fuck')
+              // console.log(mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames)
               return {mainMenuData}
             })
           )
@@ -1211,6 +1216,10 @@ class App extends Component {
               onClick={this.onMainMenuClick}
               onMouseUp={this.onNotepadMouseUp}              
             />
+            <OpenFileBox
+              openItems={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+              {...this.props}
+              />
           </div>
           <div className="app__document-container">
             <NotePad
