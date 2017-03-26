@@ -310,14 +310,80 @@ class App extends Component {
 
   toggleFileMenu () {
     const mainMenuData = {...this.state.mainMenuData}
-    this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+    const options = {
+      method: 'GET', // gonna be POST
+      headers: {
+        'Authorization': `token ${myInfo.TestToken}`
+      }
+    }
+
+
+    const url = `https://api.github.com/users/${myInfo.username}/gists`
+    // this {} is the options object, which can contain a header object, HTTP method and other stuff
+    fetch(url, options)
+    .then(response => {
+      const openFileNamesArray = []
+      const openFilePathsArray = []
+
+      if (response.ok) {
+        return response.json()
+          .then(gistArray => {
+            // console.log(gistArray)
+            for (let gist in gistArray) {
+              if (gist) {
+              let multiFilePaths = []                              
+              openFileNamesArray.push(Object.keys(gistArray[gist].files))
+              for (let filePath in gistArray[gist].files) {
+                if (Object.keys(gistArray[gist].files).length > 1) {
+                    multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
+                  } else {
+                    openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
+                  }
+                }
+                if (multiFilePaths.length) {
+                  openFilePathsArray.push(multiFilePaths)     
+                }                           
+              }               
+            }
+            // TODO: this array will populate a div, with same styling as the main menu, 
+            // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
+            // the name of all of a user's gists will appear in the middle of the screen
+
+          })
+          .then (
+            this.setState((prevState) => {
+              // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
+              mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
+              mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              //mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+              //mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
+              //mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+              // console.log('what the fuck')
+              // console.log(mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames)
+              return {mainMenuData}
+            })
+          )
+        // response.text().then(text => console.log(JSON.parse(text)))
+      }
+        throw new Error('problem with network response...')
     })
+
+    .catch( error => {
+      console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
+    })
+    // this.setState((prevState) => {
+    //   mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   return {mainMenuData}
+    // })
     console.log('hey, this runs inside toggleFileMenu!')
   }
 
@@ -385,12 +451,13 @@ class App extends Component {
     // invoke local file system
     // hint: fileInput element type === 'file'
     console.log(`fileOpenMenu is clicked here`)
+    
     //console.log(menuItem)
 
     // works
-    console.log(myInfo.username)
-    console.log(myInfo.password)
-    console.log(myInfo.TestToken)
+    // console.log(myInfo.username)
+    // console.log(myInfo.password)
+    // console.log(myInfo.TestToken)
 
     // this.setState((prevState) => {
 
@@ -399,51 +466,51 @@ class App extends Component {
     // })
 
 
-    const options = {
-      method: 'GET', // gonna be POST
-      headers: {
-        'Authorization': `token ${myInfo.TestToken}`
-      }
-    }
+    // const options = {
+    //   method: 'GET', // gonna be POST
+    //   headers: {
+    //     'Authorization': `token ${myInfo.TestToken}`
+    //   }
+    // }
 
 
-    const url = `https://api.github.com/users/${myInfo.username}/gists`
-    // this {} is the options object, which can contain a header object, HTTP method and other stuff
-    fetch(url, options)
-    .then(response => {
-      const openFileNamesArray = []
-      const openFilePathsArray = []
+    // const url = `https://api.github.com/users/${myInfo.username}/gists`
+    // // this {} is the options object, which can contain a header object, HTTP method and other stuff
+    // fetch(url, options)
+    // .then(response => {
+    //   const openFileNamesArray = []
+    //   const openFilePathsArray = []
 
-      if (response.ok) {
-        return response.json()
-          .then(gistArray => {
-            // console.log(gistArray)
-            for (let gist in gistArray) {
-              if (gist) {
-              let multiFilePaths = []                              
-              openFileNamesArray.push(Object.keys(gistArray[gist].files))
-              for (let filePath in gistArray[gist].files) {
-                if (Object.keys(gistArray[gist].files).length > 1) {
-                    multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
-                  } else {
-                    openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
-                  }
-                }
-                if (multiFilePaths.length) {
-                  openFilePathsArray.push(multiFilePaths)     
-                }                           
-              }               
-            }
-            // TODO: this array will populate a div, with same styling as the main menu, 
-            // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
-            // the name of all of a user's gists will appear in the middle of the screen
+    //   if (response.ok) {
+    //     return response.json()
+    //       .then(gistArray => {
+    //         // console.log(gistArray)
+    //         for (let gist in gistArray) {
+    //           if (gist) {
+    //           let multiFilePaths = []                              
+    //           openFileNamesArray.push(Object.keys(gistArray[gist].files))
+    //           for (let filePath in gistArray[gist].files) {
+    //             if (Object.keys(gistArray[gist].files).length > 1) {
+    //                 multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
+    //               } else {
+    //                 openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
+    //               }
+    //             }
+    //             if (multiFilePaths.length) {
+    //               openFilePathsArray.push(multiFilePaths)     
+    //             }                           
+    //           }               
+    //         }
+    //         // TODO: this array will populate a div, with same styling as the main menu, 
+    //         // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
+    //         // the name of all of a user's gists will appear in the middle of the screen
 
-          })
-          .then (
+    //       })
+    //       .then (
             this.setState((prevState) => {
               // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
-              mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
+              //mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
+              //mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
               mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
               mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
               mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
@@ -451,15 +518,15 @@ class App extends Component {
               // console.log(mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames)
               return {mainMenuData}
             })
-          )
-        // response.text().then(text => console.log(JSON.parse(text)))
-      }
-        throw new Error('problem with network response...')
-    })
+    //       )
+    //     // response.text().then(text => console.log(JSON.parse(text)))
+    //   }
+    //     throw new Error('problem with network response...')
+    // })
 
-    .catch( error => {
-      console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
-    })
+    // .catch( error => {
+    //   console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
+    // })
 
   }
 
@@ -1218,6 +1285,7 @@ class App extends Component {
             />
             <OpenFileBox
               openItems={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+              fileNames={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames}
               {...this.props}
               />
           </div>
