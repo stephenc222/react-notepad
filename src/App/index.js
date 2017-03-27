@@ -146,6 +146,12 @@ class App extends Component {
     callback && callback(menuItem)
   }
 
+  // TODO: initial stub of Open File Box click handlers
+  // onOpenFileBoxGist (event, gist) {
+  //   event.stopPropagation()
+  //   console.warn(gist)
+  // }
+
   onNotepadMouseDown (event, column, row) {
     event.stopPropagation()    
     // console.log(event.target.innerHTML) // how to get the actual character

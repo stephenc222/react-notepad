@@ -1,12 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
 
-// TODO: this Component needs to re render based on prop change.
-// Currently, this Component I believe is rendered at the same time as all the 
-// other Components, but as it stands, this Component is the only Component that
-// has data that is dynamically updated via a network response
-// so, this needs to detect prop change and re render itself
-// **probably need** componentWillReceiveProps(nextProps), but just a guess 
 class OpenFileBox extends Component {
   constructor (props) {
     super(props)
@@ -19,8 +13,12 @@ class OpenFileBox extends Component {
     return (<ul key={index}>{files.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
   }
 
+  // TODO: add reference to click handler prop here for each gist's raw data url
+  // for parsing to then set the state of the Notepad Textarea Component
+  // keep state in App, not here
+
   renderEachGistFile (file, index) {
-    return (<li key={index}>{file}</li>)
+    return (<li className='gist' key={index} onClick={(event) => console.log('gist was clicked!')}>{file}</li>)
   }
 
 
