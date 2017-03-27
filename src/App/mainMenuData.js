@@ -19,7 +19,15 @@ const mainMenu = {
               disableOtherMenuHandlers: false,
               gists: {
                 fileNames: [],
-                filePaths: []
+                filePaths: [],
+                files: [],
+                //   [{
+                //     file: {
+                //       name: '',
+                //       path: ''
+                //     }
+                //   }]
+                // ]
               }
             },
             {

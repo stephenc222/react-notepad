@@ -850,6 +850,7 @@ class App extends Component {
     .then(response => {
       const openFileNamesArray = []
       const openFilePathsArray = []
+      const filesArray = []
 
       if (response.ok) {
         return response.json()
@@ -857,17 +858,34 @@ class App extends Component {
             // console.log(gistArray)
             for (let gist in gistArray) {
               if (gist) {
-              let multiFilePaths = []                              
+              let multiFilePaths = []       
+              let multiFilePathsTEST = []
+                
               openFileNamesArray.push(Object.keys(gistArray[gist].files))
+              // file.name = 
+              //filesArray.push([file])
               for (let filePath in gistArray[gist].files) {
                 if (Object.keys(gistArray[gist].files).length > 1) {
                     multiFilePaths.push([gistArray[gist].files[filePath].raw_url])
+                    let file = {}
+                    file.name = gistArray[gist].files[filePath].filename
+                    //console.log(gistArray[gist].files[filePath].filename)
+                    file.path = gistArray[gist].files[filePath].raw_url
+                    console.log(file.name)
+                    multiFilePathsTEST.push(file)
                   } else {
                     openFilePathsArray.push([gistArray[gist].files[filePath].raw_url])
+                    let file = {}                    
+                    file.name = gistArray[gist].files[filePath].filename
+                    console.log(gistArray[gist].files[filePath].filename)
+                    file.path = gistArray[gist].files[filePath].raw_url
+                    // filesArray.push([gistArray[gist].files[filePath].raw_url])
+                    filesArray.push([file])
                   }
                 }
-                if (multiFilePaths.length) {
-                  openFilePathsArray.push(multiFilePaths)     
+                if (multiFilePathsTEST.length) {
+                  openFilePathsArray.push(multiFilePaths) 
+                  filesArray.push([multiFilePathsTEST])
                 }                           
               }               
             }
@@ -881,6 +899,7 @@ class App extends Component {
               // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
               mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
               mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
+              mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
               // mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
               // mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
               // mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
@@ -1296,6 +1315,7 @@ class App extends Component {
             <OpenFileBox
               openItems={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
               fileNames={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames}
+              files={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.files}
               {...this.props}
               />
           </div>
