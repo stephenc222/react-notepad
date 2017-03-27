@@ -1,7 +1,8 @@
 .fileOpenBox {
   visibility: visible;
   border: red solid 2px;
-  background-color: white;
+  border-radius: 20px;
+  background-color: #e6fff7;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -25,10 +26,10 @@
 }
 
 .gist {
-  background-color: lightyellow;
+  background-color: #b3ffe6;
 }
 
 .gist:hover {
-  background-color: lightgreen;
+  background-color: #00cc88;
 }   
 

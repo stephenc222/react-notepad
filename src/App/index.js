@@ -61,7 +61,8 @@ class App extends Component {
   constructor (props) {
     super(props)
     // menu items here 
-    this.onMainMenuClick = this.onMainMenuClick.bind(this)    
+    this.onClickCloseDialog = this.onClickCloseDialog.bind(this)
+    this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
     this.onNotepadMouseEnter = this.onNotepadMouseEnter.bind(this)
     this.onNotepadMouseLeave = this.onNotepadMouseLeave.bind(this)
@@ -69,6 +70,7 @@ class App extends Component {
     this.isSelected = this.isSelected.bind(this)
 
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
+    this.fileNewMenu = this.fileNewMenu.bind(this)
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
@@ -136,6 +138,17 @@ class App extends Component {
       undoStack: [],
       redoStack: []
     }
+  }
+
+  onClickCloseDialog (event, dialog) {
+    const mainMenuData = {...this.state.mainMenuData}
+    if (this.state.mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox) {
+      if (!(event.target).closest('.fileOpenBox')) {
+        mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
+        this.setState({mainMenuData})
+      }
+    }
+      
   }
 
   onMainMenuClick (event, menuItem) {
@@ -303,85 +316,9 @@ class App extends Component {
           (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
         )
       )
-    // TODO: closet I've gotten so far to creating the selection look in the currently implemented text area
-    // if (column >= documentSelection.selectionStart.column && column <= documentSelection.selectionEnd.column) {
-    // if (row >= documentSelection.selectionStart.row && row < documentSelection.selectionEnd.row) {
-    //   return true
-    // } else if (column >= documentSelection.selectionStart.column && column < documentSelection.selectionEnd.column && row === documentSelection.selectionEnd.row) {
-    //     return true
-    //   } else {
-    //     return false
-    //   }
     }
 
   toggleFileMenu () {
-    // const mainMenuData = {...this.state.mainMenuData}
-    // const options = {
-    //   method: 'GET', // gonna be POST
-    //   headers: {
-    //     'Authorization': `token ${myInfo.TestToken}`
-    //   }
-    // }
-
-
-    // const url = `https://api.github.com/users/${myInfo.username}/gists`
-    // // this {} is the options object, which can contain a header object, HTTP method and other stuff
-    // fetch(url, options)
-    // .then(response => {
-    //   const openFileNamesArray = []
-    //   const openFilePathsArray = []
-
-    //   if (response.ok) {
-    //     return response.json()
-    //       .then(gistArray => {
-    //         // console.log(gistArray)
-    //         for (let gist in gistArray) {
-    //           if (gist) {
-    //           let multiFilePaths = []                              
-    //           openFileNamesArray.push(Object.keys(gistArray[gist].files))
-    //           for (let filePath in gistArray[gist].files) {
-    //             if (Object.keys(gistArray[gist].files).length > 1) {
-    //                 multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
-    //               } else {
-    //                 openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
-    //               }
-    //             }
-    //             if (multiFilePaths.length) {
-    //               openFilePathsArray.push(multiFilePaths)     
-    //             }                           
-    //           }               
-    //         }
-    //         // TODO: this array will populate a div, with same styling as the main menu, 
-    //         // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
-    //         // the name of all of a user's gists will appear in the middle of the screen
-
-    //       })
-    //       .then (
-    //         this.setState((prevState) => {
-    //           // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
-    //           mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
-    //           mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           //mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-    //           //mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
-    //           //mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //           // console.log('what the fuck')
-    //           // console.log(mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames)
-    //           return {mainMenuData}
-    //         })
-    //       )
-    //     // response.text().then(text => console.log(JSON.parse(text)))
-    //   }
-    //     throw new Error('problem with network response...')
-    // })
-
-    // .catch( error => {
-    //   console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
-    // })
     this.setState((prevState) => {
       mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
@@ -1345,6 +1282,7 @@ class App extends Component {
         tabIndex={0}
         onKeyDown={this.onKeyDown}
         onKeyPress={this.onKeyPress}
+        onClick={this.onClickCloseDialog}
         ref={(element) => {this.topLevel = element}}
         >
         <div className='app__header'>React Notepad - Untitled.txt</div>

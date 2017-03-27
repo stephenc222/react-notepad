@@ -26,7 +26,7 @@ class OpenFileBox extends Component {
     return (
       <div className={`fileOpenBox${this.props.openItems.showOpenFileBox ? '': 'Hidden'}`}>
         <div>Open Public Gists</div>
-        {console.log(this.props.openItems.gists.fileNames)}
+        {/*console.log(this.props.openItems.gists.fileNames)*/}
         <div>{this.props.openItems.gists.fileNames.map(this.renderGists)}</div>
       </div>
     )
