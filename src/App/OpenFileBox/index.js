@@ -9,9 +9,8 @@ class OpenFileBox extends Component {
   }
 
 
-  renderGists (files, index) {
-    console.log(files)
-    return (<ul key={index}>{files.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
+  renderGists (gists, index) {
+    return (<ul key={index}>{gists.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
   }
   
 
@@ -21,8 +20,8 @@ class OpenFileBox extends Component {
   // keep state in App, not here
 
   renderEachGistFile (file, index) {
-    //console.log(file)
-    return (<li className='gist' key={index} onClick={(event) => console.log('gist was clicked!')}>{file}</li>)
+    // TODO: add either a ref or data element via 'file.path'
+    return (<li className='gist' key={index} onClick={(event) => console.log('gist was clicked!')}>{file.name}</li>)
   }
 
 
@@ -31,7 +30,7 @@ class OpenFileBox extends Component {
     return (
       <div className={`fileOpenBox${this.props.openItems.showOpenFileBox ? '': 'Hidden'}`}>
         <div>Open Public Gists</div>
-        <div>{this.props.openItems.gists.fileNames.map(this.renderGists)}</div>
+        <div>{this.props.openItems.gists.files.map(this.renderGists)}</div>
       </div>
     )
   }
