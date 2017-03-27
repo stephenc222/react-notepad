@@ -5,12 +5,18 @@ class OpenFileBox extends Component {
   constructor (props) {
     super(props)
     this.renderGists = this.renderGists.bind(this)
+    this.renderGistsData = this.renderGistsData.bind(this)
     this.renderEachGistFile = this.renderEachGistFile.bind(this)
+    this.renderEachGistDataURL = this.renderEachGistDataURL.bind(this)
   }
 
 
   renderGists (files, index) {
     return (<ul key={index}>{files.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
+  }
+
+  renderGistsData (urls, index) {
+    return (urls.map(this.renderEachGistDataURL))
   }
 
   // TODO: add reference to click handler prop here for each gist's raw data url
@@ -21,12 +27,16 @@ class OpenFileBox extends Component {
     return (<li className='gist' key={index} onClick={(event) => console.log('gist was clicked!')}>{file}</li>)
   }
 
+  renderEachGistDataURL (url, index) {
+    return (console.log(url))
+  }
+
 
   render () {
     return (
       <div className={`fileOpenBox${this.props.openItems.showOpenFileBox ? '': 'Hidden'}`}>
         <div>Open Public Gists</div>
-        {/*console.log(this.props.openItems.gists.fileNames)*/}
+        {this.props.openItems.gists.filePaths.map(this.renderGistsData)}
         <div>{this.props.openItems.gists.fileNames.map(this.renderGists)}</div>
       </div>
     )

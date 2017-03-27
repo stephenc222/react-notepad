@@ -861,9 +861,9 @@ class App extends Component {
               openFileNamesArray.push(Object.keys(gistArray[gist].files))
               for (let filePath in gistArray[gist].files) {
                 if (Object.keys(gistArray[gist].files).length > 1) {
-                    multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
+                    multiFilePaths.push([gistArray[gist].files[filePath].raw_url])
                   } else {
-                    openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
+                    openFilePathsArray.push([gistArray[gist].files[filePath].raw_url])
                   }
                 }
                 if (multiFilePaths.length) {
