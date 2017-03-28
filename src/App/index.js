@@ -402,7 +402,6 @@ class App extends Component {
   onGistClick (event, gist) {
     // let documentFileName = this.state.documentFileName
     const mainMenuData = {...this.state.mainMenuData}
-    const documentContent = this.state.documentContent.slice()
     console.log(`${gist.name} was clicked!`)
     console.log(`raw_url: ${gist.url}`)
 
@@ -435,21 +434,8 @@ class App extends Component {
       const gistTextData = text.split('\n')
       const newDocumentContent = []
       gistTextData.forEach(line => newDocumentContent.push(line))
-
-      // here, I'm getting exactly what I need, but I need to 
-      // (for the whole documentContent object) push characters onto the NEXT line//
-      // if longer than say an index or two before the end of the screen
-
-      if (newDocumentContent.length < documentContent.length) {
-        for (let line of newDocumentContent) {
-          line = newDocumentContent.length
-          if (line < documentContent.length) {
-            //console.log (line)
-            //console.log(newDocumentContent.length)
-            newDocumentContent.push('')
-          }        
-        }
-      }
+      // 13 lines is how a full textarea is, roughly
+      while (newDocumentContent.length < 13) { newDocumentContent.push('') }
 
 
 
