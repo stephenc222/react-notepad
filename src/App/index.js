@@ -71,7 +71,9 @@ class App extends Component {
 
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
     this.fileNewMenu = this.fileNewMenu.bind(this)
+
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
+    this.onGistClick = this.onGistClick.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
     this.editUndo = this.editUndo.bind(this)
@@ -119,6 +121,7 @@ class App extends Component {
     
     this.state = {
       mainMenuData,
+      documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: mockData,
       documentSelection: {
@@ -158,12 +161,6 @@ class App extends Component {
     const callback = this[menuItem.onClick]
     callback && callback(menuItem)
   }
-
-  // TODO: initial stub of Open File Box click handlers
-  // onOpenFileBoxGist (event, gist) {
-  //   event.stopPropagation()
-  //   console.warn(gist)
-  // }
 
   onNotepadMouseDown (event, column, row) {
     event.stopPropagation()    
@@ -394,83 +391,105 @@ class App extends Component {
     // invoke local file system
     // hint: fileInput element type === 'file'
     console.log(`fileOpenMenu is clicked here`)
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+      mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
+  }
+
+  onGistClick (event, gist) {
+    // let documentFileName = this.state.documentFileName
+    const mainMenuData = {...this.state.mainMenuData}
+    const documentContent = this.state.documentContent.slice()
+    console.log(`${gist.name} was clicked!`)
+    console.log(`raw_url: ${gist.url}`)
+
+    const options = {
+      method: 'GET'
+      // headers: {
+      //   'Authorization': `token ${myInfo.TestToken}`
+      // }
+    }
+
+    fetch(gist.url, options)
+    .then(response => {
+      if (response.ok) {
+        return response.text()
+      }
+    }).then ( text => {
+      // this is where the processing of the text string inside the 'pre' tag needs to happen
+      // console.log('----------------------------------------')
+      // console.log('raw text:')
+      // console.log('----------------------------------------')
+      // console.log(text)
+      // console.log('----------------------------------------')
+      // console.log('testing newDocumentContent')
+      // console.log('----------------------------------------')   
+
+
+
+
+      
+      const gistTextData = text.split('\n')
+      const newDocumentContent = []
+      gistTextData.forEach(line => newDocumentContent.push(line))
+
+      // here, I'm getting exactly what I need, but I need to 
+      // (for the whole documentContent object) push characters onto the NEXT line//
+      // if longer than say an index or two before the end of the screen
+
+      if (newDocumentContent.length < documentContent.length) {
+        for (let line of newDocumentContent) {
+          line = newDocumentContent.length
+          if (line < documentContent.length) {
+            //console.log (line)
+            //console.log(newDocumentContent.length)
+            newDocumentContent.push('')
+          }        
+        }
+      }
+
+
+
+
+
+      // console.log(newDocumentContent)
+      // console.log('----------------------------------------')
+      return newDocumentContent
+    })
+    .then ( end => {
+      const nextState = {}
+      nextState.documentFileName = gist.name
+      mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
+      mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
+      nextState.documentContent = end //newDocumentContent
+      nextState.mainMenuData = mainMenuData
+      // fetch(gist.url)
+      this.setState(nextState)
+    }
     
-    //console.log(menuItem)
 
-    // works
-    // console.log(myInfo.username)
-    // console.log(myInfo.password)
-    // console.log(myInfo.TestToken)
+    )
+    .catch ()
 
+
+
+
+    // const nextState = {}
+    // nextState.documentFileName = gist.name
+    // mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
+    // mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
+    // nextState.mainMenuData = mainMenuData
+    // // fetch(gist.url)
+    // this.setState(nextState)
     // this.setState((prevState) => {
-
-    //   mainMenuData.topLevel.items[0].subLevel.visible = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //   return {mainMenuData}
+    //   documentFileName = gist.name
+    //   mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
+    //   mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false
+    //   return {documentFileName,mainMenuData}
     // })
-
-
-    // const options = {
-    //   method: 'GET', // gonna be POST
-    //   headers: {
-    //     'Authorization': `token ${myInfo.TestToken}`
-    //   }
-    // }
-
-
-    // const url = `https://api.github.com/users/${myInfo.username}/gists`
-    // // this {} is the options object, which can contain a header object, HTTP method and other stuff
-    // fetch(url, options)
-    // .then(response => {
-    //   const openFileNamesArray = []
-    //   const openFilePathsArray = []
-
-    //   if (response.ok) {
-    //     return response.json()
-    //       .then(gistArray => {
-    //         // console.log(gistArray)
-    //         for (let gist in gistArray) {
-    //           if (gist) {
-    //           let multiFilePaths = []                              
-    //           openFileNamesArray.push(Object.keys(gistArray[gist].files))
-    //           for (let filePath in gistArray[gist].files) {
-    //             if (Object.keys(gistArray[gist].files).length > 1) {
-    //                 multiFilePaths.push(gistArray[gist].files[filePath].raw_url)
-    //               } else {
-    //                 openFilePathsArray.push(gistArray[gist].files[filePath].raw_url)
-    //               }
-    //             }
-    //             if (multiFilePaths.length) {
-    //               openFilePathsArray.push(multiFilePaths)     
-    //             }                           
-    //           }               
-    //         }
-    //         // TODO: this array will populate a div, with same styling as the main menu, 
-    //         // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
-    //         // the name of all of a user's gists will appear in the middle of the screen
-
-    //       })
-    //       .then (
-            this.setState((prevState) => {
-              // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              //mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
-              //mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
-              mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-              mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
-              mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              // console.log('what the fuck')
-              // console.log(mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames)
-              return {mainMenuData}
-            })
-    //       )
-    //     // response.text().then(text => console.log(JSON.parse(text)))
-    //   }
-    //     throw new Error('problem with network response...')
-    // })
-
-    // .catch( error => {
-    //   console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
-    // })
-
   }
 
   fileSaveMenu (menuItem) {
@@ -714,7 +733,6 @@ class App extends Component {
       }
     }
     stackOps(topLayer)
-
     // redoStack.length !== 0 && undoStack.push(redoStack.pop())
     
     let updateCursor = true
@@ -845,7 +863,6 @@ class App extends Component {
 
 
     const url = `https://api.github.com/users/${myInfo.username}/gists`
-    // this {} is the options object, which can contain a header object, HTTP method and other stuff
     fetch(url, options)
     .then(response => {
       //const openFileNamesArray = []
@@ -870,7 +887,7 @@ class App extends Component {
                     let file = {}
                     file.name = gistArray[gist].files[filePath].filename
                     //console.log(gistArray[gist].files[filePath].filename)
-                    file.path = gistArray[gist].files[filePath].raw_url
+                    file.url = gistArray[gist].files[filePath].raw_url
                     //console.log(file.name)
                     multiFileGist.push(file)
                   } else {
@@ -878,7 +895,7 @@ class App extends Component {
                     let file = {}                    
                     file.name = gistArray[gist].files[filePath].filename
                     //console.log(gistArray[gist].files[filePath].filename)
-                    file.path = gistArray[gist].files[filePath].raw_url
+                    file.url = gistArray[gist].files[filePath].raw_url
                     // filesArray.push([gistArray[gist].files[filePath].raw_url])
                     filesArray.push([file])
                   }
@@ -1304,7 +1321,7 @@ class App extends Component {
         onClick={this.onClickCloseDialog}
         ref={(element) => {this.topLevel = element}}
         >
-        <div className='app__header'>React Notepad - Untitled.txt</div>
+        <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
         <div className='app__main-container'>
           <div className='app__menu-bar-container'>
             <MainMenu 
@@ -1314,8 +1331,8 @@ class App extends Component {
             />
             <OpenFileBox
               openItems={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
-              //fileNames={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames}
               files={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.files}
+              onClick={this.onGistClick}
               {...this.props}
               />
           </div>

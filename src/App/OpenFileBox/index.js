@@ -19,9 +19,9 @@ class OpenFileBox extends Component {
   // for parsing to then set the state of the Notepad Textarea Component
   // keep state in App, not here
 
-  renderEachGistFile (file, index) {
-    // TODO: add either a ref or data element via 'file.path'
-    return (<li className='gist' key={index} onClick={(event) => console.log('gist was clicked!')}>{file.name}</li>)
+  renderEachGistFile (gist, index) {
+    // TODO: add either a ref or data element via 'file.url'
+    return (<li className='gist' key={index} onClick={(event) => this.props.onClick(event, gist)}>{gist.name}</li>)
   }
 
 
