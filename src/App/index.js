@@ -139,7 +139,8 @@ class App extends Component {
         }
       },
       undoStack: [],
-      redoStack: []
+      redoStack: [],
+      saved: false
     }
   }
 
@@ -384,6 +385,46 @@ class App extends Component {
     // set document content to empty
     console.log(`fileNewMenu is clicked here`)
     console.log(menuItem)
+
+    const documentContent = this.state.documentContent.slice()
+    const documentCursor = {...this.state.documentCursor}
+    const mainMenuData = {...this.state.mainMenuData}
+    let saved = this.state.saved
+    
+
+    if (!documentContent.every(line => line === '') && !saved) {
+
+      console.log('need to save file!')
+      let fileOpenControl = new Promise((resolve, reject) => {
+        this.setState((prevState) => {
+          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          return {mainMenuData}
+        })
+        resolve('promise finished')
+      })
+
+      fileOpenControl.then((dialog) => {
+        console.log(dialog)
+        console.log('do stuff here if not saved and not empty')
+      // TODO: pop up box to warn user they have unsaved 
+      })
+      return
+    }
+    
+    const nextState = {}
+    // just to keep 13 lines for a full textarea
+    const resetDocumentContent = ['','','','','','','','','','','','','']
+    
+    documentCursor.row = 0
+    documentCursor.column = 0
+    nextState.mainMenuData = mainMenuData
+    nextState.mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    nextState.documentContent = resetDocumentContent
+    nextState.documentCursor = documentCursor
+    nextState.undoStack = []
+    nextState.redoStack = []
+
+    this.setState(nextState)
   }
 
   fileOpenMenu (menuItem) {
