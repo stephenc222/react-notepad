@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import OpenFileBox from './OpenFileBox'
 import './index.css'
 
 class MainMenu extends Component {
@@ -12,14 +13,14 @@ class MainMenu extends Component {
   renderSubLevelMenu (subMenu,index) {
 
     return (
-      <li key={index} onClick={(event) => this.props.onClick(event, subMenu)}>{subMenu.label}</li>
+      <li key={index} onClick={(event) => this.props.onMainMenuClick(event, subMenu)}>{subMenu.label}</li>
     )
   }
 
   topLevelMenu (menu, index) {
     //const subLevel = menu.subLevel
     return (
-      <li className={'menuItem'} key={menu.label} onClick={(event) => this.props.onClick(event, menu)}> {menu.label}
+      <li className={'menuItem'} key={menu.label} onClick={(event) => this.props.onMainMenuClick(event, menu)}> {menu.label}
           <ul className={`subMenu ${menu.subLevel.visible ? menu.menu : menu.menu + 'Hidden'}`}>
             {menu.subLevel.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}
           </ul>
@@ -35,6 +36,11 @@ class MainMenu extends Component {
           onMouseUp={() => this.props.onMouseUp()}>
             {this.props.menu.topLevel.items.map(this.topLevelMenu)}
         </ul>
+        <OpenFileBox 
+          onGistClick={this.props.onGistClick}
+          openItems={this.props.openItems}
+          files={this.props.files}
+        />
       </div>
     )
   }

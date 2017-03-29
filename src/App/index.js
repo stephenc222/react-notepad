@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 // also import PropTypes
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
-import OpenFileBox from './OpenFileBox'
+// import OpenFileBox from './OpenFileBox'
 
 import NotePad from './Notepad'
 import StatusBar from './StatusBar'
@@ -1384,15 +1384,12 @@ class App extends Component {
           <div className='app__menu-bar-container'>
             <MainMenu 
               menu={this.state.mainMenuData} 
-              onClick={this.onMainMenuClick}
-              onMouseUp={this.onNotepadMouseUp}              
-            />
-            <OpenFileBox
+              onMainMenuClick={this.onMainMenuClick}
+              onMouseUp={this.onNotepadMouseUp}  
+              onGistClick={this.onGistClick}            
               openItems={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
               files={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.files}
-              onClick={this.onGistClick}
-              {...this.props}
-              />
+            />
           </div>
           <div className="app__document-container">
             <NotePad

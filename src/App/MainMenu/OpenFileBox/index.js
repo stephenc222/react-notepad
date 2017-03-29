@@ -21,7 +21,7 @@ class OpenFileBox extends Component {
 
   renderEachGistFile (gist, index) {
     // TODO: add either a ref or data element via 'file.url'
-    return (<li className='gist' key={index} onClick={(event) => this.props.onClick(event, gist)}>{gist.name}</li>)
+    return (<li className='gist' key={index} onClick={(event) => this.props.onGistClick(event, gist)}>{gist.name}</li>)
   }
 
 
