@@ -442,9 +442,33 @@ class App extends Component {
 
   onGistClick (event, gist) {
     // let documentFileName = this.state.documentFileName
+    const documentContent = this.state.documentContent.slice()
+    const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
-    console.log(`${gist.name} was clicked!`)
-    console.log(`raw_url: ${gist.url}`)
+    let saved = this.state.saved
+
+    if (!documentContent.every(line => line === '') && !saved) {
+      
+      console.log('inside open')
+      console.log('need to save file!')
+      let fileOpenControl = new Promise((resolve, reject) => {
+        this.setState((prevState) => {
+          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          return {mainMenuData}
+        })
+        resolve('promise finished')
+      })
+
+      fileOpenControl.then((dialog) => {
+        console.log(dialog)
+        console.log('do stuff here if not saved and not empty')
+      // TODO: pop up box to warn user they have unsaved 
+      })
+      return
+    }
+    
+    //console.log(`${gist.name} was clicked!`)
+    //console.log(`raw_url: ${gist.url}`)
 
     const options = {
       method: 'GET'
@@ -487,7 +511,12 @@ class App extends Component {
       return newDocumentContent
     })
     .then ( end => {
+
       const nextState = {}
+
+      documentCursor.row = 0
+      documentCursor.column = 0
+      nextState.documentCursor = documentCursor
       nextState.documentFileName = gist.name
       mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
       mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
@@ -499,7 +528,9 @@ class App extends Component {
     
 
     )
-    .catch ()
+    .catch ( error => {
+      console.error(`gist fetch error: ${error}`)
+    })
 
 
 
