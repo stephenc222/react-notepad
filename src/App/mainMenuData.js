@@ -10,7 +10,8 @@ const mainMenu = {
           items: [
             {
               label: 'New',
-              onClick: 'fileNewMenu'
+              onClick: 'fileNewMenu',
+              showNewFileBox: false
             },
             {
               label: 'Open...',
@@ -25,11 +26,14 @@ const mainMenu = {
             },
             {
               label: 'Save',
-              onClick: 'fileSaveMenu'
+              onClick: 'fileSaveMenu',
+              showFirstSaveBox: false
             },
             {
               label: 'Save As...',
-              onClick: 'fileSaveAsMenu'
+              onClick: 'fileSaveAsMenu',
+              showSaveAsBox: false,
+              disableOtherMenuHandlers: false,
             },
             // {
             //   label: 'Page Setup...',
@@ -37,11 +41,15 @@ const mainMenu = {
             // },
             {
               label: 'Print...',
-              onClick: 'printMenu'
+              onClick: 'printMenu',
+              showPrintFileBox: false,
+              disableOtherMenuHandlers: false
             },
             {
               label: 'Exit',
-              onClick: 'exitNotepad'
+              onClick: 'exitNotepad',
+              showExitNotepadBox: false,
+              disableOtherMenuHandlers: false
             }
           ]
         }
@@ -79,7 +87,8 @@ const mainMenu = {
             },
             {
               label: 'Find...',
-              onClick: 'editFind'
+              onClick: 'editFind',
+              showFindBox: false
             },
             {
               label: 'Find Next',
@@ -87,11 +96,13 @@ const mainMenu = {
             },
             {
               label: 'Replace...',
-              onClick: 'editReplace'
+              onClick: 'editReplace',
+              showReplaceBox: false
             },
             {
               label: 'Go To...',
-              onClick: 'editGoTo'
+              onClick: 'editGoTo',
+              showGoToBox: false
             },
             {
               label: 'Select All',
@@ -117,7 +128,8 @@ const mainMenu = {
             },
             {
               label: 'Font...',
-              onClick: 'formatFont'
+              onClick: 'formatFont',
+              showFontBox: false
             }
           ]
         }
@@ -145,11 +157,13 @@ const mainMenu = {
           items: [
             {
               label: 'View Help',
-              onClick: 'helpViewHelp'
+              onClick: 'helpViewHelp',
+              showViewHelpBox: false
             },
             {
               label: 'About Notepad',
-              onClick: 'helpAboutNotepad'
+              onClick: 'helpAboutNotepad',
+              showAboutBox: false
             }
           ]
         }

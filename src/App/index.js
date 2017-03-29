@@ -61,7 +61,7 @@ class App extends Component {
   constructor (props) {
     super(props)
     // menu items here 
-    this.onClickCloseDialog = this.onClickCloseDialog.bind(this)
+    this.onClickCloseMenuItem = this.onClickCloseMenuItem.bind(this)
     this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
     this.onNotepadMouseEnter = this.onNotepadMouseEnter.bind(this)
@@ -144,15 +144,105 @@ class App extends Component {
     }
   }
 
-  onClickCloseDialog (event, dialog) {
+  onClickCloseMenuItem (event) {
     const mainMenuData = {...this.state.mainMenuData}
-    if (this.state.mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox) {
-      if (!(event.target).closest('.fileOpenBox')) {
-        mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
+
+    // no view menu dialog boxes
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
+    const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+
+    if (!(event.target).closest('.app__menu-bar-container')) {
+      this.setState((prevState) => {
+        mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        return {mainMenuData}
+      })
+    }
+
+    // file submenu dialog boxes
+    if (fileMenu[0].showNewFileBox) {
+      if (!(event.target).closest('.fileNewFileBox')) {
+        fileMenu[0].showNewFileBox = false
         this.setState({mainMenuData})
       }
     }
-      
+    if (fileMenu[1].showOpenFileBox) {
+      if (!(event.target).closest('.fileOpenBox')) {
+        fileMenu[1].showOpenFileBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (fileMenu[2].showFirstSaveBox) {
+      if (!(event.target).closest('.fileFirstSaveBox')) {
+        fileMenu[2].showFirstSaveBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (fileMenu[3].showSaveAsBox) {
+      if (!(event.target).closest('.fileSaveAsBox')) {
+        fileMenu[3].showSaveAsBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (fileMenu[4].showPrintFileBox) {
+      if (!(event.target).closest('.filePrintFileBox')) {
+        fileMenu[4].showPrintFileBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (fileMenu[5].showExitNotepadBox) {
+      if (!(event.target).closest('.fileExitNotepadBox')) {
+        fileMenu[5].showExitNotepadBox = false
+        this.setState({mainMenuData})
+      }
+    }
+
+    // edit submenu dialog boxes
+    if (editMenu[6].showFindBox) {
+      if (!(event.target).closest('.editFindBox')) {
+        editMenu[6].showFindBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (editMenu[8].showReplaceBox) {
+      if (!(event.target).closest('.editReplaceBox')) {
+        editMenu[8].showReplaceBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (editMenu[9].showGoToBox) {
+      if (!(event.target).closest('.editGoToBox')) {
+        editMenu[9].showGoToBox = false
+        this.setState({mainMenuData})
+      }
+    }
+
+    // format submenu dialog boxes    
+    if (formatMenu[1].showFontBox) {
+      if (!(event.target).closest('.formatFontBox')) {
+        formatMenu[1].showOpenFontBox = false
+        this.setState({mainMenuData})
+      }
+    }
+
+    // help submenu dialog boxes
+    if (helpMenu[0].showViewHelpBox) {
+      if (!(event.target).closest('.helpViewBox')) {
+        helpMenu[0].showViewHelpBox = false
+        this.setState({mainMenuData})
+      }
+    }
+    if (helpMenu[1].showAboutBox) {
+      if (!(event.target).closest('.helpAboutBox')) {
+        helpMenu[1].showAboutBox = false
+        this.setState({mainMenuData})
+      }
+    } 
   }
 
   onMainMenuClick (event, menuItem) {
@@ -1376,7 +1466,7 @@ class App extends Component {
         tabIndex={0}
         onKeyDown={this.onKeyDown}
         onKeyPress={this.onKeyPress}
-        onClick={this.onClickCloseDialog}
+        onClick={this.onClickCloseMenuItem}
         ref={(element) => {this.topLevel = element}}
         >
         <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
