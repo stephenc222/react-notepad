@@ -560,11 +560,11 @@ class App extends Component {
     console.log(`fileSaveAsMenu is clicked here`)
     console.log(menuItem)
   }
-  pageSetUpMenu (menuItem) {
-    // page set up for print, *may* take out
-    console.log(`pageSetUpMenu is clicked here`)
-    console.log(menuItem)
-  }
+  // pageSetUpMenu (menuItem) {
+  //   // page set up for print, *may* take out
+  //   console.log(`pageSetUpMenu is clicked here`)
+  //   console.log(menuItem)
+  // }
 
   // NOTE: possibly pull out printing all together...
   printMenu (menuItem) {
@@ -1401,7 +1401,6 @@ class App extends Component {
               onMouseEnter={this.onNotepadMouseEnter}
               onMouseLeave={this.onNotepadMouseLeave}
               onMouseUp={this.onNotepadMouseUp}
-              {...this.props}
             />
             <div className="dev__stack-view-container">
               <UndoStackView

@@ -20,14 +20,7 @@ const mainMenu = {
               gists: {
                 fileNames: [],
                 filePaths: [],
-                files: [],
-                //   [{
-                //     file: {
-                //       name: '',
-                //       path: ''
-                //     }
-                //   }]
-                // ]
+                files: []
               }
             },
             {
@@ -38,10 +31,10 @@ const mainMenu = {
               label: 'Save As...',
               onClick: 'fileSaveAsMenu'
             },
-            {
-              label: 'Page Setup...',
-              onClick: 'pageSetUpMenu'
-            },
+            // {
+            //   label: 'Page Setup...',
+            //   onClick: 'pageSetUpMenu'
+            // },
             {
               label: 'Print...',
               onClick: 'printMenu'
