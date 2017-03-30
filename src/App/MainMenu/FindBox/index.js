@@ -3,8 +3,9 @@ import React, { Component } from 'react'
 class FindBox extends Component {
   render () {
     return (
-      <div>
-        
+      <div className={(this.props.openItems.showFindBox) ? 'findBox': 'findBoxHidden'}>
+        <div>Find</div>
+        <div>{'placeholder text'}</div>
       </div>
     )
   }

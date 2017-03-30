@@ -28,7 +28,7 @@ class OpenFileBox extends Component {
 
   render () {
     return (
-      <div className={`fileOpenBox${this.props.openItems.showOpenFileBox ? '': 'Hidden'}`}>
+      <div className={(this.props.openItems.showOpenFileBox) ? 'openFileBox': 'openFileBoxHidden'}>
         <div>Open Public Gists</div>
         <div>{this.props.openItems.gists.files.map(this.renderGists)}</div>
       </div>

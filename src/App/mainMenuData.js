@@ -158,7 +158,7 @@ const mainMenu = {
             {
               label: 'View Help',
               onClick: 'helpViewHelp',
-              showViewHelpBox: false
+              showHelpBox: false
             },
             {
               label: 'About Notepad',

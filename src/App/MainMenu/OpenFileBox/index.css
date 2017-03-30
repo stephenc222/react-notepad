@@ -1,4 +1,4 @@
-.fileOpenBox {
+.openFileBox {
   visibility: visible;
   border: red solid 2px;
   border-radius: 20px;
@@ -16,7 +16,7 @@
   cursor: default;  
 }
 
-.fileOpenBoxHidden {
+.openFileBoxHidden {
   visibility: hidden;
   border-color: black;
   border: black solid 2px;  

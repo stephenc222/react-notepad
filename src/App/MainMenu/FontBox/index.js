@@ -3,8 +3,9 @@ import React, { Component } from 'react'
 class FontBox extends Component {
   render () {
     return (
-      <div>
-        
+      <div className={(this.props.openItems.showFontBox) ? 'fontBox': 'fontBoxHidden'}>
+        <div>Font Selection</div>
+        <div>{'placeholder text'}</div>
       </div>
     )
   }

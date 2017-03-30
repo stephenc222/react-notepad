@@ -166,37 +166,37 @@ class App extends Component {
 
     // file submenu dialog boxes
     if (fileMenu[0].showNewFileBox) {
-      if (!(event.target).closest('.fileNewFileBox')) {
+      if (!(event.target).closest('.newFileBox')) {
         fileMenu[0].showNewFileBox = false
         this.setState({mainMenuData})
       }
     }
     if (fileMenu[1].showOpenFileBox) {
-      if (!(event.target).closest('.fileOpenBox')) {
+      if (!(event.target).closest('.openFileBox')) {
         fileMenu[1].showOpenFileBox = false
         this.setState({mainMenuData})
       }
     }
     if (fileMenu[2].showFirstSaveBox) {
-      if (!(event.target).closest('.fileFirstSaveBox')) {
+      if (!(event.target).closest('.firstSaveBox')) {
         fileMenu[2].showFirstSaveBox = false
         this.setState({mainMenuData})
       }
     }
     if (fileMenu[3].showSaveAsBox) {
-      if (!(event.target).closest('.fileSaveAsBox')) {
+      if (!(event.target).closest('.saveAsBox')) {
         fileMenu[3].showSaveAsBox = false
         this.setState({mainMenuData})
       }
     }
     if (fileMenu[4].showPrintFileBox) {
-      if (!(event.target).closest('.filePrintFileBox')) {
+      if (!(event.target).closest('.printFileBox')) {
         fileMenu[4].showPrintFileBox = false
         this.setState({mainMenuData})
       }
     }
     if (fileMenu[5].showExitNotepadBox) {
-      if (!(event.target).closest('.fileExitNotepadBox')) {
+      if (!(event.target).closest('.exitNotepadBox')) {
         fileMenu[5].showExitNotepadBox = false
         this.setState({mainMenuData})
       }
@@ -204,19 +204,19 @@ class App extends Component {
 
     // edit submenu dialog boxes
     if (editMenu[6].showFindBox) {
-      if (!(event.target).closest('.editFindBox')) {
+      if (!(event.target).closest('.findBox')) {
         editMenu[6].showFindBox = false
         this.setState({mainMenuData})
       }
     }
     if (editMenu[8].showReplaceBox) {
-      if (!(event.target).closest('.editReplaceBox')) {
+      if (!(event.target).closest('.replaceBox')) {
         editMenu[8].showReplaceBox = false
         this.setState({mainMenuData})
       }
     }
     if (editMenu[9].showGoToBox) {
-      if (!(event.target).closest('.editGoToBox')) {
+      if (!(event.target).closest('.goToBox')) {
         editMenu[9].showGoToBox = false
         this.setState({mainMenuData})
       }
@@ -224,21 +224,21 @@ class App extends Component {
 
     // format submenu dialog boxes    
     if (formatMenu[1].showFontBox) {
-      if (!(event.target).closest('.formatFontBox')) {
+      if (!(event.target).closest('.fontBox')) {
         formatMenu[1].showOpenFontBox = false
         this.setState({mainMenuData})
       }
     }
 
     // help submenu dialog boxes
-    if (helpMenu[0].showViewHelpBox) {
-      if (!(event.target).closest('.helpViewBox')) {
+    if (helpMenu[0].showHelpBox) {
+      if (!(event.target).closest('.helpBox')) {
         helpMenu[0].showViewHelpBox = false
         this.setState({mainMenuData})
       }
     }
     if (helpMenu[1].showAboutBox) {
-      if (!(event.target).closest('.helpAboutBox')) {
+      if (!(event.target).closest('.aboutBox')) {
         helpMenu[1].showAboutBox = false
         this.setState({mainMenuData})
       }
