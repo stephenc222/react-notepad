@@ -102,22 +102,22 @@ class App extends Component {
     this.insertDelete = this.insertDelete.bind(this)
     this.insertCharacter = this.insertCharacter.bind(this)
 
-    // audio object
-    this.audioContext = new window.AudioContext()
-    this.audioGainNode = this.audioContext.createGain()
-    this.audioGainNode.connect(this.audioContext.destination)
-    this.audioGainNode.gain.value = 0.15
+    // // audio object
+    // this.audioContext = new window.AudioContext()
+    // this.audioGainNode = this.audioContext.createGain()
+    // this.audioGainNode.connect(this.audioContext.destination)
+    // this.audioGainNode.gain.value = 0.15
 
-    // beep sound effect when backspace is pressed and cursor at
-    // the beginning of a line
-    this.beep = () => {
-      const oscillator = this.audioContext.createOscillator()
-      oscillator.type = 'square'
-      oscillator.frequency.value = 120
-      oscillator.connect(this.audioGainNode)
-      oscillator.start()
-      oscillator.stop(this.audioContext.currentTime + 0.15)
-    }
+    // // beep sound effect when backspace is pressed and cursor at
+    // // the beginning of a line
+    // this.beep = () => {
+    //   const oscillator = this.audioContext.createOscillator()
+    //   oscillator.type = 'square'
+    //   oscillator.frequency.value = 120
+    //   oscillator.connect(this.audioGainNode)
+    //   oscillator.start()
+    //   oscillator.stop(this.audioContext.currentTime + 0.15)
+    // }
     
     this.state = {
       mainMenuData,
@@ -1018,9 +1018,10 @@ class App extends Component {
       const filesArray = []
 
       if (response.ok) {
+        //console.log(response.json())
         return response.json()
           .then(gistArray => {
-            // console.log(gistArray)
+            // console.log(JSON.stringify(gistArray))
             for (let gist in gistArray) {
               if (gist) {
               //let multiFilePaths = []       
@@ -1222,7 +1223,7 @@ class App extends Component {
       changeRow(`${pre}${post}`)
     } else {
       if (documentCursor.row === 0 && documentCursor.column === 0) {
-        this.beep()
+        // this.beep()
       } else if (documentContent.length > 1 && rowContent.length === 0) {
         documentContent.splice(documentCursor.row, 1)
         documentCursor.row -= 1

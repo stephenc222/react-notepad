@@ -5,6 +5,7 @@
 
 # testing
 /coverage
+src/App/__mocks__/fetch.js
 
 # production
 /build
