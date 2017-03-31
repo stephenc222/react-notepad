@@ -7,6 +7,6 @@ import UndoStackView from '.';
 
 describe('UndoStackView Component', () => {
   it('gets mounted to the dom', function () {
-    expect(mount(<UndoStackView undoStackObject={[]}/>).find('.undoStackView').length).to.equal(1)
+    expect(shallow(<UndoStackView undoStackObject={[]}/>).find('.undoStackView').length).to.equal(1)
   })
 })

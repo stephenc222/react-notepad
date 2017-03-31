@@ -6,7 +6,7 @@ import sinon from 'sinon'
 import StatusBar from '.';
 
 describe('StatusBar Component', () => {
-  it('gets mounted to the dom', function () {
-    expect(mount(<StatusBar />).find('.statusBar').length).to.equal(1)
+  it('renders with props passed to it', function () {
+    expect(shallow(<StatusBar />).find('.statusBar').length).to.equal(1)
   })
 })

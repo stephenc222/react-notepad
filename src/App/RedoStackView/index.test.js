@@ -7,6 +7,6 @@ import RedoStackView from '.';
 
 describe('RedoStackView Component', () => {
   it('gets mounted to the dom', function () {
-    expect(mount(<RedoStackView redoStackObject={[]}/>).find('.redoStackView').length).to.equal(1)
+    expect(shallow(<RedoStackView redoStackObject={[]}/>).find('.redoStackView').length).to.equal(1)
   })
 })
