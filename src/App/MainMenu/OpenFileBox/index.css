@@ -27,6 +27,10 @@
   position: absolute;
 }
 
+ul {
+    flex-wrap: wrap;
+}
+
 .gist {
   background-color: #b3ffe6;
 }
