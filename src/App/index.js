@@ -1009,7 +1009,6 @@ class App extends Component {
       }
     }
 
-
     const url = `https://api.github.com/users/${myInfo.username}/gists`
     fetch(url, options)
     .then(response => {
@@ -1018,7 +1017,6 @@ class App extends Component {
       const filesArray = []
 
       if (response.ok) {
-        //console.log(response.json())
         return response.json()
           .then(gistArray => {
             // console.log(JSON.stringify(gistArray))
