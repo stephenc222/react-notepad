@@ -12,25 +12,16 @@ class OpenFileBox extends Component {
   renderGists (gists, index) {
     return (<ul key={index}>{gists.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
   }
-  
-
-
-  // TODO: add reference to click handler prop here for each gist's raw data url
-  // for parsing to then set the state of the Notepad Textarea Component
-  // keep state in App, not here
 
   renderEachGistFile (gist, index) {
-    // TODO: add either a ref or data element via 'file.url'
     return (<li className='gist' key={index} onClick={(event) => this.props.onGistClick(event, gist)}>{gist.name}</li>)
   }
 
-
-
   render () {
     return (
-      <div className={(this.props.openItems.showOpenFileBox) ? 'openFileBox': 'openFileBoxHidden'}>
+      <div className={(this.props.openFileBox.showOpenFileBox) ? 'openFileBox': 'openFileBoxHidden'}>
         <div>Open Public Gists</div>
-        <div>{this.props.openItems.gists.files.map(this.renderGists)}</div>
+        <div>{this.props.openFileBox.gists.files.map(this.renderGists)}</div>
       </div>
     )
   }

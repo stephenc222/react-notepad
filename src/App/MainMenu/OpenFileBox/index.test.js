@@ -8,8 +8,7 @@ import mainMenuData from '../../mainMenuData'
 
 describe('OpenFileBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
-    files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
+    openFileBox: mainMenuData.topLevel.items[0].subLevel.items[1],
     onGistClick: sinon.spy()
   }
   it('renders with props passed to it', function () {

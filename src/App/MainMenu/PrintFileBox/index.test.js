@@ -8,10 +8,11 @@ import mainMenuData from '../../mainMenuData'
 
 describe('PrintFileBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
+    printFileBox: mainMenuData.topLevel.items[0].subLevel.items[4],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }
+
   it('renders with props passed to it', function () {
     expect(shallow(<PrintFileBox {...props}/>).find('.printFileBoxHidden').length).to.equal(1)
   })

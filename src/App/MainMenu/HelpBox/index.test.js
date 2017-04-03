@@ -8,7 +8,7 @@ import mainMenuData from '../../mainMenuData'
 
 describe('HelpBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
+    helpBox: mainMenuData.topLevel.items[0].subLevel.items[1],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

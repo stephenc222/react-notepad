@@ -75,6 +75,8 @@ class App extends Component {
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
     this.onGistClick = this.onGistClick.bind(this)
 
+    this.fileSaveAsMenu = this.fileSaveAsMenu.bind(this)
+
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
     this.editUndo = this.editUndo.bind(this)
     this.editRedo = this.editRedo.bind(this)
@@ -614,30 +616,10 @@ class App extends Component {
       nextState.mainMenuData = mainMenuData
       // fetch(gist.url)
       this.setState(nextState)
-    }
-    
-
-    )
+    })
     .catch ( error => {
       console.error(`gist fetch error: ${error}`)
     })
-
-
-
-
-    // const nextState = {}
-    // nextState.documentFileName = gist.name
-    // mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
-    // mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
-    // nextState.mainMenuData = mainMenuData
-    // // fetch(gist.url)
-    // this.setState(nextState)
-    // this.setState((prevState) => {
-    //   documentFileName = gist.name
-    //   mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
-    //   mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false
-    //   return {documentFileName,mainMenuData}
-    // })
   }
 
   fileSaveMenu (menuItem) {
@@ -647,8 +629,29 @@ class App extends Component {
   }
   fileSaveAsMenu (menuItem) {
     // ask you for different name and where to save it
+    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    // let fileOpenControl = new Promise((resolve, reject) => {
+    //   this.setState((prevState) => {
+    //     mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //     return {mainMenuData}
+    //   })
+    //   resolve('promise finished')
+    // })
+
+    // fileOpenControl.then((dialog) => {
+    //   console.log(dialog)
+    //   console.log('do stuff here if not saved and not empty')
+    // })
+
     console.log(`fileSaveAsMenu is clicked here`)
-    console.log(menuItem)
+    console.log(fileMenu)
+    this.setState((prevState) => {
+      fileMenu[3].showSaveAsBox = true
+      fileMenu[3].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
   }
   // pageSetUpMenu (menuItem) {
   //   // page set up for print, *may* take out
@@ -1475,9 +1478,21 @@ class App extends Component {
               menu={this.state.mainMenuData} 
               onMainMenuClick={this.onMainMenuClick}
               onMouseUp={this.onNotepadMouseUp}  
-              onGistClick={this.onGistClick}            
-              openItems={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
-              files={this.state.mainMenuData.topLevel.items[0].subLevel.items[1].gists.files}
+              onGistClick={this.onGistClick}     
+              // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
+              // into something more readable
+              newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
+              openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+              firstSaveBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[2]}
+              saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
+              printFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[4]}
+              exitNotepadBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[5]}
+              findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
+              replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
+              goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
+              fontBox={this.state.mainMenuData.topLevel.items[2].subLevel.items[1]}
+              helpBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[0]}
+              aboutBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[1]}
             />
           </div>
           <div className="app__document-container">

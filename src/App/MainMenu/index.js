@@ -1,8 +1,19 @@
 import React, { Component } from 'react'
+import NewFileBox from './NewFileBox'
 import OpenFileBox from './OpenFileBox'
+import FirstSaveBox from './FirstSaveBox'
+import SaveAsBox from './SaveAsBox'
+import PrintFileBox from './PrintFileBox'
+import ExitNotepadBox from './ExitNotepadBox'
+import FindBox from './FindBox'
+import ReplaceBox from './ReplaceBox'
+import GoToBox from './GoToBox'
+import FontBox from './FontBox'
+import HelpBox from './HelpBox'
+import AboutBox from './AboutBox'
 import './index.css'
 
-class MainMenu extends Component {
+export default class MainMenu extends Component {
   constructor(props) {
     super(props)
     this.topLevelMenu = this.topLevelMenu.bind(this)
@@ -36,14 +47,46 @@ class MainMenu extends Component {
           onMouseUp={() => this.props.onMouseUp()}>
             {this.props.menu.topLevel.items.map(this.topLevelMenu)}
         </ul>
+        <NewFileBox 
+          newFileBox={this.props.newFileBox}
+        />
         <OpenFileBox 
           onGistClick={this.props.onGistClick}
-          openItems={this.props.openItems}
-          files={this.props.files}
+          openFileBox={this.props.openFileBox}
+        />        
+        <FirstSaveBox 
+          firstSaveBox={this.props.firstSaveBox}
+        />
+        <SaveAsBox 
+          saveAsBox={this.props.saveAsBox}
+        />
+        <PrintFileBox 
+          printFileBox={this.props.printFileBox}
+        />
+        <ExitNotepadBox 
+          exitNotepadBox={this.props.exitNotepadBox}
+        />
+        <FindBox 
+          findBox={this.props.findBox}
+        />
+        <ReplaceBox 
+          replaceBox={this.props.replaceBox}
+        />
+        <GoToBox 
+          goToBox={this.props.goToBox}
+        />
+        <FontBox 
+          fontBox={this.props.fontBox}
+        />
+        <HelpBox 
+          helpBox={this.props.helpBox}
+        />
+        <AboutBox 
+          aboutBox={this.props.aboutBox}
         />
       </div>
     )
   }
 }
 
-export default MainMenu
+//export default MainMenu

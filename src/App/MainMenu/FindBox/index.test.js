@@ -8,7 +8,7 @@ import mainMenuData from '../../mainMenuData'
 
 describe('FindBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
+    findBox: mainMenuData.topLevel.items[1].subLevel.items[6],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

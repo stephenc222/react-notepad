@@ -8,7 +8,7 @@ import mainMenuData from '../../mainMenuData'
 
 describe('FirstSaveBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
+    firstSaveBox: mainMenuData.topLevel.items[0].subLevel.items[1],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

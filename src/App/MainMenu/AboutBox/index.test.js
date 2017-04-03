@@ -8,7 +8,7 @@ import mainMenuData from '../../mainMenuData'
 
 describe('AboutBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
+    aboutBox: mainMenuData.topLevel.items[0].subLevel.items[1],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

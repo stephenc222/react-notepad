@@ -8,7 +8,7 @@ import mainMenuData from '../../mainMenuData'
 
 describe('GoToBox Component', () => {
   const props = {
-    openItems: mainMenuData.topLevel.items[0].subLevel.items[1],
+    goToBox: mainMenuData.topLevel.items[1].subLevel.items[9],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }
