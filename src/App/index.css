@@ -48,3 +48,33 @@
   flex-grow: 1;
   flex-direction: row;
 }
+
+@media print {
+  .app__header {
+    visibility: hidden;
+    display: none;
+    border: none;
+  }
+
+  .app__main-menu-bar {
+    visibility: hidden;
+    display: none;
+  }
+
+  .app__main-container {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .app__document-container {
+    width: 100%;
+    height: 100%;
+    border: none;  
+  }
+
+  .dev__stack-view-container {
+    visibility: hidden;
+    display: none;
+  }
+}

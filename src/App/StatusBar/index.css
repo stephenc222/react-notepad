@@ -1,3 +1,9 @@
 .statusBar {
   border: solid 1px darkmagenta;
 }
+
+@media print {
+  .statusBar {
+    display: none;
+  }
+}

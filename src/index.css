@@ -21,3 +21,11 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+@media print {
+  .top-level-window {
+    border: transparent;
+    width: 100%;
+    height: 100%;
+  }
+}
