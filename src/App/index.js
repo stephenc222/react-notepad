@@ -75,17 +75,26 @@ class App extends Component {
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
     this.onGistClick = this.onGistClick.bind(this)
 
+    this.fileSaveMenu = this.fileSaveMenu.bind(this)
     this.fileSaveAsMenu = this.fileSaveAsMenu.bind(this)
+    this.printMenu = this.printMenu.bind(this)
+    this.exitNotepad = this.exitNotepad.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
     this.editUndo = this.editUndo.bind(this)
     this.editRedo = this.editRedo.bind(this)
+    this.editFind = this.editFind.bind(this)
+    this.editReplace = this.editReplace.bind(this)
+    this.editGoTo = this.editGoTo.bind(this)
 
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
+    this.formatFont = this.formatFont.bind(this)
 
     this.toggleViewMenu = this.toggleViewMenu.bind(this)
 
     this.toggleHelpMenu = this.toggleHelpMenu.bind(this)
+    this.viewHelpBox = this.viewHelpBox.bind(this)
+    this.helpAboutNotepad = this.helpAboutNotepad.bind(this)
 
     // key press events here
     this.onKeyDown = this.onKeyDown.bind(this)
@@ -227,7 +236,7 @@ class App extends Component {
     // format submenu dialog boxes    
     if (formatMenu[1].showFontBox) {
       if (!(event.target).closest('.fontBox')) {
-        formatMenu[1].showOpenFontBox = false
+        formatMenu[1].showFontBox = false
         this.setState({mainMenuData})
       }
     }
@@ -235,7 +244,7 @@ class App extends Component {
     // help submenu dialog boxes
     if (helpMenu[0].showHelpBox) {
       if (!(event.target).closest('.helpBox')) {
-        helpMenu[0].showViewHelpBox = false
+        helpMenu[0].showHelpBox = false
         this.setState({mainMenuData})
       }
     }
@@ -624,8 +633,16 @@ class App extends Component {
 
   fileSaveMenu (menuItem) {
     // save to your gists
+    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     console.log(`fileSaveMenu is clicked here`)
     console.log(menuItem)
+    this.setState((prevState) => {
+      fileMenu[2].showFirstSaveBox = true
+      fileMenu[2].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
   }
   fileSaveAsMenu (menuItem) {
     // ask you for different name and where to save it
@@ -661,14 +678,32 @@ class App extends Component {
 
   // NOTE: possibly pull out printing all together...
   printMenu (menuItem) {
+    // TODO: maybe reimplement this to use chrome's native print
+    // capability?
     console.log(`printMenu is clicked here`)
     console.log(menuItem)
+    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    this.setState((prevState) => {
+      fileMenu[4].showPrintFileBox = true
+      fileMenu[4].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
   }
   exitNotepad (menuItem) {
     // close the tab -> DO NOT close window
     // or navigate to user's homepage
     console.log(`exitNotepad is clicked here`)
     console.log(menuItem)
+    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    this.setState((prevState) => {
+      fileMenu[5].showExitNotepadBox = true
+      fileMenu[5].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
   }
 
   editUndo (menuItem){
@@ -936,7 +971,15 @@ class App extends Component {
   editFind (menuItem) {
     // open up Find dialog, then finds character sequence 
     console.log('editFind clicked here')  
-    console.log(menuItem)          
+    console.log(menuItem) 
+    const mainMenuData = {...this.state.mainMenuData}
+    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    this.setState((prevState) => {
+      editMenu[6].showFindBox = true
+      editMenu[6].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })         
   }
 
   editFindNext (menuItem) {
@@ -949,13 +992,29 @@ class App extends Component {
     // open up find and replace dialog
     // TODO: eitReplace needs to be added to the undo and redo stacks    
     console.log('editReplace clicked here')  
-    console.log(menuItem)          
+    console.log(menuItem)
+    const mainMenuData = {...this.state.mainMenuData}
+    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    this.setState((prevState) => {
+      editMenu[8].showReplaceBox = true
+      editMenu[8].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })          
   }
 
   editGoTo (menuItem) {
     // goes to specific line number if word wrap NOT selected
     console.log('editGoTo clicked here')     
-    console.log(menuItem)       
+    console.log(menuItem)  
+    const mainMenuData = {...this.state.mainMenuData}
+    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    this.setState((prevState) => {
+      editMenu[9].showGoToBox = true
+      editMenu[9].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })        
   }
 
   editSelectAll (menuItem) {
@@ -980,7 +1039,15 @@ class App extends Component {
     // change font of entire text including font type, font style type, and font size 
     // also includes "Script Type:", which includes "Western", "Greek", "Turkish", etc.,
     console.log('formatFont clicked here') 
-    console.log(menuItem)       
+    console.log(menuItem)
+    const mainMenuData = {...this.state.mainMenuData}
+    const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
+    this.setState((prevState) => {
+      formatMenu[1].showFontBox = true
+      formatMenu[1].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })          
   }
 
   viewStatusBar (menuItem) {
@@ -991,16 +1058,32 @@ class App extends Component {
     console.log(menuItem)          
   }
 
-  helpViewHelp (menuItem) {
+  viewHelpBox (menuItem) {
     // opens up new searchable help tab 
-    console.log('helpViewHelp clicked here')   
-    console.log(menuItem)     
+    console.log('viewHelpBox clicked here')   
+    console.log(menuItem)   
+    const mainMenuData = {...this.state.mainMenuData}
+    const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    this.setState((prevState) => {
+      helpMenu[0].showHelpBox = true
+      helpMenu[0].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })     
   }
 
   helpAboutNotepad (menuItem) {
     // basic about this application stuff
     console.log('helpAboutNotepad clicked here')
     console.log(menuItem)    
+    const mainMenuData = {...this.state.mainMenuData}
+    const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    this.setState((prevState) => {
+      helpMenu[1].showAboutBox = true
+      helpMenu[1].disableOtherMenuHandlers = true
+      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
   }
 
   componentDidMount () {

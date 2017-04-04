@@ -157,7 +157,7 @@ const mainMenu = {
           items: [
             {
               label: 'View Help',
-              onClick: 'helpViewHelp',
+              onClick: 'viewHelpBox',
               showHelpBox: false
             },
             {
