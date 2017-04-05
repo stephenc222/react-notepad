@@ -33,20 +33,49 @@
 .app__main-container {
   flex-grow: 1;
   display: flex;
+  justify-content: flex-start;
   flex-direction: column;
 }
 
 .app__document-container {
   display: flex;
-  flex-grow: 1;
+  flex-shrink: 1;
   justify-content: flex-start;
   flex-direction: column;
+  overflow: scroll;
 }
+
+.app__document-container::-webkit-scrollbar {
+    width: 12px;
+    background-color: ghostwhite;
+}
+
+.app__document-container::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+
+.app__document-container::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    background-color: lavender;
+}
+
+.app__document-container::-webkit-scrollbar-corner {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    background-color: lavender;
+    
+}
+
 
 .dev__stack-view-container {
   display: flex;
-  flex-grow: 1;
   flex-direction: row;
+  flex-grow: 1;
+  align-content: flex-end;
 }
 
 
@@ -77,5 +106,7 @@
   .dev__stack-view-container {
     visibility: hidden;
     display: none;
+    display: flex;
+    flex-grow: 1;
   }
 }

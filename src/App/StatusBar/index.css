@@ -1,10 +1,16 @@
 .statusBar {
   border: solid 1px darkmagenta;
   display: flex;
+  justify-content: flex-end;
 }
 
 .statusBarHidden {
   display: none;
+}
+
+.app__status-bar-cursor-data {
+  display: flex;
+  flex-direction: row;
 }
 
 @media print {

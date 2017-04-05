@@ -1587,7 +1587,11 @@ class App extends Component {
               onMouseLeave={this.onNotepadMouseLeave}
               onMouseUp={this.onNotepadMouseUp}
             />
-            <div className="dev__stack-view-container">
+          </div>
+          <div className="app__status-container">
+            <StatusBar />
+          </div>
+          <div className="dev__stack-view-container">
               <UndoStackView
                 undoStackObject={this.state.undoStack}
               />
@@ -1595,10 +1599,6 @@ class App extends Component {
                 redoStackObject={this.state.redoStack}
               />
             </div>
-          </div>
-          <div className="app__status-container">
-            <StatusBar />
-          </div>
         </div>
       </div>
     )
