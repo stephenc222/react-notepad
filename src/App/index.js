@@ -498,7 +498,8 @@ class App extends Component {
       console.log('need to save file!')
       let fileOpenControl = new Promise((resolve, reject) => {
         this.setState((prevState) => {
-          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          mainMenuData.topLevel.items[0].subLevel.visible = false
+          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
           return {mainMenuData}
         })
         resolve('promise finished')
@@ -1560,6 +1561,7 @@ class App extends Component {
               onGistClick={this.onGistClick}     
               // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
               // into something more readable
+              showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
               newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
               openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
               firstSaveBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[2]}

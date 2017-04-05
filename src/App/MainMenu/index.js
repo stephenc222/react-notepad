@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import NotSavedWarningBox from './NotSavedWarningBox'
 import NewFileBox from './NewFileBox'
 import OpenFileBox from './OpenFileBox'
 import FirstSaveBox from './FirstSaveBox'
@@ -45,6 +46,9 @@ export default class MainMenu extends Component {
           onMouseUp={() => this.props.onMouseUp()}>
             {this.props.menu.topLevel.items.map(this.topLevelMenu)}
         </ul>
+        <NotSavedWarningBox
+          showNotSavedWarningBox={this.props.showNotSavedWarningBox}
+        />
         <NewFileBox 
           newFileBox={this.props.newFileBox}
         />
