@@ -48,6 +48,9 @@ export default class MainMenu extends Component {
         </ul>
         <NotSavedWarningBox
           showNotSavedWarningBox={this.props.showNotSavedWarningBox}
+          onClickSaveYes={this.props.onClickSaveYes}
+          onClickSaveNo={this.props.onClickSaveNo}
+          onClickSaveCancel={this.props.onClickSaveCancel}
         />
         <NewFileBox 
           newFileBox={this.props.newFileBox}

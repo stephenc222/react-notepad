@@ -70,6 +70,10 @@ class App extends Component {
     this.isSelected = this.isSelected.bind(this)
 
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
+    this.onClickSaveYes = this.onClickSaveYes.bind(this)
+    this.onClickSaveNo = this.onClickSaveNo.bind(this)
+    this.onClickSaveCancel = this.onClickSaveCancel.bind(this)
+
     this.fileNewMenu = this.fileNewMenu.bind(this)
 
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
@@ -151,7 +155,8 @@ class App extends Component {
       },
       undoStack: [],
       redoStack: [],
-      saved: false
+      saved: false,
+      isNewFile: true,
     }
   }
 
@@ -481,6 +486,77 @@ class App extends Component {
     console.log('hey, this runs inside toggleHelpMenu!')
   }
 
+  onClickSaveYes () {
+    console.log('onClickSaveYes was clicked!')
+    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      if (this.state.isNewFile) {
+        // this.fileSaveAsMenu('yep get rid of this param')
+        fileMenu[3].showSaveAsBox = true
+        fileMenu[3].disableOtherMenuHandlers = true
+      }
+      return {mainMenuData}
+    })
+  }
+  
+  onClickSaveNo () {
+    console.log('onClickSaveNo was clicked!')
+    const mainMenuData = {...this.state.mainMenuData}
+    let saved = true
+    let fileOpenControl = new Promise((resolve, reject) => {
+      this.setState((prevState) => {
+        mainMenuData.topLevel.items[0].subLevel.visible = false
+        mainMenuData.topLevel.items[0].showNotSavedWarningBox = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        return {mainMenuData, saved}
+      })
+      resolve(mainMenuData.topLevel.warningFromMenuItem)
+    })
+
+    fileOpenControl.then((priorMenuItem) => {
+      console.log(`${priorMenuItem}: do stuff here if not saved and not empty`)
+    // TODO: pop up box to warn user they have unsaved 
+      // const callback = this[priorMenuItem]
+      // callback()
+      console.log(this.state.saved)
+      // this.setState((prevState) => {
+        mainMenuData.topLevel.items[0].subLevel.visible = false
+
+        switch (priorMenuItem) {
+          case 'fileOpenMenu':
+            this.setState((prevState) => {
+              mainMenuData.topLevel.items[0].subLevel.visible = false
+              mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+              saved = true
+              return {mainMenuData, saved}
+            })
+            break
+          case 'fileNewMenu':
+            this.fileNewMenu()
+            break
+          case 'exitNotepad':
+            this.setState((prevState) => {
+              mainMenuData.topLevel.items[0].subLevel.visible = false
+              mainMenuData.topLevel.items[0].subLevel.items[5].showExitNotepadBox = true
+              return {mainMenuData, saved}
+            })
+            break
+          default:
+            throw new Error('unknown menu item clicked')
+        }
+    })
+  } 
+  
+  onClickSaveCancel () {
+    console.log('onClickSaveCancel was clicked!')
+    const mainMenuData = {...this.state.mainMenuData}
+    this.setState((prevState) => {
+      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData}
+    })
+  }
+
   fileNewMenu (menuItem) {
     // pop up dialog    
     // set document content to empty
@@ -490,14 +566,14 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
-    let saved = this.state.saved
+    const saved = this.state.saved
     
-
     if (!documentContent.every(line => line === '') && !saved) {
 
       console.log('need to save file!')
       let fileOpenControl = new Promise((resolve, reject) => {
         this.setState((prevState) => {
+          mainMenuData.topLevel.warningFromMenuItem = 'fileNewMenu'
           mainMenuData.topLevel.items[0].subLevel.visible = false
           mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
           return {mainMenuData}
@@ -527,19 +603,58 @@ class App extends Component {
     nextState.redoStack = []
 
     this.setState(nextState)
+    return
   }
 
-  fileOpenMenu (menuItem) {
+  fileOpenMenu (menuItem = null) {
     // display all of your gists
     // invoke local file system
     // hint: fileInput element type === 'file'
+    const documentContent = this.state.documentContent.slice()
+    //const documentCursor = {...this.state.documentCursor}
+    const mainMenuData = {...this.state.mainMenuData}
+    const saved = this.state.saved
+
     console.log(`fileOpenMenu is clicked here`)
-    this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-      mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
-    })
+    if (documentContent.every(line => line === '') || saved) {
+
+      console.log('need to save file!')
+      // let fileOpenControl = new Promise((resolve, reject) => {
+      // if (!saved) {
+      //   this.setState((prevState) => {
+      //     mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
+      //     mainMenuData.topLevel.items[0].subLevel.visible = false
+      //     mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      //     return {mainMenuData}
+      //   })
+      // } else {
+        this.setState((prevState) => {
+          mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+          mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
+          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          return {mainMenuData}
+        })
+      
+        
+        // resolve('promise finished')
+      // })
+
+      // fileOpenControl.then((dialog) => {
+      //   console.log(dialog)
+      //   console.log('do stuff here if not saved and not empty')
+      // // TODO: pop up box to warn user they have unsaved 
+      // })
+      // return
+    } else if (!saved) {
+        this.setState((prevState) => {
+          mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
+          mainMenuData.topLevel.items[0].subLevel.visible = false
+          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          return {mainMenuData}
+        })
+      
+    }
+    
   }
 
   onGistClick (event, gist) {
@@ -547,7 +662,7 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
-    let saved = this.state.saved
+    const saved = this.state.saved
 
     if (!documentContent.every(line => line === '') && !saved) {
       
@@ -612,7 +727,7 @@ class App extends Component {
       // console.log('----------------------------------------')
       return newDocumentContent
     })
-    .then ( end => {
+    .then ( newDocumentContent => {
 
       const nextState = {}
 
@@ -622,7 +737,7 @@ class App extends Component {
       nextState.documentFileName = gist.name
       mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
       mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
-      nextState.documentContent = end //newDocumentContent
+      nextState.documentContent = newDocumentContent
       nextState.mainMenuData = mainMenuData
       // fetch(gist.url)
       this.setState(nextState)
@@ -693,8 +808,31 @@ class App extends Component {
     // or navigate to user's homepage
     console.log(`exitNotepad is clicked here`)
     console.log(menuItem)
+    const documentContent = this.state.documentContent.slice()
     const mainMenuData = {...this.state.mainMenuData}
+    const saved = this.state.saved
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+
+    if (!documentContent.every(line => line === '') && !saved) {
+
+      console.log('need to save file!')
+      let fileOpenControl = new Promise((resolve, reject) => {
+        this.setState((prevState) => {
+          mainMenuData.topLevel.warningFromMenuItem = 'exitNotepad'
+          mainMenuData.topLevel.items[0].subLevel.visible = false
+          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          return {mainMenuData}
+        })
+        resolve('promise finished')
+      })
+
+      fileOpenControl.then((dialog) => {
+        console.log(dialog)
+        console.log('do stuff here if not saved and not empty')
+      // TODO: pop up box to warn user they have unsaved 
+      })
+      return
+    }
     this.setState((prevState) => {
       fileMenu[5].showExitNotepadBox = true
       fileMenu[5].disableOtherMenuHandlers = true
@@ -1485,6 +1623,7 @@ class App extends Component {
       // console.log ('updateDocument is true here')
       nextState.documentContent = documentContent
       nextState.undoStack = undoStack
+      nextState.saved = false      
     }
 
     if (updateCursor) {
@@ -1516,6 +1655,7 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const undoStack = this.state.undoStack.slice()
+    const saved = false
 
     if (charCode === KEY.ENTER) {
       console.warn('KEY: ENTER is pressed here')
@@ -1537,7 +1677,7 @@ class App extends Component {
     }
 
     if (updateDocument) {
-      this.setState({documentContent,documentCursor, undoStack})
+      this.setState({documentContent,documentCursor, undoStack, saved})
     }
   }
 
@@ -1562,6 +1702,10 @@ class App extends Component {
               // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
               // into something more readable
               showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
+              onClickSaveYes={this.onClickSaveYes}
+              onClickSaveNo={this.onClickSaveNo}
+              onClickSaveCancel={this.onClickSaveCancel}
+
               newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
               openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
               firstSaveBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[2]}

@@ -1,11 +1,12 @@
 const mainMenu = {
   topLevel: {
+    warningFromMenuItem: '',    
     items: [
       {
         label: 'File',
         onClick: 'toggleFileMenu',
         menu: 'fileMenu',
-        showNotSavedWarningBox: false,        
+        showNotSavedWarningBox: false,
         subLevel: {
           visible: false,
           items: [

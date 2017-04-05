@@ -9,6 +9,9 @@ import mainMenuData from '../../mainMenuData'
 describe('NotSavedWarningBox Component', () => {
   const props = {
     showNotSavedWarningBox: mainMenuData.topLevel.items[0].showNotSavedWarningBox,
+    onClickSaveYes: sinon.spy(),
+    onClickSaveNo: sinon.spy(),
+    onClickSaveCancel: sinon.spy(),
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }
