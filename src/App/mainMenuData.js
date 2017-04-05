@@ -5,13 +5,14 @@ const mainMenu = {
         label: 'File',
         onClick: 'toggleFileMenu',
         menu: 'fileMenu',
+        showNotSavedWarningBox: false,        
         subLevel: {
           visible: false,
           items: [
             {
               label: 'New',
               onClick: 'fileNewMenu',
-              showNewFileBox: false
+              showNewFileBox: false,
             },
             {
               label: 'Open...',
@@ -42,8 +43,8 @@ const mainMenu = {
             {
               label: 'Print...',
               onClick: 'printMenu',
-              showPrintFileBox: false,
-              disableOtherMenuHandlers: false
+              // showPrintFileBox: false,
+              // disableOtherMenuHandlers: false
             },
             {
               label: 'Exit',

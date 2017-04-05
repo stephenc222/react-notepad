@@ -3,7 +3,6 @@ import NewFileBox from './NewFileBox'
 import OpenFileBox from './OpenFileBox'
 import FirstSaveBox from './FirstSaveBox'
 import SaveAsBox from './SaveAsBox'
-import PrintFileBox from './PrintFileBox'
 import ExitNotepadBox from './ExitNotepadBox'
 import FindBox from './FindBox'
 import ReplaceBox from './ReplaceBox'
@@ -29,7 +28,6 @@ export default class MainMenu extends Component {
   }
 
   topLevelMenu (menu, index) {
-    //const subLevel = menu.subLevel
     return (
       <li className={'menuItem'} key={menu.label} onClick={(event) => this.props.onMainMenuClick(event, menu)}> {menu.label}
           <ul className={`subMenu ${menu.subLevel.visible ? menu.menu : menu.menu + 'Hidden'}`}>
@@ -60,9 +58,6 @@ export default class MainMenu extends Component {
         <SaveAsBox 
           saveAsBox={this.props.saveAsBox}
         />
-        <PrintFileBox 
-          printFileBox={this.props.printFileBox}
-        />
         <ExitNotepadBox 
           exitNotepadBox={this.props.exitNotepadBox}
         />
@@ -88,5 +83,3 @@ export default class MainMenu extends Component {
     )
   }
 }
-
-//export default MainMenu

@@ -200,12 +200,12 @@ class App extends Component {
         this.setState({mainMenuData})
       }
     }
-    if (fileMenu[4].showPrintFileBox) {
-      if (!(event.target).closest('.printFileBox')) {
-        fileMenu[4].showPrintFileBox = false
-        this.setState({mainMenuData})
-      }
-    }
+    // if (fileMenu[4].showPrintFileBox) {
+    //   if (!(event.target).closest('.printFileBox')) {
+    //     fileMenu[4].showPrintFileBox = false
+    //     this.setState({mainMenuData})
+    //   }
+    // }
     if (fileMenu[5].showExitNotepadBox) {
       if (!(event.target).closest('.exitNotepadBox')) {
         fileMenu[5].showExitNotepadBox = false
@@ -683,10 +683,8 @@ class App extends Component {
     console.log(`printMenu is clicked here`)
     console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    window.print()
     this.setState((prevState) => {
-      fileMenu[4].showPrintFileBox = true
-      fileMenu[4].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
     })
@@ -1568,7 +1566,7 @@ class App extends Component {
               openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
               firstSaveBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[2]}
               saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
-              printFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[4]}
+              // printFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[4]}
               exitNotepadBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[5]}
               findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
               replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
