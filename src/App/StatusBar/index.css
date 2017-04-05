@@ -1,5 +1,10 @@
 .statusBar {
   border: solid 1px darkmagenta;
+  display: flex;
+}
+
+.statusBarHidden {
+  display: none;
 }
 
 @media print {

@@ -678,8 +678,6 @@ class App extends Component {
 
   // NOTE: possibly pull out printing all together...
   printMenu (menuItem) {
-    // TODO: maybe reimplement this to use chrome's native print
-    // capability?
     console.log(`printMenu is clicked here`)
     console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
