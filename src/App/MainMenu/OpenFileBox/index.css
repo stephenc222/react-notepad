@@ -14,7 +14,63 @@
   transform: translate(-50%, -50%);
   z-index: 1;
   cursor: default;
-  overflow: auto;  
+  /*overflow: auto;  */
+}
+
+.openFile-title {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 5px;
+  align-items: center;
+}
+
+.openFile-title--item {
+  padding: 5px;
+}
+
+.openFile-title--item-X {
+  padding: 5px;
+  color: black;
+}
+
+.openFile-title--item-X:hover {
+  background-color: red;
+  color: white;
+  
+}
+
+.file-container {
+  display:flex;
+  flex-direction: column;
+  overflow:auto;
+  
+}
+
+.file-container::-webkit-scrollbar {
+    width: 12px;
+    background-color: ghostwhite;
+}
+
+.file-container::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+
+.file-container::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    background-color: lavender;
+}
+
+.file-container::-webkit-scrollbar-corner {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    background-color: lavender;
+    
 }
 
 .openFileBoxHidden {

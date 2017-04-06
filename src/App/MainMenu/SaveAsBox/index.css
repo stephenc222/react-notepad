@@ -33,3 +33,34 @@
   flex-wrap: nowrap;
   justify-content: space-between;
 }
+
+.saveAs-title {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 5px;
+  align-items: center;
+}
+
+.saveAs-title--item {
+  padding: 5px;
+}
+
+.saveAs-title--item-X {
+  padding: 5px;
+  color: black;
+}
+
+.saveAs-title--item-X:hover {
+  background-color: red;
+  color: white;
+  
+}
+
+.file-container {
+  display:flex;
+  flex-direction: column;
+  overflow:auto;
+  
+}

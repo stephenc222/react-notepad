@@ -57,6 +57,10 @@ export default class MainMenu extends Component {
         />
         <OpenFileBox 
           onGistClick={this.props.onGistClick}
+          openFileHandleChange={this.props.openFileHandleChange}
+          openFileHandleSubmit={this.props.openFileHandleSubmit}
+          openFileHandleCancel={this.props.openFileHandleCancel}
+          openFileFormValue={this.props.openFileFormValue}
           openFileBox={this.props.openFileBox}
         />        
         <FirstSaveBox 
@@ -64,6 +68,9 @@ export default class MainMenu extends Component {
         />
         <SaveAsBox 
           saveAsBox={this.props.saveAsBox}
+          saveAsHandleChange={this.props.saveAsHandleChange}
+          saveAsHandleSubmit={this.props.saveAsHandleSubmit}
+          saveAsHandleCancel={this.props.saveAsHandleCancel}
         />
         <ExitNotepadBox 
           exitNotepadBox={this.props.exitNotepadBox}

@@ -2,18 +2,23 @@
   visibility: visible;
   border: red solid 2px;
   border-radius: 20px;
-  background-color: #e6fff7;
+  background-color: #cdebf9;
   padding: 20px;
   display: flex;
   flex-direction: column;
   position: absolute;
-  height: 500px;
-  width: 600px;
+  height: 300px;
+  width: 400px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
   cursor: default;  
+}
+
+.notSaved__buttons {
+  display: flex;
+  flex-direction: row;
 }
 
 .notSavedWarningBoxHidden {

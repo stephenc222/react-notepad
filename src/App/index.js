@@ -78,9 +78,17 @@ class App extends Component {
 
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
     this.onGistClick = this.onGistClick.bind(this)
+    this.openFileHandleChange = this.openFileHandleChange.bind(this)
+    this.openFileHandleSubmit = this.openFileHandleSubmit.bind(this)
+    this.openFileHandleCancel = this.openFileHandleCancel.bind(this)
 
     this.fileSaveMenu = this.fileSaveMenu.bind(this)
+
     this.fileSaveAsMenu = this.fileSaveAsMenu.bind(this)
+    this.saveAsHandleChange = this.saveAsHandleChange.bind(this)
+    this.saveAsHandleSubmit = this.saveAsHandleSubmit.bind(this)
+    this.saveAsHandleCancel = this.saveAsHandleCancel.bind(this)
+
     this.printMenu = this.printMenu.bind(this)
     this.exitNotepad = this.exitNotepad.bind(this)
 
@@ -157,7 +165,9 @@ class App extends Component {
       redoStack: [],
       saved: false,
       isNewFile: true,
-      dialogBoxisVisible: false
+      dialogBoxisVisible: false,
+      openFileFormValue: '',
+      saveAsFormValue: ''
     }
   }
 
@@ -172,11 +182,11 @@ class App extends Component {
 
     if (!(event.target).closest('.app__menu-bar-container')) {
       this.setState((prevState) => {
-        mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-        mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-        mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-        mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-        mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        mainMenuData.topLevel.items[4].subLevel.visible = false
+        mainMenuData.topLevel.items[3].subLevel.visible = false
+        mainMenuData.topLevel.items[2].subLevel.visible = false
+        mainMenuData.topLevel.items[1].subLevel.visible = false
+        mainMenuData.topLevel.items[0].subLevel.visible = false
         return {mainMenuData}
       })
     }
@@ -188,12 +198,12 @@ class App extends Component {
         this.setState({mainMenuData})
       }
     }
-    // TODO: probably need to remove this and handle return to textarea
-    // via SaveAsBox click handlers
+
     if (fileMenu[1].showOpenFileBox) {
       if (!(event.target).closest('.openFileBox')) {
-        fileMenu[1].showOpenFileBox = false
-        this.setState({mainMenuData})
+        // fileMenu[1].showOpenFileBox = false
+        // this.setState({mainMenuData})
+        // TODO: make OpenFile box blink, just like in notepad?
       }
     }
     // TODO: probably need to remove this and handle return to textarea
@@ -271,7 +281,6 @@ class App extends Component {
   }
 
   onMainMenuClick (event, menuItem) {
-    
     event.stopPropagation()
     console.warn(menuItem)
     const callback = this[menuItem.onClick]
@@ -308,13 +317,11 @@ class App extends Component {
 
     const nextState = {}
     if (updateDocument) {
-      // console.log ('editUndo - updateDocument is true here')
       nextState.documentContent = documentContent
       nextState.documentSelection = documentSelection
     }
 
     if (updateCursor) {
-      //console.log ('editUndo - updateCursor is true here')
       nextState.documentCursor = documentCursor
     }
     this.setState(nextState)
@@ -369,8 +376,7 @@ class App extends Component {
       documentSelection.isSelectedChanging = false
       // console.log(event.target) returns: <react></react> 
     }
-      //documentSelection.isSelectedChanging = false
-    //const documentCursor = {...this.state.documentCursor}
+
     let updateDocument = true
     const nextState = {}
     if (updateDocument) {
@@ -433,10 +439,10 @@ class App extends Component {
 
   toggleFileMenu () {
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[4].subLevel.visible = false
+      mainMenuData.topLevel.items[3].subLevel.visible = false
+      mainMenuData.topLevel.items[2].subLevel.visible = false
+      mainMenuData.topLevel.items[1].subLevel.visible = false
       mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
     })
@@ -446,10 +452,10 @@ class App extends Component {
   toggleEditMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[3].subLevel.visible = false
+      mainMenuData.topLevel.items[4].subLevel.visible = false
+      mainMenuData.topLevel.items[2].subLevel.visible = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       mainMenuData.topLevel.items[1].subLevel.visible = !prevState.mainMenuData.topLevel.items[1].subLevel.visible
       return {mainMenuData}
     })
@@ -459,10 +465,10 @@ class App extends Component {
   toggleFormatMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[4].subLevel.visible = false 
+      mainMenuData.topLevel.items[3].subLevel.visible = false 
+      mainMenuData.topLevel.items[1].subLevel.visible = false 
+      mainMenuData.topLevel.items[0].subLevel.visible = false 
       mainMenuData.topLevel.items[2].subLevel.visible = !prevState.mainMenuData.topLevel.items[2].subLevel.visible
       return {mainMenuData}
     })
@@ -472,10 +478,10 @@ class App extends Component {
   toggleViewMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[4].subLevel.visible = false
+      mainMenuData.topLevel.items[2].subLevel.visible = false
+      mainMenuData.topLevel.items[1].subLevel.visible = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       mainMenuData.topLevel.items[3].subLevel.visible = !prevState.mainMenuData.topLevel.items[3].subLevel.visible
       return {mainMenuData}
     })
@@ -485,10 +491,10 @@ class App extends Component {
   toggleHelpMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false 
+      mainMenuData.topLevel.items[1].subLevel.visible = false 
+      mainMenuData.topLevel.items[2].subLevel.visible = false 
+      mainMenuData.topLevel.items[3].subLevel.visible = false 
       mainMenuData.topLevel.items[4].subLevel.visible = !prevState.mainMenuData.topLevel.items[4].subLevel.visible
       return {mainMenuData}
     })
@@ -500,11 +506,13 @@ class App extends Component {
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       if (this.state.isNewFile) {
-        // this.fileSaveAsMenu('yep get rid of this param')
         fileMenu[3].showSaveAsBox = true
         fileMenu[3].disableOtherMenuHandlers = true
+      } else {
+        // TODO: call save functionality not save as here
+        console.warn('call save NOT save as functionality here')
       }
       return {mainMenuData}
     })
@@ -517,19 +525,13 @@ class App extends Component {
     let fileOpenControl = new Promise((resolve, reject) => {
       this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.visible = false
-        mainMenuData.topLevel.items[0].showNotSavedWarningBox = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+        mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
         return {mainMenuData, saved}
       })
       resolve(mainMenuData.topLevel.warningFromMenuItem)
     })
 
     fileOpenControl.then((priorMenuItem) => {
-      console.log(`${priorMenuItem}: do stuff here if not saved and not empty`)
-    // TODO: pop up box to warn user they have unsaved 
-      // const callback = this[priorMenuItem]
-      // callback()
-      console.log(this.state.saved)
-      // this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.visible = false
 
         switch (priorMenuItem) {
@@ -537,7 +539,6 @@ class App extends Component {
             this.setState((prevState) => {
               mainMenuData.topLevel.items[0].subLevel.visible = false
               mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-              saved = true
               return {mainMenuData, saved}
             })
             break
@@ -561,7 +562,7 @@ class App extends Component {
     console.log('onClickSaveCancel was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       return {mainMenuData}
     })
   }
@@ -584,7 +585,7 @@ class App extends Component {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'fileNewMenu'
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
           return {mainMenuData}
         })
         resolve('promise finished')
@@ -605,7 +606,7 @@ class App extends Component {
     documentCursor.row = 0
     documentCursor.column = 0
     nextState.mainMenuData = mainMenuData
-    nextState.mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    nextState.mainMenuData.topLevel.items[0].subLevel.visible = false
     nextState.documentContent = resetDocumentContent
     nextState.documentCursor = documentCursor
     nextState.undoStack = []
@@ -620,46 +621,26 @@ class App extends Component {
     // invoke local file system
     // hint: fileInput element type === 'file'
     const documentContent = this.state.documentContent.slice()
-    //const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
+    const dialogBoxisVisible = true
 
     console.log(`fileOpenMenu is clicked here`)
     if (documentContent.every(line => line === '') || saved) {
 
       console.log('need to save file!')
-      // let fileOpenControl = new Promise((resolve, reject) => {
-      // if (!saved) {
-      //   this.setState((prevState) => {
-      //     mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
-      //     mainMenuData.topLevel.items[0].subLevel.visible = false
-      //     mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      //     return {mainMenuData}
-      //   })
-      // } else {
         this.setState((prevState) => {
           mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
           mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
           mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData}
+          return {mainMenuData, dialogBoxisVisible}
         })
-      
-        
-        // resolve('promise finished')
-      // })
-
-      // fileOpenControl.then((dialog) => {
-      //   console.log(dialog)
-      //   console.log('do stuff here if not saved and not empty')
-      // // TODO: pop up box to warn user they have unsaved 
-      // })
-      // return
     } else if (!saved) {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
           mainMenuData.topLevel.items[0].subLevel.visible = false
           mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData}
+          return {mainMenuData, dialogBoxisVisible}
         })
       
     }
@@ -668,33 +649,29 @@ class App extends Component {
 
   onGistClick (event, gist) {
     // let documentFileName = this.state.documentFileName
-    const documentContent = this.state.documentContent.slice()
+    //const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
-    const saved = this.state.saved
+    // const saved = this.state.saved
 
-    if (!documentContent.every(line => line === '') && !saved) {
+    // if (!documentContent.every(line => line === '') && !saved) {
       
-      console.log('inside open')
-      console.log('need to save file!')
-      let fileOpenControl = new Promise((resolve, reject) => {
-        this.setState((prevState) => {
-          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData}
-        })
-        resolve('promise finished')
-      })
+    //   // console.log('inside open')
+    //   // console.log('need to save file!')
+    //   // let fileOpenControl = new Promise((resolve, reject) => {
+    //   //   this.setState((prevState) => {
+    //   //     mainMenuData.topLevel.items[0].subLevel.visible = false
+    //   //     return {mainMenuData}
+    //   //   })
+    //   //   resolve('promise finished')
+    //   // })
 
-      fileOpenControl.then((dialog) => {
-        console.log(dialog)
-        console.log('do stuff here if not saved and not empty')
-      // TODO: pop up box to warn user they have unsaved 
-      })
-      return
-    }
-    
-    //console.log(`${gist.name} was clicked!`)
-    //console.log(`raw_url: ${gist.url}`)
+    //   // fileOpenControl.then((dialog) => {
+    //   //   console.log(dialog)
+    //   //   console.log('do stuff here if not saved and not empty')
+    //   // })
+    //   return
+    // }
 
     const options = {
       method: 'GET'
@@ -709,29 +686,11 @@ class App extends Component {
         return response.text()
       }
     }).then ( text => {
-      // this is where the processing of the text string inside the 'pre' tag needs to happen
-      // console.log('----------------------------------------')
-      // console.log('raw text:')
-      // console.log('----------------------------------------')
-      // console.log(text)
-      // console.log('----------------------------------------')
-      // console.log('testing newDocumentContent')
-      // console.log('----------------------------------------')   
-
-
-
-
-      
       const gistTextData = text.split('\n')
       const newDocumentContent = []
       gistTextData.forEach(line => newDocumentContent.push(line))
       // 13 lines is how a full textarea is, roughly
       while (newDocumentContent.length < 13) { newDocumentContent.push('') }
-
-
-
-
-
       // console.log(newDocumentContent)
       // console.log('----------------------------------------')
       return newDocumentContent
@@ -742,17 +701,50 @@ class App extends Component {
 
       documentCursor.row = 0
       documentCursor.column = 0
-      nextState.documentCursor = documentCursor
-      nextState.documentFileName = gist.name
+
       mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
       mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
+      
+      nextState.documentCursor = documentCursor
+      nextState.documentFileName = gist.name
       nextState.documentContent = newDocumentContent
       nextState.mainMenuData = mainMenuData
+      nextState.saved = true // MIGHT need to change...
+      nextState.dialogBoxisVisible = false
       // fetch(gist.url)
       this.setState(nextState)
     })
     .catch ( error => {
       console.error(`gist fetch error: ${error}`)
+    })
+  }
+
+  openFileHandleChange (event) {
+    this.setState({openFileFormValue: event.target.value})
+  }
+
+  openFileHandleSubmit (event) {
+    console.log(`openFile input value is: ${this.state.openFileFormValue}`)
+    event.preventDefault()
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const dialogBoxisVisible = false
+    this.setState((prevState) => {
+      fileMenu[1].showOpenFileBox = false
+      fileMenu[1].disableOtherMenuHandlers = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData, dialogBoxisVisible}
+    })
+  }
+
+  openFileHandleCancel (event) {
+    event.preventDefault()
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
+    const dialogBoxisVisible = false
+    this.setState((prevState) => {
+      fileMenu[1].showOpenFileBox = false
+      fileMenu[1].disableOtherMenuHandlers = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData, dialogBoxisVisible}
     })
   }
 
@@ -774,21 +766,7 @@ class App extends Component {
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const dialogBoxisVisible = true
-    // let fileOpenControl = new Promise((resolve, reject) => {
-    //   this.setState((prevState) => {
-    //     mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //     return {mainMenuData}
-    //   })
-    //   resolve('promise finished')
-    // })
-
-    // fileOpenControl.then((dialog) => {
-    //   console.log(dialog)
-    //   console.log('do stuff here if not saved and not empty')
-    // })
-
     console.log(`fileSaveAsMenu is clicked here`)
-    console.log(fileMenu)
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = true
       fileMenu[3].disableOtherMenuHandlers = true
@@ -796,13 +774,79 @@ class App extends Component {
       return {mainMenuData, dialogBoxisVisible}
     })
   }
-  // pageSetUpMenu (menuItem) {
-  //   // page set up for print, *may* take out
-  //   console.log(`pageSetUpMenu is clicked here`)
-  //   console.log(menuItem)
-  // }
 
-  // NOTE: possibly pull out printing all together...
+  saveAsHandleChange (event) {
+    this.setState({saveAsFormValue: event.target.value})
+  }
+
+  saveAsHandleSubmit (event) {
+    const newFileName = this.state.saveAsFormValue;
+    const documentContent = this.state.documentContent.slice()
+    console.log(`saveAs input value is: ${this.state.saveAsFormValue}`)
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const dialogBoxisVisible = false
+    const url = `https://api.github.com/gists`    
+    const documentFileName = newFileName
+
+    event.preventDefault()    
+    // const url = `https://api.github.com/users/${myInfo.username}/gists`    
+    // const options = {
+    //   method: 'POST', // gonna be POST
+    //   headers: {
+    //     'Authorization': `token ${myInfo.TestToken}`
+    //   }
+    // }
+
+    // TODO: handle OAuth, this works right now because this is my personal access token
+    function saveGist(opts) {
+      console.log(documentContent)
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${myInfo.TestToken}`
+        },
+        body: JSON.stringify(opts)
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        console.log('saved Gist as:', data.html_url);
+      });
+    }
+
+    saveGist({
+      // TODO: user define-able for 'description'
+      // and make this 'public' choice for the user, secret or public gist
+      description: 'Demo created gist via API',
+      public: false,
+      files: {
+        [newFileName] : {
+          content: documentContent.join('\n')
+        }
+      }
+    })
+
+    this.setState((prevState) => {
+      fileMenu[3].showSaveAsBox = false
+      fileMenu[3].disableOtherMenuHandlers = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData, dialogBoxisVisible, documentFileName}
+    })
+  }
+
+  saveAsHandleCancel (event) {
+    event.preventDefault()
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
+    const dialogBoxisVisible = false
+    this.setState((prevState) => {
+      fileMenu[3].showSaveAsBox = false
+      fileMenu[3].disableOtherMenuHandlers = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      return {mainMenuData, dialogBoxisVisible}
+    })
+  }
+
   printMenu (menuItem) {
     console.log(`printMenu is clicked here`)
     console.log(menuItem)
@@ -1714,18 +1758,28 @@ class App extends Component {
               menu={this.state.mainMenuData} 
               onMainMenuClick={this.onMainMenuClick}
               onMouseUp={this.onNotepadMouseUp}  
-              onGistClick={this.onGistClick}     
+
+              openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+              onGistClick={this.onGistClick}  
+              openFileHandleChange={this.openFileHandleChange}
+              openFileHandleSubmit={this.openFileHandleSubmit}
+              openFileHandleCancel={this.openFileHandleCancel}
+              openFileFormValue={this.openFileFormValue}   
               // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
               // into something more readable
               showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
               onClickSaveYes={this.onClickSaveYes}
               onClickSaveNo={this.onClickSaveNo}
               onClickSaveCancel={this.onClickSaveCancel}
-
+              
               newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
-              openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
               firstSaveBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[2]}
+              
               saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
+              saveAsHandleChange={this.saveAsHandleChange}
+              saveAsHandleSubmit={this.saveAsHandleSubmit}
+              saveAsHandleCancel={this.saveAsHandleCancel}
+              
               // printFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[4]}
               exitNotepadBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[5]}
               findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
