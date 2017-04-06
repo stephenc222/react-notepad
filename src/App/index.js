@@ -157,6 +157,7 @@ class App extends Component {
       redoStack: [],
       saved: false,
       isNewFile: true,
+      dialogBoxisVisible: false
     }
   }
 
@@ -187,18 +188,24 @@ class App extends Component {
         this.setState({mainMenuData})
       }
     }
+    // TODO: probably need to remove this and handle return to textarea
+    // via SaveAsBox click handlers
     if (fileMenu[1].showOpenFileBox) {
       if (!(event.target).closest('.openFileBox')) {
         fileMenu[1].showOpenFileBox = false
         this.setState({mainMenuData})
       }
     }
+    // TODO: probably need to remove this and handle return to textarea
+    // via SaveAsBox click handlers
     if (fileMenu[2].showFirstSaveBox) {
       if (!(event.target).closest('.firstSaveBox')) {
         fileMenu[2].showFirstSaveBox = false
         this.setState({mainMenuData})
       }
     }
+    // TODO: probably need to remove this and handle return to textarea
+    // via SaveAsBox click handlers
     if (fileMenu[3].showSaveAsBox) {
       if (!(event.target).closest('.saveAsBox')) {
         fileMenu[3].showSaveAsBox = false
@@ -231,6 +238,8 @@ class App extends Component {
         this.setState({mainMenuData})
       }
     }
+    // TODO: probably need to remove this and handle return to textarea
+    // via GoToBox click handlers
     if (editMenu[9].showGoToBox) {
       if (!(event.target).closest('.goToBox')) {
         editMenu[9].showGoToBox = false
@@ -764,6 +773,7 @@ class App extends Component {
     // ask you for different name and where to save it
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const dialogBoxisVisible = true
     // let fileOpenControl = new Promise((resolve, reject) => {
     //   this.setState((prevState) => {
     //     mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
@@ -783,7 +793,7 @@ class App extends Component {
       fileMenu[3].showSaveAsBox = true
       fileMenu[3].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, dialogBoxisVisible}
     })
   }
   // pageSetUpMenu (menuItem) {
@@ -1518,6 +1528,9 @@ class App extends Component {
   }
   onKeyDown (event) {
     // console.log(`keyCode inside onKeyDown: ${event.keyCode}`)
+    if (this.state.dialogBoxisVisible) {
+      return
+    }
 
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
@@ -1636,6 +1649,9 @@ class App extends Component {
 
   onKeyPress (event) {
     // console.log(`charCode inside onKeyPress: ${event.charCode}`)
+    if (this.state.dialogBoxisVisible) {
+      return
+    }
     const {
       // altKey,
       // ctrlKey,
@@ -1730,6 +1746,7 @@ class App extends Component {
               onMouseEnter={this.onNotepadMouseEnter}
               onMouseLeave={this.onNotepadMouseLeave}
               onMouseUp={this.onNotepadMouseUp}
+              dialogBoxisVisible={this.state.dialogBoxisVisible}
             />
           </div>
           <div className="app__status-container">

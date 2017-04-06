@@ -61,7 +61,9 @@ class Notepad extends Component {
       return (
         <div 
           key={column} 
-          className={`notepadArea__column${isSelected(column, row) ? '--selected' : ''} notepadArea__cursor`}
+          className={
+            `notepadArea__column${isSelected(column, row) ? '--selected' : ''} 
+            notepadArea__cursor${this.props.dialogBoxisVisible ? '-hidden': ''}`}
           onMouseDown={(event) => this.props.onMouseDown(event, column, row)}
           onMouseEnter={(event) => this.props.onMouseEnter(event, column, row)}
           onMouseUp={(event) => this.props.onMouseUp(event)}>

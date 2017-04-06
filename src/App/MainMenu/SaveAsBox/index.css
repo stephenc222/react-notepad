@@ -6,6 +6,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   position: absolute;
   height: 500px;
   width: 600px;
@@ -24,4 +25,11 @@
   display: none;
   flex-direction: column;
   position: absolute;
+}
+
+.saveAsBox-info__container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }

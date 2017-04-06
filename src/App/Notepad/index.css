@@ -77,6 +77,11 @@
   animation: 1s blink-cursor step-end infinite;
 }
 
+.notepadArea__cursor-hidden {
+  box-sizing: border-box;
+  border-left-color: transparent
+}
+
 @keyframes 'blink-cursor' {
   from, to {
     border-left-color: black;
