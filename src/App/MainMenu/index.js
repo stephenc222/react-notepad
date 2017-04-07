@@ -4,7 +4,6 @@ import NewFileBox from './NewFileBox'
 import OpenFileBox from './OpenFileBox'
 import FirstSaveBox from './FirstSaveBox'
 import SaveAsBox from './SaveAsBox'
-import ExitNotepadBox from './ExitNotepadBox'
 import FindBox from './FindBox'
 import ReplaceBox from './ReplaceBox'
 import GoToBox from './GoToBox'
@@ -73,9 +72,6 @@ export default class MainMenu extends Component {
           saveAsHandleChange={this.props.saveAsHandleChange}
           saveAsHandleSubmit={this.props.saveAsHandleSubmit}
           saveAsHandleCancel={this.props.saveAsHandleCancel}
-        />
-        <ExitNotepadBox 
-          exitNotepadBox={this.props.exitNotepadBox}
         />
         <FindBox 
           findBox={this.props.findBox}

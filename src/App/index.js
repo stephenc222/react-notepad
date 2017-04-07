@@ -229,12 +229,12 @@ class App extends Component {
     //     this.setState({mainMenuData})
     //   }
     // }
-    if (fileMenu[5].showExitNotepadBox) {
-      if (!(event.target).closest('.exitNotepadBox')) {
-        fileMenu[5].showExitNotepadBox = false
-        this.setState({mainMenuData})
-      }
-    }
+    // if (fileMenu[5].showExitNotepadBox) {
+    //   if (!(event.target).closest('.exitNotepadBox')) {
+    //     fileMenu[5].showExitNotepadBox = false
+    //     this.setState({mainMenuData})
+    //   }
+    // }
 
     // edit submenu dialog boxes
     if (editMenu[6].showFindBox) {
@@ -547,11 +547,7 @@ class App extends Component {
             this.fileNewMenu()
             break
           case 'exitNotepad':
-            this.setState((prevState) => {
-              mainMenuData.topLevel.items[0].subLevel.visible = false
-              mainMenuData.topLevel.items[0].subLevel.items[5].showExitNotepadBox = true
-              return {mainMenuData, saved}
-            })
+            this.exitNotepad()
             break
           default:
             throw new Error('unknown menu item clicked')
@@ -864,7 +860,7 @@ class App extends Component {
     // close the tab -> DO NOT close window
     // or navigate to user's homepage
     console.log(`exitNotepad is clicked here`)
-    console.log(menuItem)
+    //console.log(menuItem)
     const documentContent = this.state.documentContent.slice()
     const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
@@ -890,12 +886,15 @@ class App extends Component {
       })
       return
     }
-    this.setState((prevState) => {
-      fileMenu[5].showExitNotepadBox = true
-      fileMenu[5].disableOtherMenuHandlers = true
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
-    })
+    // TODO: make work for firefox too
+    alert('Going to Chrome\'s homepage...')
+    window.open('https://www.google.com/_/chrome/newtab', '_self')
+    // this.setState((prevState) => {
+    //   fileMenu[5].showExitNotepadBox = true
+    //   fileMenu[5].disableOtherMenuHandlers = true
+    //   mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+    //   return {mainMenuData}
+    // })
   }
 
   editUndo (menuItem){
@@ -1786,7 +1785,7 @@ class App extends Component {
               saveAsHandleCancel={this.saveAsHandleCancel}
               
               // printFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[4]}
-              exitNotepadBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[5]}
+              // exitNotepadBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[5]}
               findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
               replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
               goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
