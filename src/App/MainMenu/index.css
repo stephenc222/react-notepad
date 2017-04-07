@@ -7,7 +7,6 @@ ul {
 
 li {
   display: flex;
-  padding-right: 1%;
   user-select: none;
 }
 
@@ -15,7 +14,8 @@ li {
   display: flex;
   flex-direction: column;
   background: white;
-  cursor: default;
+  cursor: default;  
+  padding-right: 5px;
 }
 
 .menuItem:hover {

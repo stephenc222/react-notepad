@@ -163,7 +163,7 @@ const mainMenu = {
               showHelpBox: false
             },
             {
-              label: 'About Notepad',
+              label: 'About React Notepad',
               onClick: 'helpAboutNotepad',
               showAboutBox: false
             }
