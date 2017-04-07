@@ -167,7 +167,8 @@ class App extends Component {
       isNewFile: true,
       dialogBoxisVisible: false,
       openFileFormValue: '',
-      saveAsFormValue: ''
+      saveAsFormFileName: '',
+      saveAsFormFileDescription: ''
     }
   }
 
@@ -607,6 +608,7 @@ class App extends Component {
     documentCursor.column = 0
     nextState.mainMenuData = mainMenuData
     nextState.mainMenuData.topLevel.items[0].subLevel.visible = false
+    nextState.documentFileName = 'Untitled.txt'
     nextState.documentContent = resetDocumentContent
     nextState.documentCursor = documentCursor
     nextState.undoStack = []
@@ -776,17 +778,18 @@ class App extends Component {
   }
 
   saveAsHandleChange (event) {
-    this.setState({saveAsFormValue: event.target.value})
+    //console.log(event.target.name)
+    this.setState({[event.target.name]: event.target.value})
   }
-
   saveAsHandleSubmit (event) {
-    const newFileName = this.state.saveAsFormValue;
+    const documentFileName = this.state.saveAsFormFileName   
+    const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
-    console.log(`saveAs input value is: ${this.state.saveAsFormValue}`)
+    console.log(`saveAs input FileName value is: ${this.state.saveAsFormFileNameValue}`)
+    console.log(`saveAs input Description value is: ${this.state.saveAsFormFileDescValue}`)
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const dialogBoxisVisible = false
     const url = `https://api.github.com/gists`    
-    const documentFileName = newFileName
 
     event.preventDefault()    
     // const url = `https://api.github.com/users/${myInfo.username}/gists`    
@@ -818,10 +821,10 @@ class App extends Component {
     saveGist({
       // TODO: user define-able for 'description'
       // and make this 'public' choice for the user, secret or public gist
-      description: 'Demo created gist via API',
+      description: newFileDescription,
       public: false,
       files: {
-        [newFileName] : {
+        [documentFileName] : {
           content: documentContent.join('\n')
         }
       }
@@ -1777,6 +1780,8 @@ class App extends Component {
               
               saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
               saveAsHandleChange={this.saveAsHandleChange}
+              saveAsFormFileName={this.state.saveAsFormFileName}
+              saveAsFormFileDescription={this.state.saveAsFormFileDescription}
               saveAsHandleSubmit={this.saveAsHandleSubmit}
               saveAsHandleCancel={this.saveAsHandleCancel}
               

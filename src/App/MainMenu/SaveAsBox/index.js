@@ -16,12 +16,34 @@ class SaveAsBox extends Component {
         </div>
         <div className="save-file-form-container">
           <form onSubmit={this.props.saveAsHandleSubmit}>
-            <label>
-              File Name:
-              <input type="text" value={this.props.saveAsFormValue} onChange={this.props.saveAsHandleChange}/>
-            </label>
-            <input type="submit" value="Save" />
-            <input type="button" value="Cancel" onClick={this.props.saveAsHandleCancel}/>            
+            <div>
+              <label>
+                File Name:
+              </label>
+              <input 
+                type="text" 
+                name="saveAsFormFileName"
+                value={this.props.saveAsFormFileName} 
+                onChange={this.props.saveAsHandleChange}
+              />
+            </div>
+            <div>
+              <label>
+                Gist Description:
+              </label>
+              <textarea 
+                className="gist-description" 
+                cols="80" 
+                rows="10" 
+                name="saveAsFormFileDescription"
+                value={this.props.saveAsFormFileDescription}
+                onChange={this.props.saveAsHandleChange}>
+              </textarea>
+            </div>
+            <div className="saveAs-buttons">
+              <input type="submit" value="Save" />
+              <input type="button" value="Cancel" onClick={this.props.saveAsHandleCancel}/>         
+            </div>
           </form> 
         </div>
       </div>

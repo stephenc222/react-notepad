@@ -68,6 +68,8 @@ export default class MainMenu extends Component {
         />
         <SaveAsBox 
           saveAsBox={this.props.saveAsBox}
+          saveAsFormFileName={this.props.saveAsFormFileName}
+          saveAsFormFileDescription={this.props.saveAsFormFileDescription}
           saveAsHandleChange={this.props.saveAsHandleChange}
           saveAsHandleSubmit={this.props.saveAsHandleSubmit}
           saveAsHandleCancel={this.props.saveAsHandleCancel}
