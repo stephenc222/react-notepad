@@ -748,6 +748,10 @@ class App extends Component {
 
   fileSaveMenu (menuItem) {
     // save to your gists
+    // TODO: may not need it's own dialog box, just a conditional call to show
+    // SaveAsBox. Also checkout this to help:
+    // https://developer.github.com/v3/gists/#edit-a-gist
+
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     console.log(`fileSaveMenu is clicked here`)
@@ -860,41 +864,23 @@ class App extends Component {
     // close the tab -> DO NOT close window
     // or navigate to user's homepage
     console.log(`exitNotepad is clicked here`)
-    //console.log(menuItem)
     const documentContent = this.state.documentContent.slice()
     const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
 
     if (!documentContent.every(line => line === '') && !saved) {
-
-      console.log('need to save file!')
-      let fileOpenControl = new Promise((resolve, reject) => {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'exitNotepad'
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
           return {mainMenuData}
         })
-        resolve('promise finished')
-      })
 
-      fileOpenControl.then((dialog) => {
-        console.log(dialog)
-        console.log('do stuff here if not saved and not empty')
-      // TODO: pop up box to warn user they have unsaved 
-      })
       return
     }
     // TODO: make work for firefox too
     alert('Going to Chrome\'s homepage...')
     window.open('https://www.google.com/_/chrome/newtab', '_self')
-    // this.setState((prevState) => {
-    //   fileMenu[5].showExitNotepadBox = true
-    //   fileMenu[5].disableOtherMenuHandlers = true
-    //   mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-    //   return {mainMenuData}
-    // })
   }
 
   editUndo (menuItem){
