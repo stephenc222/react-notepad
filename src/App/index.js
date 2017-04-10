@@ -164,11 +164,12 @@ class App extends Component {
       undoStack: [],
       redoStack: [],
       saved: false,
-      isNewFile: true,
+      hasSaved: false,
       dialogBoxisVisible: false,
       openFileFormValue: '',
       saveAsFormFileName: '',
-      saveAsFormFileDescription: ''
+      saveAsFormFileDescription: '',
+      openFileGistID: ''
     }
   }
 
@@ -508,12 +509,15 @@ class App extends Component {
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     this.setState((prevState) => {
       mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
-      if (this.state.isNewFile) {
+      if (!this.state.hasSaved) {
         fileMenu[3].showSaveAsBox = true
         fileMenu[3].disableOtherMenuHandlers = true
       } else {
         // TODO: call save functionality not save as here
         console.warn('call save NOT save as functionality here')
+        console.warn(`value of hasSaved: ${this.state.hasSaved}`)
+        // alert('Calling SAVE (patch request) here!')
+        this.fileSaveMenu()
       }
       return {mainMenuData}
     })
@@ -650,27 +654,6 @@ class App extends Component {
     //const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
-    // const saved = this.state.saved
-
-    // if (!documentContent.every(line => line === '') && !saved) {
-      
-    //   // console.log('inside open')
-    //   // console.log('need to save file!')
-    //   // let fileOpenControl = new Promise((resolve, reject) => {
-    //   //   this.setState((prevState) => {
-    //   //     mainMenuData.topLevel.items[0].subLevel.visible = false
-    //   //     return {mainMenuData}
-    //   //   })
-    //   //   resolve('promise finished')
-    //   // })
-
-    //   // fileOpenControl.then((dialog) => {
-    //   //   console.log(dialog)
-    //   //   console.log('do stuff here if not saved and not empty')
-    //   // })
-    //   return
-    // }
-
     const options = {
       method: 'GET'
       // headers: {
@@ -706,10 +689,11 @@ class App extends Component {
       nextState.documentCursor = documentCursor
       nextState.documentFileName = gist.name
       nextState.documentContent = newDocumentContent
+      nextState.openFileGistID = gist.id
       nextState.mainMenuData = mainMenuData
       nextState.saved = true // MIGHT need to change...
+      nextState.hasSaved = true
       nextState.dialogBoxisVisible = false
-      // fetch(gist.url)
       this.setState(nextState)
     })
     .catch ( error => {
@@ -751,17 +735,71 @@ class App extends Component {
     // TODO: may not need it's own dialog box, just a conditional call to show
     // SaveAsBox. Also checkout this to help:
     // https://developer.github.com/v3/gists/#edit-a-gist
-
+    // const documentFileName = this.state.documentFileName
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const hasSaved = this.state.hasSaved
+    const dialogBoxisVisible = true 
+    const url = `https://api.github.com/gists`  
+    
+    // console.log(gistArray[gist].id)
+    // mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
+    
     console.log(`fileSaveMenu is clicked here`)
-    console.log(menuItem)
-    this.setState((prevState) => {
-      fileMenu[2].showFirstSaveBox = true
-      fileMenu[2].disableOtherMenuHandlers = true
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
-    })
+    if (hasSaved) {
+      // alert('calling PATCH here!')
+      console.log()
+      const documentFileName = this.state.documentFileName
+      const documentContent = this.state.documentContent.slice()
+      const currentFileDescription = this.state.saveAsFormFileDescription;
+      const gistID = this.state.openFileGistID
+      console.log('ID inside fileSaveMenu: ' + gistID)
+      console.log(`${url}/${gistID}`)
+      // TODO: use gistID to concatenate with url to make the PATCH request
+      function saveGist(opts) {
+        fetch(`${url}/${gistID}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `token ${myInfo.TestToken}`
+          },
+          body: JSON.stringify(opts)
+        })
+        .then(function(response) {
+          return response.json()
+        })
+        .then(function(data) {
+          console.log('SAVE Gist -not- saved-as:', data.html_url)
+        })
+        .catch ( error => {
+          console.error(`SAVE gist fetch error: ${error}`)
+        })
+      }
+
+      saveGist({
+        // TODO: user define-able for 'description'
+        // and make this 'public' choice for the user, secret or public gist
+        description: currentFileDescription,
+        public: false,
+        files: {
+          [documentFileName] : {
+            content: documentContent.join('\n')
+          }
+        }
+      })
+
+      this.setState((prevState) => {
+        mainMenuData.topLevel.items[0].subLevel.visible =  false
+        return {mainMenuData}
+      })
+      //mainMenuData.topLevel.items[0].subLevel.visible = false
+    } else {
+      this.setState((prevState) => {
+        fileMenu[3].showSaveAsBox = true
+        fileMenu[3].disableOtherMenuHandlers = true
+        mainMenuData.topLevel.items[0].subLevel.visible = false
+        return {mainMenuData, dialogBoxisVisible}
+      })
+    }
   }
   fileSaveAsMenu (menuItem) {
     // ask you for different name and where to save it
@@ -772,7 +810,7 @@ class App extends Component {
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = true
       fileMenu[3].disableOtherMenuHandlers = true
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData, dialogBoxisVisible}
     })
   }
@@ -785,21 +823,14 @@ class App extends Component {
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
-    console.log(`saveAs input FileName value is: ${this.state.saveAsFormFileNameValue}`)
-    console.log(`saveAs input Description value is: ${this.state.saveAsFormFileDescValue}`)
+    // console.log(`saveAs input FileName value is: ${this.state.saveAsFormFileNameValue}`)
+    // console.log(`saveAs input Description value is: ${this.state.saveAsFormFileDescValue}`)
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const hasSaved = true
     const dialogBoxisVisible = false
     const url = `https://api.github.com/gists`    
 
-    event.preventDefault()    
-    // const url = `https://api.github.com/users/${myInfo.username}/gists`    
-    // const options = {
-    //   method: 'POST', // gonna be POST
-    //   headers: {
-    //     'Authorization': `token ${myInfo.TestToken}`
-    //   }
-    // }
-
+    event.preventDefault()
     // TODO: handle OAuth, this works right now because this is my personal access token
     function saveGist(opts) {
       console.log(documentContent)
@@ -811,11 +842,14 @@ class App extends Component {
         body: JSON.stringify(opts)
       })
       .then(function(response) {
-        return response.json();
+        return response.json()
       })
       .then(function(data) {
-        console.log('saved Gist as:', data.html_url);
-      });
+        console.log('saved Gist as:', data.html_url)
+      })
+      .catch ( error => {
+        console.error(`SAVE AS gist fetch error: ${error}`)
+      })
     }
 
     saveGist({
@@ -834,7 +868,7 @@ class App extends Component {
       fileMenu[3].showSaveAsBox = false
       fileMenu[3].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, dialogBoxisVisible, documentFileName}
+      return {mainMenuData, documentFileName, dialogBoxisVisible, hasSaved}
     })
   }
 
@@ -1287,6 +1321,7 @@ class App extends Component {
               if (gist) {
               //let multiFilePaths = []       
               let multiFileGist = []
+              // console.log(gistArray[gist].id)
                 
               //openFileNamesArray.push(Object.keys(gistArray[gist].files))
               // file.name = 
@@ -1296,7 +1331,7 @@ class App extends Component {
                     //multiFilePaths.push([gistArray[gist].files[filePath].raw_url])
                     let file = {}
                     file.name = gistArray[gist].files[filePath].filename
-                    //console.log(gistArray[gist].files[filePath].filename)
+                    file.id = gistArray[gist].id
                     file.url = gistArray[gist].files[filePath].raw_url
                     //console.log(file.name)
                     multiFileGist.push(file)
@@ -1304,7 +1339,7 @@ class App extends Component {
                     //openFilePathsArray.push([gistArray[gist].files[filePath].raw_url])
                     let file = {}                    
                     file.name = gistArray[gist].files[filePath].filename
-                    //console.log(gistArray[gist].files[filePath].filename)
+                    file.id = gistArray[gist].id                    
                     file.url = gistArray[gist].files[filePath].raw_url
                     // filesArray.push([gistArray[gist].files[filePath].raw_url])
                     filesArray.push([file])
@@ -1316,9 +1351,6 @@ class App extends Component {
                 }                           
               }               
             }
-            // TODO: this array will populate a div, with same styling as the main menu, 
-            // and onClick of fileOpenMenu, fileOpenMenu will hide and a div containing
-            // the name of all of a user's gists will appear in the middle of the screen
 
           })
           .then (
