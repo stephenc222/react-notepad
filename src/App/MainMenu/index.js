@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import NotSavedWarningBox from './NotSavedWarningBox'
 import NewFileBox from './NewFileBox'
 import OpenFileBox from './OpenFileBox'
-import FirstSaveBox from './FirstSaveBox'
 import SaveAsBox from './SaveAsBox'
 import FindBox from './FindBox'
 import ReplaceBox from './ReplaceBox'
@@ -62,9 +61,6 @@ export default class MainMenu extends Component {
           openFileFormValue={this.props.openFileFormValue}
           openFileBox={this.props.openFileBox}
         />        
-        <FirstSaveBox 
-          firstSaveBox={this.props.firstSaveBox}
-        />
         <SaveAsBox 
           saveAsBox={this.props.saveAsBox}
           saveAsFormFileName={this.props.saveAsFormFileName}

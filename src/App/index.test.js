@@ -4,7 +4,6 @@ import { expect } from 'chai'
 import { mount } from 'enzyme'
 import sinon from 'sinon'
 import App from '.'
-import { fetchData } from './__mocks__/fetch'
 
 describe('App Component', () => {
   beforeAll( () => {

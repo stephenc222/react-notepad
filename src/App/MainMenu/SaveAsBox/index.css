@@ -75,6 +75,10 @@
   flex-grow: 1;
 }
 
+.gist-description {
+  display: flex;
+}
+
 .saveAs-buttons {
   display: flex;
   justify-content: flex-end;

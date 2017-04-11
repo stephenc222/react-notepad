@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 // import Request from 'superagent'
 import 'whatwg-fetch'
 // also import PropTypes
+import getGists from './helpers/getGists'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
 // import OpenFileBox from './OpenFileBox'
@@ -208,14 +209,13 @@ class App extends Component {
         // TODO: make OpenFile box blink, just like in notepad?
       }
     }
-    // TODO: probably need to remove this and handle return to textarea
     // via SaveAsBox click handlers
-    if (fileMenu[2].showFirstSaveBox) {
-      if (!(event.target).closest('.firstSaveBox')) {
-        fileMenu[2].showFirstSaveBox = false
-        this.setState({mainMenuData})
-      }
-    }
+    // if (fileMenu[2].showFirstSaveBox) {
+    //   if (!(event.target).closest('.firstSaveBox')) {
+    //     fileMenu[2].showFirstSaveBox = false
+    //     this.setState({mainMenuData})
+    //   }
+    // }
     // TODO: probably need to remove this and handle return to textarea
     // via SaveAsBox click handlers
     if (fileMenu[3].showSaveAsBox) {
@@ -739,6 +739,7 @@ class App extends Component {
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = this.state.hasSaved
+    const saved = true
     const dialogBoxisVisible = true 
     const url = `https://api.github.com/gists`  
     
@@ -789,7 +790,7 @@ class App extends Component {
 
       this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.visible =  false
-        return {mainMenuData}
+        return {mainMenuData, saved}
       })
       //mainMenuData.topLevel.items[0].subLevel.visible = false
     } else {
@@ -827,11 +828,13 @@ class App extends Component {
     // console.log(`saveAs input Description value is: ${this.state.saveAsFormFileDescValue}`)
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = true
+    const saved = true
     const dialogBoxisVisible = false
     const url = `https://api.github.com/gists`    
 
     event.preventDefault()
     // TODO: handle OAuth, this works right now because this is my personal access token
+    
     function saveGist(opts) {
       console.log(documentContent)
       fetch(url, {
@@ -868,7 +871,7 @@ class App extends Component {
       fileMenu[3].showSaveAsBox = false
       fileMenu[3].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, documentFileName, dialogBoxisVisible, hasSaved}
+      return {mainMenuData, documentFileName, dialogBoxisVisible, saved, hasSaved}
     })
   }
 
@@ -1307,78 +1310,12 @@ class App extends Component {
     }
 
     const url = `https://api.github.com/users/${myInfo.username}/gists`
-    fetch(url, options)
-    .then(response => {
-      //const openFileNamesArray = []
-      //const openFilePathsArray = []
-      const filesArray = []
 
-      if (response.ok) {
-        return response.json()
-          .then(gistArray => {
-            // console.log(JSON.stringify(gistArray))
-            for (let gist in gistArray) {
-              if (gist) {
-              //let multiFilePaths = []       
-              let multiFileGist = []
-              // console.log(gistArray[gist].id)
-                
-              //openFileNamesArray.push(Object.keys(gistArray[gist].files))
-              // file.name = 
-              //filesArray.push([file])
-              for (let filePath in gistArray[gist].files) {
-                if (Object.keys(gistArray[gist].files).length > 1) {
-                    //multiFilePaths.push([gistArray[gist].files[filePath].raw_url])
-                    let file = {}
-                    file.name = gistArray[gist].files[filePath].filename
-                    file.id = gistArray[gist].id
-                    file.url = gistArray[gist].files[filePath].raw_url
-                    //console.log(file.name)
-                    multiFileGist.push(file)
-                  } else {
-                    //openFilePathsArray.push([gistArray[gist].files[filePath].raw_url])
-                    let file = {}                    
-                    file.name = gistArray[gist].files[filePath].filename
-                    file.id = gistArray[gist].id                    
-                    file.url = gistArray[gist].files[filePath].raw_url
-                    // filesArray.push([gistArray[gist].files[filePath].raw_url])
-                    filesArray.push([file])
-                  }
-                }
-                if (multiFileGist.length) {
-                  //openFilePathsArray.push(multiFilePaths) 
-                  filesArray.push(multiFileGist)
-                }                           
-              }               
-            }
-
-          })
-          .then (
-            this.setState((prevState) => {
-              // mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              //mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames = openFileNamesArray
-              //mainMenuData.topLevel.items[0].subLevel.items[1].gists.filePaths = openFilePathsArray
-              mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
-              // mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              // mainMenuData.topLevel.items[3].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              // mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              // mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              // mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              //mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-              //mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
-              //mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-              // console.log('what the fuck')
-              // console.log(mainMenuData.topLevel.items[0].subLevel.items[1].gists.fileNames)
-              return {mainMenuData}
-            })
-          )
-        // response.text().then(text => console.log(JSON.parse(text)))
-      }
-        throw new Error('problem with network response...')
-    })
-
-    .catch( error => {
-      console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
+    getGists(url, options, (filesArray) => {
+      this.setState((prevState) => {
+        mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
+        return {mainMenuData}
+      })
     })
   }
 
@@ -1793,7 +1730,6 @@ class App extends Component {
               onClickSaveCancel={this.onClickSaveCancel}
               
               newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
-              firstSaveBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[2]}
               
               saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
               saveAsHandleChange={this.saveAsHandleChange}
@@ -1802,8 +1738,6 @@ class App extends Component {
               saveAsHandleSubmit={this.saveAsHandleSubmit}
               saveAsHandleCancel={this.saveAsHandleCancel}
               
-              // printFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[4]}
-              // exitNotepadBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[5]}
               findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
               replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
               goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}

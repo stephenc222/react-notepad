@@ -33,7 +33,7 @@ class SaveAsBox extends Component {
               </label>
               <textarea 
                 className="gist-description" 
-                cols="80" 
+                cols="70" 
                 rows="10" 
                 name="saveAsFormFileDescription"
                 value={this.props.saveAsFormFileDescription}
