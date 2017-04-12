@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 // import Request from 'superagent'
 import 'whatwg-fetch'
 // also import PropTypes
-import getGists from './helpers/getGists'
+import PageExitManager from './PageExitManager'
+import {getGists} from './helpers/getGists'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
 // import OpenFileBox from './OpenFileBox'
@@ -145,6 +146,7 @@ class App extends Component {
     
     this.state = {
       mainMenuData,
+      isDirty: true,
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: mockData,
@@ -170,7 +172,8 @@ class App extends Component {
       openFileFormValue: '',
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
-      openFileGistID: ''
+      openFileGistID: '',
+      myGISTS: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files
     }
   }
 
@@ -580,23 +583,13 @@ class App extends Component {
     const saved = this.state.saved
     
     if (!documentContent.every(line => line === '') && !saved) {
-
       console.log('need to save file!')
-      let fileOpenControl = new Promise((resolve, reject) => {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'fileNewMenu'
           mainMenuData.topLevel.items[0].subLevel.visible = false
           mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
           return {mainMenuData}
         })
-        resolve('promise finished')
-      })
-
-      fileOpenControl.then((dialog) => {
-        console.log(dialog)
-        console.log('do stuff here if not saved and not empty')
-      // TODO: pop up box to warn user they have unsaved 
-      })
       return
     }
     
@@ -611,6 +604,8 @@ class App extends Component {
     nextState.documentFileName = 'Untitled.txt'
     nextState.documentContent = resetDocumentContent
     nextState.documentCursor = documentCursor
+    nextState.saveAsFormFileName = ''
+    nextState.saveAsFormFileDescription = ''
     nextState.undoStack = []
     nextState.redoStack = []
 
@@ -713,7 +708,7 @@ class App extends Component {
     this.setState((prevState) => {
       fileMenu[1].showOpenFileBox = false
       fileMenu[1].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData, dialogBoxisVisible}
     })
   }
@@ -821,12 +816,14 @@ class App extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
   saveAsHandleSubmit (event) {
+    // 
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
     // console.log(`saveAs input FileName value is: ${this.state.saveAsFormFileNameValue}`)
     // console.log(`saveAs input Description value is: ${this.state.saveAsFormFileDescValue}`)
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    let myGISTS = this.state.myGISTS.slice()
     const hasSaved = true
     const saved = true
     const dialogBoxisVisible = false
@@ -834,10 +831,43 @@ class App extends Component {
 
     event.preventDefault()
     // TODO: handle OAuth, this works right now because this is my personal access token
-    
-    function saveGist(opts) {
-      console.log(documentContent)
-      fetch(url, {
+    const getOptions = {
+      method: 'GET', // gonna be POST
+      headers: {
+        'Authorization': `token ${myInfo.TestToken}`
+      }
+    }
+
+    const postOptions = {
+      // TODO: user define-able for 'description'
+      // and make this 'public' choice for the user, secret or public gist
+      description: newFileDescription,
+      public: false,
+      files: {
+        [documentFileName] : {
+          content: documentContent.join('\n')
+        }
+      }
+    }
+
+    const userGistsUrl = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
+
+    const updateGists = () => {
+      return getGists(userGistsUrl, getOptions, (filesArray) => {
+        console.log('inside getGists')
+        this.setState((prevState) => {
+          mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
+          myGISTS = filesArray
+          fileMenu[3].showSaveAsBox = false
+          fileMenu[3].disableOtherMenuHandlers = false
+          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          return {mainMenuData, documentFileName, dialogBoxisVisible, saved, hasSaved, myGISTS}
+        })
+      })
+    }
+    const saveGist = (opts) => {
+      // TODO: put this fetch as like postGist inside the helper file
+      const save = fetch(url, {
         method: 'POST',
         headers: {
           'Authorization': `token ${myInfo.TestToken}`
@@ -853,26 +883,10 @@ class App extends Component {
       .catch ( error => {
         console.error(`SAVE AS gist fetch error: ${error}`)
       })
+      return Promise.resolve(save)
     }
-
-    saveGist({
-      // TODO: user define-able for 'description'
-      // and make this 'public' choice for the user, secret or public gist
-      description: newFileDescription,
-      public: false,
-      files: {
-        [documentFileName] : {
-          content: documentContent.join('\n')
-        }
-      }
-    })
-
-    this.setState((prevState) => {
-      fileMenu[3].showSaveAsBox = false
-      fileMenu[3].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, documentFileName, dialogBoxisVisible, saved, hasSaved}
-    })
+    return saveGist(postOptions).then(updateGists)
+    
   }
 
   saveAsHandleCancel (event) {
@@ -1309,7 +1323,7 @@ class App extends Component {
       }
     }
 
-    const url = `https://api.github.com/users/${myInfo.username}/gists`
+    const url = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
 
     getGists(url, options, (filesArray) => {
       this.setState((prevState) => {
@@ -1700,6 +1714,7 @@ class App extends Component {
 
   render () {
     return (
+      <PageExitManager route="/">
       <div 
         className="top-level-window"
         tabIndex={0}
@@ -1772,6 +1787,7 @@ class App extends Component {
             </div>
         </div>
       </div>
+      </PageExitManager>
     )
   }
 }

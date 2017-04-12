@@ -9,9 +9,9 @@ class NotSavedWarningBox extends Component {
         <div>Warning - File Not Saved!</div>
         <div>{'Are you sure you don\'t want to save first?'}</div>
         <div className="notSaved__buttons">
-          <div onClick={this.props.onClickSaveYes}>Save</div>
-          <div onClick={this.props.onClickSaveNo}>Don't Save</div>
-          <div onClick={this.props.onClickSaveCancel}>Cancel</div>
+          <input type="button" value="Save" onClick={this.props.onClickSaveYes} />
+          <input type="button" value="Don't Save" onClick={this.props.onClickSaveNo} />
+          <input type="button" value="Cancel" onClick={this.props.onClickSaveCancel} />
         </div>
       </div>
     )
