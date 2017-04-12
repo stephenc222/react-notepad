@@ -62,7 +62,7 @@ const CURSOR_KEYS = [
 class App extends Component {
   constructor (props) {
     super(props)
-    // menu items here 
+    // menu items here
     this.onClickCloseMenuItem = this.onClickCloseMenuItem.bind(this)
     this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
@@ -143,10 +143,11 @@ class App extends Component {
     //   oscillator.start()
     //   oscillator.stop(this.audioContext.currentTime + 0.15)
     // }
-    
+
     this.state = {
       mainMenuData,
       isDirty: true,
+      prompt: false,
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: mockData,
@@ -175,6 +176,11 @@ class App extends Component {
       openFileGistID: '',
       myGISTS: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files
     }
+
+    window.addEventListener('beforeunload', (e) => {
+      e.preventDefault()
+      this.setState({ prompt: true })
+    }, false)
   }
 
   onClickCloseMenuItem (event) {
@@ -262,7 +268,7 @@ class App extends Component {
       }
     }
 
-    // format submenu dialog boxes    
+    // format submenu dialog boxes
     if (formatMenu[1].showFontBox) {
       if (!(event.target).closest('.fontBox')) {
         formatMenu[1].showFontBox = false
@@ -282,7 +288,7 @@ class App extends Component {
         helpMenu[1].showAboutBox = false
         this.setState({mainMenuData})
       }
-    } 
+    }
   }
 
   onMainMenuClick (event, menuItem) {
@@ -293,7 +299,7 @@ class App extends Component {
   }
 
   onNotepadMouseDown (event, column, row) {
-    event.stopPropagation()    
+    event.stopPropagation()
     // console.log(event.target.innerHTML) // how to get the actual character
     // console.log(event.target)
     const documentSelection = {...this.state.documentSelection}
@@ -305,15 +311,15 @@ class App extends Component {
     console.log('column + 1')
     console.log(column + 1)
     // NOTE: use column for the cursor but column + 1 for data stuff
-    documentCursor.column = column 
+    documentCursor.column = column
     documentCursor.row = row
-    documentSelection.selectionStart.column = column 
+    documentSelection.selectionStart.column = column
     documentSelection.selectionStart.row = row
-    documentSelection.selectionEnd.column = column 
+    documentSelection.selectionEnd.column = column
     documentSelection.selectionEnd.row = row
     documentSelection.isSelected = true
     documentSelection.isSelectedChanging = true
-    
+
     console.log('row')
     console.log(row)
 
@@ -335,14 +341,14 @@ class App extends Component {
 
   onNotepadMouseEnter (event, column, row) {
     // console.log('onNotepadMouseEnter')
-    // *hint* this seems to miss the first item to be captured by the selection object    
-    event.stopPropagation()    
+    // *hint* this seems to miss the first item to be captured by the selection object
+    event.stopPropagation()
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     //const documentContent = this.state.documentContent.slice()
     if (documentSelection.isSelected && documentSelection.isSelectedChanging) {
       console.log ('Enter - isSelected true')
-      documentCursor.column = column 
+      documentCursor.column = column
       documentCursor.row = row
       documentSelection.selectionEnd.column = column
       documentSelection.selectionEnd.row = row
@@ -350,26 +356,26 @@ class App extends Component {
       // change css class here or some kind of flag
       // also move the cursor here
       this.setState({documentCursor})
-      
+
     }
-    
+
 
   }
 
   onNotepadMouseLeave () {
     // console.log('onNotepadMouseLeave')
-    // *hint* this seems to non-duplicately capture all items that are supposed to be selected   
+    // *hint* this seems to non-duplicately capture all items that are supposed to be selected
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
       console.log ('Leave - isSelected true and event.target is: ')
-      // console.log(event.target) returns: <react></react> 
+      // console.log(event.target) returns: <react></react>
       documentSelection.isSelectedChanging = false
       // change css class here or some kind of flag
       this.setState({documentSelection})
-      
+
     }
     // console.log(event.target)
-    
+
   }
 
   onNotepadMouseUp () {
@@ -379,7 +385,7 @@ class App extends Component {
     if (documentSelection.isSelected) {
       console.log ('Leave - isSelected true and event.target is: ')
       documentSelection.isSelectedChanging = false
-      // console.log(event.target) returns: <react></react> 
+      // console.log(event.target) returns: <react></react>
     }
 
     let updateDocument = true
@@ -398,7 +404,7 @@ class App extends Component {
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
     const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
-    // var x = ['jack','bob','jill','went','up','a','hill'].reduce( function (index, column) { 
+    // var x = ['jack','bob','jill','went','up','a','hill'].reduce( function (index, column) {
     // console.log(column.length)
     // return index += column.length }, 0)
     if (!documentSelection.isSelected) {
@@ -470,10 +476,10 @@ class App extends Component {
   toggleFormatMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false 
-      mainMenuData.topLevel.items[3].subLevel.visible = false 
-      mainMenuData.topLevel.items[1].subLevel.visible = false 
-      mainMenuData.topLevel.items[0].subLevel.visible = false 
+      mainMenuData.topLevel.items[4].subLevel.visible = false
+      mainMenuData.topLevel.items[3].subLevel.visible = false
+      mainMenuData.topLevel.items[1].subLevel.visible = false
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       mainMenuData.topLevel.items[2].subLevel.visible = !prevState.mainMenuData.topLevel.items[2].subLevel.visible
       return {mainMenuData}
     })
@@ -496,10 +502,10 @@ class App extends Component {
   toggleHelpMenu () {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.visible = false 
-      mainMenuData.topLevel.items[1].subLevel.visible = false 
-      mainMenuData.topLevel.items[2].subLevel.visible = false 
-      mainMenuData.topLevel.items[3].subLevel.visible = false 
+      mainMenuData.topLevel.items[0].subLevel.visible = false
+      mainMenuData.topLevel.items[1].subLevel.visible = false
+      mainMenuData.topLevel.items[2].subLevel.visible = false
+      mainMenuData.topLevel.items[3].subLevel.visible = false
       mainMenuData.topLevel.items[4].subLevel.visible = !prevState.mainMenuData.topLevel.items[4].subLevel.visible
       return {mainMenuData}
     })
@@ -525,7 +531,7 @@ class App extends Component {
       return {mainMenuData}
     })
   }
-  
+
   onClickSaveNo () {
     console.log('onClickSaveNo was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
@@ -560,8 +566,8 @@ class App extends Component {
             throw new Error('unknown menu item clicked')
         }
     })
-  } 
-  
+  }
+
   onClickSaveCancel () {
     console.log('onClickSaveCancel was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
@@ -572,7 +578,7 @@ class App extends Component {
   }
 
   fileNewMenu (menuItem) {
-    // pop up dialog    
+    // pop up dialog
     // set document content to empty
     console.log(`fileNewMenu is clicked here`)
     console.log(menuItem)
@@ -581,7 +587,7 @@ class App extends Component {
     const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
-    
+
     if (!documentContent.every(line => line === '') && !saved) {
       console.log('need to save file!')
         this.setState((prevState) => {
@@ -592,11 +598,11 @@ class App extends Component {
         })
       return
     }
-    
+
     const nextState = {}
     // just to keep 13 lines for a full textarea
     const resetDocumentContent = ['','','','','','','','','','','','','']
-    
+
     documentCursor.row = 0
     documentCursor.column = 0
     nextState.mainMenuData = mainMenuData
@@ -634,14 +640,14 @@ class App extends Component {
         })
     } else if (!saved) {
         this.setState((prevState) => {
-          mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
+          mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'
           mainMenuData.topLevel.items[0].subLevel.visible = false
           mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
           return {mainMenuData, dialogBoxisVisible}
         })
-      
+
     }
-    
+
   }
 
   onGistClick (event, gist) {
@@ -679,8 +685,8 @@ class App extends Component {
       documentCursor.column = 0
 
       mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
-      mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
-      
+      mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false
+
       nextState.documentCursor = documentCursor
       nextState.documentFileName = gist.name
       nextState.documentContent = newDocumentContent
@@ -715,7 +721,7 @@ class App extends Component {
 
   openFileHandleCancel (event) {
     event.preventDefault()
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const dialogBoxisVisible = false
     this.setState((prevState) => {
       fileMenu[1].showOpenFileBox = false
@@ -735,12 +741,12 @@ class App extends Component {
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = this.state.hasSaved
     const saved = true
-    const dialogBoxisVisible = true 
-    const url = `https://api.github.com/gists`  
-    
+    const dialogBoxisVisible = true
+    const url = `https://api.github.com/gists`
+
     // console.log(gistArray[gist].id)
     // mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
-    
+
     console.log(`fileSaveMenu is clicked here`)
     if (hasSaved) {
       // alert('calling PATCH here!')
@@ -816,8 +822,8 @@ class App extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
   saveAsHandleSubmit (event) {
-    // 
-    const documentFileName = this.state.saveAsFormFileName   
+    //
+    const documentFileName = this.state.saveAsFormFileName
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
     // console.log(`saveAs input FileName value is: ${this.state.saveAsFormFileNameValue}`)
@@ -827,7 +833,7 @@ class App extends Component {
     const hasSaved = true
     const saved = true
     const dialogBoxisVisible = false
-    const url = `https://api.github.com/gists`    
+    const url = `https://api.github.com/gists`
 
     event.preventDefault()
     // TODO: handle OAuth, this works right now because this is my personal access token
@@ -886,12 +892,12 @@ class App extends Component {
       return Promise.resolve(save)
     }
     return saveGist(postOptions).then(updateGists)
-    
+
   }
 
   saveAsHandleCancel (event) {
     event.preventDefault()
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
+    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const dialogBoxisVisible = false
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = false
@@ -940,8 +946,8 @@ class App extends Component {
     const documentCursor = {...this.state.documentCursor}
     // console.log(menuItem)
     const documentContent = this.state.documentContent.slice()
-    const undoStack = this.state.undoStack.slice() 
-    const redoStack = this.state.redoStack.slice()   
+    const undoStack = this.state.undoStack.slice()
+    const redoStack = this.state.redoStack.slice()
     const topLayer = undoStack.slice(undoStack.length - 1)
 
     function stackOps (stackLayer) {
@@ -950,8 +956,8 @@ class App extends Component {
       */
 
       if (undoStack.length) {
-        // const peekLayer = undoStack[undoStack.length - 2]        
-        console.log("Undo - stackOps:")        
+        // const peekLayer = undoStack[undoStack.length - 2]
+        console.log("Undo - stackOps:")
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
           console.log('Undo test: insertCharacter')
@@ -971,11 +977,11 @@ class App extends Component {
           documentCursor.column -= 1
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
 
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())          
+          undoStack.length !== 0 && redoStack.push(undoStack.pop())
 
         } else if (stackLayer[0].event === 'insertBackspace') {
 
-          console.log(`UNDO - inside insertBackspace if block: 
+          console.log(`UNDO - inside insertBackspace if block:
             ${JSON.stringify(stackLayer[0])}`)
 
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
@@ -989,13 +995,13 @@ class App extends Component {
           console.log ('new docContent:')
           console.log(documentContent)
           undoStack.length !== 0 && redoStack.push(undoStack.pop())
-    
+
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
 
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
-          
+
           addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0].value)
           console.log('after splice: ')
           console.log(addBackChar)
@@ -1008,20 +1014,20 @@ class App extends Component {
 
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
           undoStack.length !== 0 && redoStack.push(undoStack.pop())
-          
+
         } else if (stackLayer[0].event === 'editPaste') {
 
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
           undoStack.length !== 0 && redoStack.push(undoStack.pop())
-          
+
         }
-      } 
+      }
     }
 
     stackOps(topLayer)
-    
+
     // undoStack.length !== 0 && redoStack.push(undoStack.pop())
-    
+
 
     let updateCursor = true
     let updateDocument = true
@@ -1042,18 +1048,18 @@ class App extends Component {
     // console.log('editUndo -nextState:')
     //console.log(nextState)
     this.setState(nextState)
-    
-            
+
+
   }
 
   editRedo (menuItem) {
 
-    console.log('editRedo called here')    
+    console.log('editRedo called here')
     const documentCursor = {...this.state.documentCursor}
     // console.log(menuItem)
     const documentContent = this.state.documentContent.slice()
-    const undoStack = this.state.undoStack.slice() 
-    const redoStack = this.state.redoStack.slice()   
+    const undoStack = this.state.undoStack.slice()
+    const redoStack = this.state.redoStack.slice()
     const topLayer = redoStack.slice(redoStack.length - 1)
     function stackOps (stackLayer) {
       /**
@@ -1061,13 +1067,13 @@ class App extends Component {
       */
 
       if (redoStack.length) {
-        console.log("Redo - stackOps:")        
+        console.log("Redo - stackOps:")
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
 
           //const addBackChar = stackLayer[0][top]
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
-          
+
           addBackChar.splice(stackLayer[0].position.column - 1, 0, stackLayer[0].value)
           console.log('after splice: ')
           console.log(addBackChar)
@@ -1083,11 +1089,11 @@ class App extends Component {
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           // redoStack.length !== 0 && redoStack.pop()
-          
+
 
         } else if (stackLayer[0].event === 'insertBackspace') {
 
-          console.log(`REDO - inside insertBackspace if block: 
+          console.log(`REDO - inside insertBackspace if block:
             ${JSON.stringify(stackLayer[0])}`)
           console.log(redoStack[redoStack.length - 2])
           console.log(JSON.stringify(documentContent))
@@ -1104,13 +1110,13 @@ class App extends Component {
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
           console.log(removeChar)
-          
+
           //documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           // redoStack.length !== 0 && redoStack.pop()
-          
+
 
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
@@ -1128,27 +1134,27 @@ class App extends Component {
           console.log(removeChar)
 
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
-                    
+
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           // redoStack.length !== 0 && redoStack.pop()
-          
-          
+
+
         } else if (stackLayer[0].event === 'editCut') {
 
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())          
-          
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+
         } else if (stackLayer[0].event === 'editPaste') {
-          
+
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          
+
         }
       }
     }
     stackOps(topLayer)
     // redoStack.length !== 0 && undoStack.push(redoStack.pop())
-    
+
     let updateCursor = true
     let updateDocument = true
 
@@ -1171,35 +1177,35 @@ class App extends Component {
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
     // TODO: editCut needs to be added to the undo and redo stacks
-    console.log('editCut clicked here')        
-    console.log(menuItem)    
+    console.log('editCut clicked here')
+    console.log(menuItem)
   }
 
   editCopy (menuItem){
-    // virtual clipboard copy 
+    // virtual clipboard copy
     // ditto
-    console.log('editCopy clicked here')   
-    console.log(menuItem)         
+    console.log('editCopy clicked here')
+    console.log(menuItem)
   }
 
   editPaste (menuItem){
     // virtual clipboard paste
-    // TODO: editPaste needs to be added to the undo and redo stacks    
-    console.log('editPaste clicked here')   
-    console.log(menuItem)         
+    // TODO: editPaste needs to be added to the undo and redo stacks
+    console.log('editPaste clicked here')
+    console.log(menuItem)
   }
 
   editDelete  (menuItem) {
     // delete selection
-    // TODO: editDelete needs to be added to the undo and redo stacks    
-    console.log('editDelete clicked here')   
-    console.log(menuItem)         
+    // TODO: editDelete needs to be added to the undo and redo stacks
+    console.log('editDelete clicked here')
+    console.log(menuItem)
   }
 
   editFind (menuItem) {
-    // open up Find dialog, then finds character sequence 
-    console.log('editFind clicked here')  
-    console.log(menuItem) 
+    // open up Find dialog, then finds character sequence
+    console.log('editFind clicked here')
+    console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
     const editMenu = mainMenuData.topLevel.items[1].subLevel.items
     this.setState((prevState) => {
@@ -1207,19 +1213,19 @@ class App extends Component {
       editMenu[6].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
-    })         
+    })
   }
 
   editFindNext (menuItem) {
     // finds next occurrence of current selection
-    console.log('editFindNext clicked here')  
-    console.log(menuItem)          
+    console.log('editFindNext clicked here')
+    console.log(menuItem)
   }
 
   editReplace (menuItem) {
     // open up find and replace dialog
-    // TODO: eitReplace needs to be added to the undo and redo stacks    
-    console.log('editReplace clicked here')  
+    // TODO: eitReplace needs to be added to the undo and redo stacks
+    console.log('editReplace clicked here')
     console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
     const editMenu = mainMenuData.topLevel.items[1].subLevel.items
@@ -1228,13 +1234,13 @@ class App extends Component {
       editMenu[8].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
-    })          
+    })
   }
 
   editGoTo (menuItem) {
     // goes to specific line number if word wrap NOT selected
-    console.log('editGoTo clicked here')     
-    console.log(menuItem)  
+    console.log('editGoTo clicked here')
+    console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
     const editMenu = mainMenuData.topLevel.items[1].subLevel.items
     this.setState((prevState) => {
@@ -1242,31 +1248,31 @@ class App extends Component {
       editMenu[9].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
-    })        
+    })
   }
 
   editSelectAll (menuItem) {
     // select all text
-    console.log('editSelectAll clicked here')  
-    console.log(menuItem)          
+    console.log('editSelectAll clicked here')
+    console.log(menuItem)
   }
 
   editTimeDate (menuItem) {
     // inputs current time stamp at current cursor position
-    console.log('editTimeDate clicked here')  
-    console.log(menuItem)        
+    console.log('editTimeDate clicked here')
+    console.log(menuItem)
   }
 
   formatWordWrap (menuItem) {
     // wraps text to fit inside current viewable area
-    console.log('formatWordWrap clicked here')  
-    console.log(menuItem)          
+    console.log('formatWordWrap clicked here')
+    console.log(menuItem)
   }
 
   formatFont  (menuItem) {
-    // change font of entire text including font type, font style type, and font size 
+    // change font of entire text including font type, font style type, and font size
     // also includes "Script Type:", which includes "Western", "Greek", "Turkish", etc.,
-    console.log('formatFont clicked here') 
+    console.log('formatFont clicked here')
     console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
     const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
@@ -1275,21 +1281,21 @@ class App extends Component {
       formatMenu[1].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
-    })          
+    })
   }
 
   viewStatusBar (menuItem) {
-    // if word Wrap NOT checked, then creates a bottom display of 
+    // if word Wrap NOT checked, then creates a bottom display of
     // where the cursor is, e.g., "Ln 11, Col 17"
     // displays checked box also
-    console.log('viewStatusBar clicked here')  
-    console.log(menuItem)          
+    console.log('viewStatusBar clicked here')
+    console.log(menuItem)
   }
 
   viewHelpBox (menuItem) {
-    // opens up new searchable help tab 
-    console.log('viewHelpBox clicked here')   
-    console.log(menuItem)   
+    // opens up new searchable help tab
+    console.log('viewHelpBox clicked here')
+    console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
     const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
     this.setState((prevState) => {
@@ -1297,13 +1303,13 @@ class App extends Component {
       helpMenu[0].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
       return {mainMenuData}
-    })     
+    })
   }
 
   helpAboutNotepad (menuItem) {
     // basic about this application stuff
     console.log('helpAboutNotepad clicked here')
-    console.log(menuItem)    
+    console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
     const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
     this.setState((prevState) => {
@@ -1346,24 +1352,24 @@ class App extends Component {
     } else {
       documentCursor.column = 0
     }
-    // console.log(`moveToEndOfLine called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveToEndOfLine called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
 
   moveToTopOfDocument (documentCursor, documentContent) {
     documentCursor.row = 0
     documentCursor.column = 0
-    // console.log(`moveToTopOfDocument called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveToTopOfDocument called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
 
   moveToBottomOfDocument (documentCursor, documentContent) {
     documentCursor.row = documentContent.length - 1
     documentCursor.column = 0
-    // console.log(`moveToBottomOfDocument called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveToBottomOfDocument called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
 
@@ -1375,8 +1381,8 @@ class App extends Component {
     if (documentCursor.column > documentContent[documentCursor.row].length - 1) {
       this.moveToEndOfLine(documentCursor, documentContent)
     }
-    // console.log(`moveUp called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveUp called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
 
@@ -1388,11 +1394,11 @@ class App extends Component {
     if (documentCursor.column > documentContent[documentCursor.row].length -1) {
       this.moveToEndOfLine(documentCursor, documentContent)
     }
-    // console.log(`moveDown called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveDown called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
-  }  
-  
+  }
+
   moveLeft (documentCursor, documentContent) {
     documentCursor.column -= 1
     if (documentCursor.column < 0) {
@@ -1403,11 +1409,11 @@ class App extends Component {
         this.moveToStartOfLine(documentCursor, documentContent)
       }
     }
-    // console.log(`moveLeft called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveLeft called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
-  }  
-  
+  }
+
   moveRight (documentCursor, documentContent) {
     documentCursor.column += 1
     if (documentCursor.column > documentContent[documentCursor.row].length) {
@@ -1418,8 +1424,8 @@ class App extends Component {
         this.moveToEndOfLine(documentCursor, documentContent)
       }
     }
-    // console.log(`moveRight called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`moveRight called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
 
@@ -1450,12 +1456,12 @@ class App extends Component {
 
     documentCursor.column = 0
 
-    // console.log(`insertCarriageReturn called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`insertCarriageReturn called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
 
-  insertBackspace (documentCursor, documentContent) {   
+  insertBackspace (documentCursor, documentContent) {
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     const rowContent = documentContent[documentCursor.row]
@@ -1486,8 +1492,8 @@ class App extends Component {
     }
 
 
-    // console.log(`insertBackspace called, 
-    //   documentCursor: ${JSON.stringify(documentCursor)}, 
+    // console.log(`insertBackspace called,
+    //   documentCursor: ${JSON.stringify(documentCursor)},
     //   documentContent: ${JSON.stringify(documentContent)}`)
   }
 
@@ -1517,14 +1523,14 @@ class App extends Component {
     //   documentContent.splice(documentCursor.row, 1)
     // }
 
-    console.log(`insertDelete called, 
-      documentCursor: ${documentCursor}, 
+    console.log(`insertDelete called,
+      documentCursor: ${documentCursor},
       documentContent: ${documentContent}`)
   }
 
   insertCharacter (character, documentCursor, documentContent) {
     const rowContent = documentContent[documentCursor.row]
-    
+
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     if (documentCursor.column === 0) {
@@ -1537,8 +1543,8 @@ class App extends Component {
       changeRow(`${pre}${character}${post}`)
     }
 
-    // console.log(`insertCharacter called, 
-    //   documentCursor: ${documentCursor}, 
+    // console.log(`insertCharacter called,
+    //   documentCursor: ${documentCursor},
     //   documentContent: ${documentContent}`)
   }
   onKeyDown (event) {
@@ -1554,7 +1560,7 @@ class App extends Component {
     let updateCursor = false
     let updateDocument = false
 
-    // implementation of cursor movement with arrow keys and 
+    // implementation of cursor movement with arrow keys and
     // alphanumeric character key down events
 
     const moveToStartOfLine = () => this.moveToStartOfLine(documentCursor, documentContent)
@@ -1590,24 +1596,24 @@ class App extends Component {
 
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
-      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column - 1]      
+      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column - 1]
       this.insertBackspace(documentCursor, documentContent)
-      nextStackItem.position = documentCursor            
-      nextStackItem.event = 'insertBackspace' 
+      nextStackItem.position = documentCursor
+      nextStackItem.event = 'insertBackspace'
       if (nextStackItem.value) {
         undoStack.push(nextStackItem)
-      }          
+      }
       //undoStack.push(nextStackItem)
       updateCursor = true
       updateDocument = true
     } else if (isKey(KEY.DELETE)) {
       event.preventDefault()
-      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column]      
+      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column]
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
-      nextStackItem.position = documentCursor    
-      nextStackItem.event = 'insertDelete'                   
+      nextStackItem.position = documentCursor
+      nextStackItem.event = 'insertDelete'
       if (nextStackItem.value) {
         undoStack.push(nextStackItem)
       }
@@ -1651,7 +1657,7 @@ class App extends Component {
       // console.log ('updateDocument is true here')
       nextState.documentContent = documentContent
       nextState.undoStack = undoStack
-      nextState.saved = false      
+      nextState.saved = false
     }
 
     if (updateCursor) {
@@ -1701,10 +1707,10 @@ class App extends Component {
         documentCursor, documentContent)
       const nextStackItem = {}
       nextStackItem.value = character
-      nextStackItem.position = documentCursor 
-      nextStackItem.event = 'insertCharacter'  
-      undoStack.push(nextStackItem)         
-      documentCursor.column += 1            
+      nextStackItem.position = documentCursor
+      nextStackItem.event = 'insertCharacter'
+      undoStack.push(nextStackItem)
+      documentCursor.column += 1
     }
 
     if (updateDocument) {
@@ -1714,79 +1720,84 @@ class App extends Component {
 
   render () {
     return (
-      <PageExitManager route="/">
-      <div 
-        className="top-level-window"
-        tabIndex={0}
-        onKeyDown={this.onKeyDown}
-        onKeyPress={this.onKeyPress}
-        onClick={this.onClickCloseMenuItem}
-        ref={(element) => {this.topLevel = element}}
+      <PageExitManager
+        prompt={this.state.prompt}
+        isDirty={this.state.isDirty}
+        onYes={() => { this.setState({ isDirty: false, prompt: false }) }}
+        onNo={() => { this.setState({ isDirty: false, prompt: false }) }}
         >
-        <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
-        <div className='app__main-container'>
-          <div className='app__menu-bar-container'>
-            <MainMenu 
-              menu={this.state.mainMenuData} 
-              onMainMenuClick={this.onMainMenuClick}
-              onMouseUp={this.onNotepadMouseUp}  
+        <div
+          className="top-level-window"
+          tabIndex={0}
+          onKeyDown={this.onKeyDown}
+          onKeyPress={this.onKeyPress}
+          onClick={this.onClickCloseMenuItem}
+          ref={(element) => {this.topLevel = element}}
+          >
+          <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
+          <div className='app__main-container'>
+            <div className='app__menu-bar-container'>
+              <MainMenu
+                menu={this.state.mainMenuData}
+                onMainMenuClick={this.onMainMenuClick}
+                onMouseUp={this.onNotepadMouseUp}
 
-              openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
-              onGistClick={this.onGistClick}  
-              openFileHandleChange={this.openFileHandleChange}
-              openFileHandleSubmit={this.openFileHandleSubmit}
-              openFileHandleCancel={this.openFileHandleCancel}
-              openFileFormValue={this.openFileFormValue}   
-              // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
-              // into something more readable
-              showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
-              onClickSaveYes={this.onClickSaveYes}
-              onClickSaveNo={this.onClickSaveNo}
-              onClickSaveCancel={this.onClickSaveCancel}
-              
-              newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
-              
-              saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
-              saveAsHandleChange={this.saveAsHandleChange}
-              saveAsFormFileName={this.state.saveAsFormFileName}
-              saveAsFormFileDescription={this.state.saveAsFormFileDescription}
-              saveAsHandleSubmit={this.saveAsHandleSubmit}
-              saveAsHandleCancel={this.saveAsHandleCancel}
-              
-              findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
-              replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
-              goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
-              fontBox={this.state.mainMenuData.topLevel.items[2].subLevel.items[1]}
-              helpBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[0]}
-              aboutBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[1]}
-            />
-          </div>
-          <div className="app__document-container">
-            <NotePad
-              cursor={this.state.documentCursor}
-              content={this.state.documentContent}
-              selection={this.state.documentSelection}
-              isSelected={this.isSelected}
-              onMouseDown={this.onNotepadMouseDown}
-              onMouseEnter={this.onNotepadMouseEnter}
-              onMouseLeave={this.onNotepadMouseLeave}
-              onMouseUp={this.onNotepadMouseUp}
-              dialogBoxisVisible={this.state.dialogBoxisVisible}
-            />
-          </div>
-          <div className="app__status-container">
-            <StatusBar />
-          </div>
-          <div className="dev__stack-view-container">
-              <UndoStackView
-                undoStackObject={this.state.undoStack}
-              />
-              <RedoStackView
-                redoStackObject={this.state.redoStack}
+                openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+                onGistClick={this.onGistClick}
+                openFileHandleChange={this.openFileHandleChange}
+                openFileHandleSubmit={this.openFileHandleSubmit}
+                openFileHandleCancel={this.openFileHandleCancel}
+                openFileFormValue={this.openFileFormValue}
+                // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"
+                // into something more readable
+                showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
+                onClickSaveYes={this.onClickSaveYes}
+                onClickSaveNo={this.onClickSaveNo}
+                onClickSaveCancel={this.onClickSaveCancel}
+
+                newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
+
+                saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
+                saveAsHandleChange={this.saveAsHandleChange}
+                saveAsFormFileName={this.state.saveAsFormFileName}
+                saveAsFormFileDescription={this.state.saveAsFormFileDescription}
+                saveAsHandleSubmit={this.saveAsHandleSubmit}
+                saveAsHandleCancel={this.saveAsHandleCancel}
+
+                findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
+                replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
+                goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
+                fontBox={this.state.mainMenuData.topLevel.items[2].subLevel.items[1]}
+                helpBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[0]}
+                aboutBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[1]}
               />
             </div>
+            <div className="app__document-container">
+              <NotePad
+                cursor={this.state.documentCursor}
+                content={this.state.documentContent}
+                selection={this.state.documentSelection}
+                isSelected={this.isSelected}
+                onMouseDown={this.onNotepadMouseDown}
+                onMouseEnter={this.onNotepadMouseEnter}
+                onMouseLeave={this.onNotepadMouseLeave}
+                onMouseUp={this.onNotepadMouseUp}
+                dialogBoxisVisible={this.state.dialogBoxisVisible}
+              />
+            </div>
+            <div className="app__status-container">
+              <StatusBar />
+            </div>
+            <div className="dev__stack-view-container">
+                <UndoStackView
+                  undoStackObject={this.state.undoStack}
+                />
+                <RedoStackView
+                  redoStackObject={this.state.redoStack}
+                />
+              </div>
+          </div>
         </div>
-      </div>
       </PageExitManager>
     )
   }
