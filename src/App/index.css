@@ -103,6 +103,10 @@
     border: none;  
   }
 
+  .app__document-container::-webkit-scrollbar {
+    display: none;
+  }
+
   .dev__stack-view-container {
     visibility: hidden;
     display: none;

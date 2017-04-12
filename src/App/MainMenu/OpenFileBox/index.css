@@ -48,6 +48,10 @@
   
 }
 
+.open-file-form-container input:hover {
+  background-color: lavender;
+}
+
 .file-container::-webkit-scrollbar {
     width: 12px;
     background-color: ghostwhite;

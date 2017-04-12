@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-// import Request from 'superagent'
 import 'whatwg-fetch'
 // also import PropTypes
-import PageExitManager from './PageExitManager'
 import {getGists} from './helpers/getGists'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
@@ -126,7 +124,6 @@ class App extends Component {
     this.insertBackspace = this.insertBackspace.bind(this)
     this.insertDelete = this.insertDelete.bind(this)
     this.insertCharacter = this.insertCharacter.bind(this)
-
     // // audio object
     // this.audioContext = new window.AudioContext()
     // this.audioGainNode = this.audioContext.createGain()
@@ -1714,7 +1711,6 @@ class App extends Component {
 
   render () {
     return (
-      <PageExitManager route="/">
       <div 
         className="top-level-window"
         tabIndex={0}
@@ -1787,7 +1783,6 @@ class App extends Component {
             </div>
         </div>
       </div>
-      </PageExitManager>
     )
   }
 }
