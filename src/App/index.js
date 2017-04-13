@@ -13,17 +13,14 @@ import StatusBar from './StatusBar'
 import RedoStackView from './RedoStackView'
 import UndoStackView from './UndoStackView'
 
-// json data for testing authentication
+// json data for testing GitHub API requests for user-level permission
 import myInfo from './mySecretStuff.js'
 import './index.css'
 
-const mockData = [
+const startData = [
   '',
   '',
   '',
-  // 'Testing this App text input area',
-  // 'This is the second line',
-  // 'And a third line of more text also',
   '',
   '',
   '',
@@ -146,7 +143,7 @@ class App extends Component {
       isDirty: true,
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
-      documentContent: mockData,
+      documentContent: startData,
       documentSelection: {
         isSelected: false,
         // TODO: figure out if this second flag, "isSelectedChanging", is actually necessary
@@ -169,7 +166,10 @@ class App extends Component {
       openFileFormValue: '',
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
+      newSavedGistID: '',
+      gistType: 'secret',
       openFileGistID: '',
+      openFileGistType: '',
       myGISTS: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files
     }
 
@@ -680,6 +680,7 @@ class App extends Component {
       nextState.documentFileName = gist.name
       nextState.documentContent = newDocumentContent
       nextState.openFileGistID = gist.id
+      nextState.openFileGistType = gist.public
       nextState.mainMenuData = mainMenuData
       nextState.saved = true // MIGHT need to change...
       nextState.hasSaved = true
@@ -732,19 +733,23 @@ class App extends Component {
       const documentFileName = this.state.documentFileName
       const documentContent = this.state.documentContent.slice()
       const currentFileDescription = this.state.saveAsFormFileDescription;
-      const gistID = this.state.openFileGistID
+      const gistID = this.state.openFileGistID || this.state.newSavedGistID
+      const gistType = this.state.gistType
 
+      console.log('gistType: ' + gistType)
       const url = `https://api.github.com/gists/${gistID}`
 
       const patchContent = {
         description: currentFileDescription,
-        public: false,
+        public: (gistType !== 'secret'),
         files: {
           [documentFileName] : {
             content: documentContent.join('\n')
           }
         }
       }
+
+      console.log(JSON.stringify(patchContent))
 
       const patchOptions = {
         method: 'PATCH',
@@ -787,7 +792,8 @@ class App extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
   saveAsHandleSubmit (event) {
-    event.preventDefault()    
+    event.preventDefault()  
+    const gistType = this.state.gistType  
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
@@ -798,7 +804,7 @@ class App extends Component {
     const url = `https://api.github.com/gists`   
 
     const getOptions = {
-      method: 'GET', // gonna be POST
+      method: 'GET',
       headers: {
         'Authorization': `token ${myInfo.TestToken}`
       }
@@ -808,10 +814,12 @@ class App extends Component {
       // TODO: user define-able for 'description'
       // and make this 'public' choice for the user, secret or public gist
       description: newFileDescription,
-      public: false,
+      public: (gistType !== 'secret'),
       files: {
         [documentFileName] : {
-          content: documentContent.join('\n')
+          content: (!documentContent.every(line => line === '') 
+            && documentContent.join('\n')) 
+            || 'empty gist'
         }
       }
     }
@@ -835,11 +843,11 @@ class App extends Component {
     // TODO: handle OAuth, this works right now because this is my personal access token
     const updateGists = () => {
       return getGists(userGistsUrl, getOptions, (filesArray) => {
-        console.log('inside getGists')
         this.setState((prevState) => {
+          const newSavedGistID = filesArray[0][0].id
           mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          return {mainMenuData, dialogBoxisVisible, saved, hasSaved}
+          return {mainMenuData, dialogBoxisVisible, saved, hasSaved, newSavedGistID}
         })
       })
     }
@@ -866,7 +874,7 @@ class App extends Component {
     const mainMenuData = {...this.state.mainMenuData}
     window.print()
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData}
     })
   }
@@ -914,7 +922,6 @@ class App extends Component {
       */
 
       if (undoStack.length) {
-        // const peekLayer = undoStack[undoStack.length - 2]        
         console.log("Undo - stackOps:")        
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
@@ -925,8 +932,6 @@ class App extends Component {
 
           const removeChar = deleteBackCharArray
             .splice(stackLayer[0].position.column - 1, 1)
-          //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
-          //console.log('after splice: ')
           console.log('deleteBackCharArray: ')
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
@@ -955,7 +960,6 @@ class App extends Component {
           undoStack.length !== 0 && redoStack.push(undoStack.pop())
     
         } else if (stackLayer[0].event === 'insertDelete') {
-          // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
 
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
@@ -984,37 +988,28 @@ class App extends Component {
 
     stackOps(topLayer)
     
-    // undoStack.length !== 0 && redoStack.push(undoStack.pop())
-    
-
     let updateCursor = true
     let updateDocument = true
 
     const nextState = {}
     if (updateDocument) {
-      // console.log ('editUndo - updateDocument is true here')
       nextState.documentContent = documentContent
       nextState.undoStack = undoStack
       nextState.redoStack = redoStack
     }
 
     if (updateCursor) {
-      //console.log ('editUndo - updateCursor is true here')
       nextState.documentCursor = documentCursor
     }
 
-    // console.log('editUndo -nextState:')
-    //console.log(nextState)
     this.setState(nextState)
-    
-            
+
   }
 
   editRedo (menuItem) {
 
     console.log('editRedo called here')    
     const documentCursor = {...this.state.documentCursor}
-    // console.log(menuItem)
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
@@ -1029,7 +1024,6 @@ class App extends Component {
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
 
-          //const addBackChar = stackLayer[0][top]
           const addBackChar = documentContent[stackLayer[0].position.row].split('')
           
           addBackChar.splice(stackLayer[0].position.column - 1, 0, stackLayer[0].value)
@@ -1039,14 +1033,12 @@ class App extends Component {
           documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = addBackChar.join('')
 
-          // console.log(documentContent[stackLayer[0].position.row])
 
           console.log ('new docContent:')
           console.log(documentContent)
 
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          // redoStack.length !== 0 && redoStack.pop()
           
 
         } else if (stackLayer[0].event === 'insertBackspace') {
@@ -1062,18 +1054,14 @@ class App extends Component {
             .slice()
 
           const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
-          //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
-          //console.log('after splice: ')
           console.log('deleteBackCharArray: ')
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
           console.log(removeChar)
           
-          //documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          // redoStack.length !== 0 && redoStack.pop()
           
 
         } else if (stackLayer[0].event === 'insertDelete') {
@@ -1084,8 +1072,6 @@ class App extends Component {
             .slice()
 
           const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
-          //deleteBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0][top])
-          //console.log('after splice: ')
           console.log('deleteBackCharArray: ')
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
@@ -1094,7 +1080,6 @@ class App extends Component {
           documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
                     
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          // redoStack.length !== 0 && redoStack.pop()
           
           
         } else if (stackLayer[0].event === 'editCut') {
@@ -1111,7 +1096,6 @@ class App extends Component {
       }
     }
     stackOps(topLayer)
-    // redoStack.length !== 0 && undoStack.push(redoStack.pop())
     
     let updateCursor = true
     let updateDocument = true
@@ -1299,9 +1283,6 @@ class App extends Component {
 
   moveToStartOfLine (documentCursor, documentContent) {
     documentCursor.column = 0
-    // console.log(`moveToStartOfLine called,
-    //   documentCursor: ${documentCursor}
-    //   documentContent: ${documentContent}`)
   }
 
   moveToEndOfLine (documentCursor, documentContent) {
@@ -1310,25 +1291,16 @@ class App extends Component {
     } else {
       documentCursor.column = 0
     }
-    // console.log(`moveToEndOfLine called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
 
   moveToTopOfDocument (documentCursor, documentContent) {
     documentCursor.row = 0
     documentCursor.column = 0
-    // console.log(`moveToTopOfDocument called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
 
   moveToBottomOfDocument (documentCursor, documentContent) {
     documentCursor.row = documentContent.length - 1
     documentCursor.column = 0
-    // console.log(`moveToBottomOfDocument called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
 
   moveUp (documentCursor, documentContent) {
@@ -1339,9 +1311,6 @@ class App extends Component {
     if (documentCursor.column > documentContent[documentCursor.row].length - 1) {
       this.moveToEndOfLine(documentCursor, documentContent)
     }
-    // console.log(`moveUp called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
 
   moveDown (documentCursor, documentContent) {
@@ -1352,9 +1321,6 @@ class App extends Component {
     if (documentCursor.column > documentContent[documentCursor.row].length -1) {
       this.moveToEndOfLine(documentCursor, documentContent)
     }
-    // console.log(`moveDown called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }  
   
   moveLeft (documentCursor, documentContent) {
@@ -1367,9 +1333,6 @@ class App extends Component {
         this.moveToStartOfLine(documentCursor, documentContent)
       }
     }
-    // console.log(`moveLeft called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }  
   
   moveRight (documentCursor, documentContent) {
@@ -1382,9 +1345,6 @@ class App extends Component {
         this.moveToEndOfLine(documentCursor, documentContent)
       }
     }
-    // console.log(`moveRight called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
 
   insertCarriageReturn (documentCursor, documentContent) {
@@ -1414,9 +1374,6 @@ class App extends Component {
 
     documentCursor.column = 0
 
-    // console.log(`insertCarriageReturn called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
 
   insertBackspace (documentCursor, documentContent) {   
@@ -1448,11 +1405,6 @@ class App extends Component {
         documentContent.splice(documentCursor.row + 1, 1)
       }
     }
-
-
-    // console.log(`insertBackspace called, 
-    //   documentCursor: ${JSON.stringify(documentCursor)}, 
-    //   documentContent: ${JSON.stringify(documentContent)}`)
   }
 
   insertDelete (documentCursor, documentContent) {
@@ -1472,14 +1424,6 @@ class App extends Component {
     // TODO: this if statement seems to be preventing correct delete events,
     // check to see if null values for 'post' don't mess anything up!
     changeRow(`${pre}${post}`)
-    // if (post.length) {
-    //   changeRow(`${pre}${post}`)
-    // } else if (documentCursor.row < documentCursor.length) {
-    //   const nextRowContent = documentContent[documentCursor.row]
-
-    //   changeRow(`${rowContent}${nextRowContent}`)
-    //   documentContent.splice(documentCursor.row, 1)
-    // }
 
     console.log(`insertDelete called, 
       documentCursor: ${documentCursor}, 
@@ -1500,13 +1444,8 @@ class App extends Component {
       const post = rowContent.slice(documentCursor.column)
       changeRow(`${pre}${character}${post}`)
     }
-
-    // console.log(`insertCharacter called, 
-    //   documentCursor: ${documentCursor}, 
-    //   documentContent: ${documentContent}`)
   }
   onKeyDown (event) {
-    // console.log(`keyCode inside onKeyDown: ${event.keyCode}`)
     if (this.state.dialogBoxisVisible) {
       return
     }
@@ -1517,10 +1456,6 @@ class App extends Component {
 
     let updateCursor = false
     let updateDocument = false
-
-    // implementation of cursor movement with arrow keys and 
-    // alphanumeric character key down events
-
     const moveToStartOfLine = () => this.moveToStartOfLine(documentCursor, documentContent)
     const moveToEndOfLine = () => this.moveToEndOfLine(documentCursor, documentContent)
     const moveToTopOfDocument = () => this.moveToTopOfDocument(documentCursor, documentContent)
@@ -1561,7 +1496,6 @@ class App extends Component {
       if (nextStackItem.value) {
         undoStack.push(nextStackItem)
       }          
-      //undoStack.push(nextStackItem)
       updateCursor = true
       updateDocument = true
     } else if (isKey(KEY.DELETE)) {
@@ -1612,14 +1546,12 @@ class App extends Component {
     const nextState = {}
 
     if (updateDocument) {
-      // console.log ('updateDocument is true here')
       nextState.documentContent = documentContent
       nextState.undoStack = undoStack
       nextState.saved = false      
     }
 
     if (updateCursor) {
-      // console.log ('updateCursor is true here')
       nextState.documentCursor = documentCursor
     }
 
@@ -1627,7 +1559,6 @@ class App extends Component {
   }
 
   onKeyPress (event) {
-    // console.log(`charCode inside onKeyPress: ${event.charCode}`)
     if (this.state.dialogBoxisVisible) {
       return
     }
@@ -1710,6 +1641,7 @@ class App extends Component {
               newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
               
               saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
+              gistType={this.state.gistType}
               saveAsHandleChange={this.saveAsHandleChange}
               saveAsFormFileName={this.state.saveAsFormFileName}
               saveAsFormFileDescription={this.state.saveAsFormFileDescription}

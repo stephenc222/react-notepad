@@ -26,6 +26,19 @@ class SaveAsBox extends Component {
                 value={this.props.saveAsFormFileName} 
                 onChange={this.props.saveAsHandleChange}
               />
+              <input 
+                type="radio" 
+                name="gistType" 
+                value="secret"
+                // defaultChecked={true}
+                checked={this.props.gistType==='secret'}                
+                onChange={this.props.saveAsHandleChange}/>secret
+              <input 
+                type="radio" 
+                name="gistType" 
+                value="public"
+                checked={this.props.gistType==='public'}
+                onChange={this.props.saveAsHandleChange}/>public
             </div>
             <div>
               <label>

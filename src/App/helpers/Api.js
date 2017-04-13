@@ -13,12 +13,14 @@ function getGists (url, options, callback) {
                     let file = {}
                     file.name = gistArray[gist].files[filePath].filename
                     file.id = gistArray[gist].id
+                    file.public = gistArray[gist].public                                     
                     file.url = gistArray[gist].files[filePath].raw_url
                     multiFileGist.push(file)
                   } else {
                     let file = {}                    
                     file.name = gistArray[gist].files[filePath].filename
-                    file.id = gistArray[gist].id                    
+                    file.id = gistArray[gist].id   
+                    file.public = gistArray[gist].public                 
                     file.url = gistArray[gist].files[filePath].raw_url
                     filesArray.push([file])
                   }
