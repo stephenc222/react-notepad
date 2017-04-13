@@ -174,12 +174,13 @@ class App extends Component {
     }
 
     //TODO: customize the confirm dialog to prevent or enable reload of browser tab
-    window.addEventListener("beforeunload", function (e) {
-      e.preventDefault()
-      var confirmationMessage = ''
-      e.returnValue = confirmationMessage    // Gecko, Trident, Chrome 34+
-      return confirmationMessage             // Gecko, WebKit, Chrome <34
-    })
+    // commented out for less aggravation during development
+    // window.addEventListener("beforeunload", function (e) {
+    //   e.preventDefault()
+    //   var confirmationMessage = ''
+    //   e.returnValue = confirmationMessage    // Gecko, Trident, Chrome 34+
+    //   return confirmationMessage             // Gecko, WebKit, Chrome <34
+    // })
   }
 
   onClickCloseMenuItem (event) {
@@ -515,6 +516,7 @@ class App extends Component {
     console.log('onClickSaveYes was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const dialogBoxisVisible = true
     this.setState((prevState) => {
       mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       if (!this.state.hasSaved) {
@@ -527,14 +529,14 @@ class App extends Component {
         // alert('Calling SAVE (patch request) here!')
         this.fileSaveMenu()
       }
-      return {mainMenuData}
+      return {mainMenuData, dialogBoxisVisible}
     })
   }
   
   onClickSaveNo () {
     console.log('onClickSaveNo was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
-    let saved = true
+    const saved = true
     let fileOpenControl = new Promise((resolve, reject) => {
       this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.visible = false
@@ -934,9 +936,12 @@ class App extends Component {
 
       return
     }
-    // TODO: make work for firefox too
-    alert('Going to Chrome\'s homepage...')
-    window.open('https://www.google.com/_/chrome/newtab', '_self')
+
+    (!!window.chrome) 
+      // for chrome home page
+      ? window.open('https://www.google.com/_/chrome/newtab', '_self')
+      // for Firefox home page
+      : window.open('about:home', '_self')
   }
 
   editUndo (menuItem){
