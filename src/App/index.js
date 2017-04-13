@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import 'whatwg-fetch'
 // also import PropTypes
-import {getGists} from './helpers/getGists'
+import {getGists, saveAsGist, saveGist} from './helpers/Api'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
 // import OpenFileBox from './OpenFileBox'
@@ -213,24 +213,19 @@ class App extends Component {
 
     if (fileMenu[1].showOpenFileBox) {
       if (!(event.target).closest('.openFileBox')) {
+        console.log('blink!')
         // fileMenu[1].showOpenFileBox = false
         // this.setState({mainMenuData})
         // TODO: make OpenFile box blink, just like in notepad?
       }
     }
-    // via SaveAsBox click handlers
-    // if (fileMenu[2].showFirstSaveBox) {
-    //   if (!(event.target).closest('.firstSaveBox')) {
-    //     fileMenu[2].showFirstSaveBox = false
-    //     this.setState({mainMenuData})
-    //   }
-    // }
-    // TODO: probably need to remove this and handle return to textarea
-    // via SaveAsBox click handlers
+    
     if (fileMenu[3].showSaveAsBox) {
       if (!(event.target).closest('.saveAsBox')) {
-        fileMenu[3].showSaveAsBox = false
-        this.setState({mainMenuData})
+        // TODO: make OpenFile box blink, just like in notepad?        
+        // fileMenu[3].showSaveAsBox = false
+        // this.setState({mainMenuData})
+        console.log('blink!')
       }
     }
     // if (fileMenu[4].showPrintFileBox) {
@@ -652,15 +647,10 @@ class App extends Component {
   }
 
   onGistClick (event, gist) {
-    // let documentFileName = this.state.documentFileName
-    //const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const mainMenuData = {...this.state.mainMenuData}
     const options = {
       method: 'GET'
-      // headers: {
-      //   'Authorization': `token ${myInfo.TestToken}`
-      // }
     }
 
     fetch(gist.url, options)
@@ -674,8 +664,6 @@ class App extends Component {
       gistTextData.forEach(line => newDocumentContent.push(line))
       // 13 lines is how a full textarea is, roughly
       while (newDocumentContent.length < 13) { newDocumentContent.push('') }
-      // console.log(newDocumentContent)
-      // console.log('----------------------------------------')
       return newDocumentContent
     })
     .then ( newDocumentContent => {
@@ -727,60 +715,28 @@ class App extends Component {
     this.setState((prevState) => {
       fileMenu[1].showOpenFileBox = false
       fileMenu[1].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData, dialogBoxisVisible}
     })
   }
 
   fileSaveMenu (menuItem) {
     // save to your gists
-    // TODO: may not need it's own dialog box, just a conditional call to show
-    // SaveAsBox. Also checkout this to help:
-    // https://developer.github.com/v3/gists/#edit-a-gist
-    // const documentFileName = this.state.documentFileName
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = this.state.hasSaved
     const saved = true
     const dialogBoxisVisible = true 
-    const url = `https://api.github.com/gists`  
-    
-    // console.log(gistArray[gist].id)
-    // mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
-    
     console.log(`fileSaveMenu is clicked here`)
     if (hasSaved) {
-      // alert('calling PATCH here!')
-      console.log()
       const documentFileName = this.state.documentFileName
       const documentContent = this.state.documentContent.slice()
       const currentFileDescription = this.state.saveAsFormFileDescription;
       const gistID = this.state.openFileGistID
-      console.log('ID inside fileSaveMenu: ' + gistID)
-      console.log(`${url}/${gistID}`)
-      // TODO: use gistID to concatenate with url to make the PATCH request
-      function saveGist(opts) {
-        fetch(`${url}/${gistID}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `token ${myInfo.TestToken}`
-          },
-          body: JSON.stringify(opts)
-        })
-        .then(function(response) {
-          return response.json()
-        })
-        .then(function(data) {
-          console.log('SAVE Gist -not- saved-as:', data.html_url)
-        })
-        .catch ( error => {
-          console.error(`SAVE gist fetch error: ${error}`)
-        })
-      }
 
-      saveGist({
-        // TODO: user define-able for 'description'
-        // and make this 'public' choice for the user, secret or public gist
+      const url = `https://api.github.com/gists/${gistID}`
+
+      const patchContent = {
         description: currentFileDescription,
         public: false,
         files: {
@@ -788,13 +744,22 @@ class App extends Component {
             content: documentContent.join('\n')
           }
         }
-      })
+      }
+
+      const patchOptions = {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `token ${myInfo.TestToken}`
+        },
+        body: JSON.stringify(patchContent)
+      }
+
+      saveGist(url, patchOptions)
 
       this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.visible =  false
         return {mainMenuData, saved}
       })
-      //mainMenuData.topLevel.items[0].subLevel.visible = false
     } else {
       this.setState((prevState) => {
         fileMenu[3].showSaveAsBox = true
@@ -819,25 +784,19 @@ class App extends Component {
   }
 
   saveAsHandleChange (event) {
-    //console.log(event.target.name)
     this.setState({[event.target.name]: event.target.value})
   }
   saveAsHandleSubmit (event) {
-    // 
+    event.preventDefault()    
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
-    // console.log(`saveAs input FileName value is: ${this.state.saveAsFormFileNameValue}`)
-    // console.log(`saveAs input Description value is: ${this.state.saveAsFormFileDescValue}`)
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
-    let myGISTS = this.state.myGISTS.slice()
     const hasSaved = true
     const saved = true
     const dialogBoxisVisible = false
-    const url = `https://api.github.com/gists`    
+    const url = `https://api.github.com/gists`   
 
-    event.preventDefault()
-    // TODO: handle OAuth, this works right now because this is my personal access token
     const getOptions = {
       method: 'GET', // gonna be POST
       headers: {
@@ -845,7 +804,7 @@ class App extends Component {
       }
     }
 
-    const postOptions = {
+    const postContent = {
       // TODO: user define-able for 'description'
       // and make this 'public' choice for the user, secret or public gist
       description: newFileDescription,
@@ -857,42 +816,35 @@ class App extends Component {
       }
     }
 
+    const postOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': `token ${myInfo.TestToken}`
+      },
+      body: JSON.stringify(postContent)
+    }
+
     const userGistsUrl = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
 
+    this.setState((prevState) => {
+      fileMenu[3].showSaveAsBox = false     
+      fileMenu[3].disableOtherMenuHandlers = false  
+      return {documentFileName, hasSaved,saved, dialogBoxisVisible}     
+    })
+
+    // TODO: handle OAuth, this works right now because this is my personal access token
     const updateGists = () => {
       return getGists(userGistsUrl, getOptions, (filesArray) => {
         console.log('inside getGists')
         this.setState((prevState) => {
           mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
-          myGISTS = filesArray
-          fileMenu[3].showSaveAsBox = false
-          fileMenu[3].disableOtherMenuHandlers = false
-          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData, documentFileName, dialogBoxisVisible, saved, hasSaved, myGISTS}
+          mainMenuData.topLevel.items[0].subLevel.visible = false
+          return {mainMenuData, dialogBoxisVisible, saved, hasSaved}
         })
       })
     }
-    const saveGist = (opts) => {
-      // TODO: put this fetch as like postGist inside the helper file
-      const save = fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `token ${myInfo.TestToken}`
-        },
-        body: JSON.stringify(opts)
-      })
-      .then(function(response) {
-        return response.json()
-      })
-      .then(function(data) {
-        console.log('saved Gist as:', data.html_url)
-      })
-      .catch ( error => {
-        console.error(`SAVE AS gist fetch error: ${error}`)
-      })
-      return Promise.resolve(save)
-    }
-    return saveGist(postOptions).then(updateGists)
+
+    return saveAsGist(url, postOptions).then(updateGists)
     
   }
 
@@ -903,7 +855,7 @@ class App extends Component {
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = false
       fileMenu[3].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+      mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData, dialogBoxisVisible}
     })
   }
@@ -937,11 +889,13 @@ class App extends Component {
       return
     }
 
-    (!!window.chrome) 
-      // for chrome home page
-      ? window.open('https://www.google.com/_/chrome/newtab', '_self')
-      // for Firefox home page
-      : window.open('about:home', '_self')
+    if (!!window.chrome) {
+      window.open('https://www.google.com/_/chrome/newtab', '_self')
+    } else if (typeof InstallTrigger !== undefined) {
+      window.open('about:home', '_self')
+    } else {
+      window.open('https://google.com', '_self')
+    }
   }
 
   editUndo (menuItem){

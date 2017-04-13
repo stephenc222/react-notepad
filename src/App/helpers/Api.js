@@ -1,4 +1,3 @@
-export
 function getGists (url, options, callback) {
   const getRequest = fetch(url, options)
     .then(response => {
@@ -42,3 +41,34 @@ function getGists (url, options, callback) {
     })
   return Promise.resolve(getRequest)  
 }
+
+function saveAsGist (url, postOptions) {
+  const save = fetch(url, postOptions)
+  .then(function(response) {
+    return response.json()
+  })
+  .then(function(data) {
+    console.log('saved Gist as:', data.html_url)
+  })
+  .catch ( error => {
+    console.error(`SAVE AS gist fetch error: ${error}`)
+  })
+  return Promise.resolve(save)
+}
+
+function saveGist (url,patchOptions) {
+  fetch(url, patchOptions)
+  .then(function(response) {
+    return response.json()
+  })
+  .then(function(data) {
+    console.log('SAVE Gist -not- saved-as:', data.html_url)
+  })
+  .catch ( error => {
+    console.error(`SAVE gist fetch error: ${error}`)
+  })
+}
+
+
+
+export {getGists, saveAsGist, saveGist}
