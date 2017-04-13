@@ -172,6 +172,14 @@ class App extends Component {
       openFileGistID: '',
       myGISTS: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files
     }
+
+    //TODO: customize the confirm dialog to prevent or enable reload of browser tab
+    window.addEventListener("beforeunload", function (e) {
+      e.preventDefault()
+      var confirmationMessage = ''
+      e.returnValue = confirmationMessage    // Gecko, Trident, Chrome 34+
+      return confirmationMessage             // Gecko, WebKit, Chrome <34
+    })
   }
 
   onClickCloseMenuItem (event) {
