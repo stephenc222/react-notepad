@@ -7,8 +7,10 @@ class StatusBar extends Component {
       <div className="statusBar">
         StatusBar
         <div className="app__status-bar-cursor-data">
-          <div className="cursor-line">Line</div>
-          <div className="cursor-column">Column</div>
+          <div className="cursor-line">
+            Line: {`${this.props.cursor.row + 1}`}</div>
+          <div className="cursor-column">
+            Column: {`${this.props.cursor.column}`}</div>
         </div>
       </div>
     )

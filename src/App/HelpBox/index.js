@@ -5,7 +5,7 @@ import './index.css'
 class HelpBox extends Component {
   render () {
     return (
-      <div className={(this.props.helpBox.showHelpBox) ? 'helpBox': 'helpBoxHidden'}>
+      <div className='helpBox'>
         <div>Help</div>
         <div>{'placeholder text'}</div>
       </div>

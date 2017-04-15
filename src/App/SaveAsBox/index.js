@@ -6,7 +6,7 @@ class SaveAsBox extends Component {
   
   render () {
     return (
-      <div className={(this.props.saveAsBox.showSaveAsBox) ? 'saveAsBox': 'saveAsBoxHidden'}>
+      <div className="saveAsBox">
         <div className="saveAs-title">
           <div className="saveAs-title--item">Save As...</div>
           <div className="saveAs-title--item-X" onClick={this.props.saveAsHandleCancel}>X</div>

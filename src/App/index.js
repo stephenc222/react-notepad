@@ -5,6 +5,14 @@ import {getGists, saveAsGist, saveGist} from './helpers/Api'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
 import OpenFileBox from './OpenFileBox'
+import NotSavedWarningBox from './NotSavedWarningBox'
+import SaveAsBox from './SaveAsBox'
+import FindBox from './FindBox'
+import ReplaceBox from './ReplaceBox'
+import GoToBox from './GoToBox'
+import FontBox from './FontBox'
+import HelpBox from './HelpBox'
+import AboutBox from './AboutBox'
 
 import NotePad from './Notepad'
 import StatusBar from './StatusBar'
@@ -72,6 +80,16 @@ class App extends Component {
     this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.renderOpenFileDialog = this.renderOpenFileDialog.bind(this)
+
+    this.renderNotSavedWarningBox = this.renderNotSavedWarningBox.bind(this)
+
+    this.renderSaveAsBox = this.renderSaveAsBox.bind(this)
+    this.renderFindBox = this.renderFindBox.bind(this)
+    this.renderReplaceBox = this.renderReplaceBox.bind(this)
+    this.renderGoToBox = this.renderGoToBox.bind(this)
+    this.renderFontBox = this.renderFontBox.bind(this)
+    this.renderHelpBox = this.renderHelpBox.bind(this)
+    this.renderAboutBox = this.renderAboutBox.bind(this)
 
     this.onClickSaveYes = this.onClickSaveYes.bind(this)
     this.onClickSaveNo = this.onClickSaveNo.bind(this)
@@ -163,6 +181,7 @@ class App extends Component {
           column: 0
         }
       },
+      statusBarIsHidden: false,
       undoStack: [],
       redoStack: [],
       saved: false,
@@ -221,10 +240,10 @@ class App extends Component {
       onCancel: this.closeModal,
       // onOpen: this.openFile
     }
-            // {...this.state.openFileProps}
+    // {...this.state.openFileProps}
 
     return (
-        <div className='dialog-box__container'>
+        <div className="dialog-box__container">
           <OpenFileBox
             handlers={handlers}
             onGistClick={this.onGistClick}
@@ -236,6 +255,134 @@ class App extends Component {
           />
         </div>
       )
+  }
+
+  renderNotSavedWarningBox () {
+    const handlers = {
+      onSaveYes: this.onClickSaveYes,
+      onSaveNo: this.onClickSaveNo,
+      onCancel: this.onClickSaveCancel
+    }
+          // {/*showNotSavedWarningBox={this.props.showNotSavedWarningBox}*/}    
+    return ( 
+      <div className="dialog-box__container">
+        <NotSavedWarningBox
+          handlers={handlers}
+          onClickSaveYes={this.onClickSaveYes}
+          onClickSaveNo={this.onClickSaveNo}
+          onClickSaveCancel={this.onClickSaveCancel}
+        />
+      </div>
+    )
+  }
+
+  renderSaveAsBox () {
+    const handlers = {
+      onChange: this.saveAsHandleChange,
+      onSubmit: this.saveAsHandleSubmit,
+      onCancel: this.saveAsHandleCancel
+    }
+
+    //saveAsBox={this.state.saveAsBox}
+    //{...this.state.saveAsBoxProps}
+
+    return (
+      <div className="dialog-box__container">
+        <SaveAsBox 
+          handlers={handlers}
+          gistType={this.state.gistType}
+          saveAsFormFileName={this.state.saveAsFormFileName}
+          saveAsFormFileDescription={this.state.saveAsFormFileDescription}
+          saveAsHandleChange={this.saveAsHandleChange}
+          saveAsHandleSubmit={this.saveAsHandleSubmit}
+          saveAsHandleCancel={this.saveAsHandleCancel}
+        />
+      </div>
+    )
+  }
+
+  renderFindBox () {
+    const handlers = {
+      // handlers go here
+    }
+
+    return (
+      <div className="dialog-box__container">
+        <FindBox
+          handlers={handlers}
+        />
+      </div>
+    )
+  }
+
+  renderReplaceBox () {
+    const handlers = {
+      // handlers go here
+    }
+
+    return (
+      <div className="dialog-box__container">
+        <ReplaceBox
+          handlers={handlers}
+        />
+      </div>
+    )
+  }
+  
+  renderGoToBox () {
+    const handlers = {
+      // handlers go here
+    }
+
+    return (
+      <div className="dialog-box__container">
+        <GoToBox
+          handlers={handlers}
+        />
+      </div>
+    )
+  }
+  
+  renderFontBox () {
+    const handlers = {
+      // handlers go here
+    }
+
+    return (
+      <div className="dialog-box__container">
+        <FontBox
+          handlers={handlers}          
+        />
+      </div>
+    )
+  }
+  
+  renderHelpBox () {
+    const handlers = {
+      // handlers go here
+    }
+
+    return (
+      <div className="dialog-box__container">
+        <HelpBox
+          handlers={handlers}          
+        />
+      </div>
+    )
+  }
+  
+  renderAboutBox () {
+    const handlers = {
+      // handlers go here
+    }
+
+    return (
+      <div className="dialog-box__container">
+        <AboutBox
+          handlers={handlers}          
+        />
+      </div>
+    )
   }
 
 
@@ -276,29 +423,17 @@ class App extends Component {
         console.log('blink!')
       }
     }
-    // if (fileMenu[4].showPrintFileBox) {
-    //   if (!(event.target).closest('.printFileBox')) {
-    //     fileMenu[4].showPrintFileBox = false
-    //     this.setState({mainMenuData})
-    //   }
-    // }
-    // if (fileMenu[5].showExitNotepadBox) {
-    //   if (!(event.target).closest('.exitNotepadBox')) {
-    //     fileMenu[5].showExitNotepadBox = false
-    //     this.setState({mainMenuData})
-    //   }
-    // }
 
     // edit submenu dialog boxes
     if (editMenu[6].showFindBox) {
       if (!(event.target).closest('.findBox')) {
-        editMenu[6].showFindBox = false
+        // editMenu[6].showFindBox = false
         this.setState({mainMenuData})
       }
     }
     if (editMenu[8].showReplaceBox) {
       if (!(event.target).closest('.replaceBox')) {
-        editMenu[8].showReplaceBox = false
+        // editMenu[8].showReplaceBox = false
         this.setState({mainMenuData})
       }
     }
@@ -306,7 +441,7 @@ class App extends Component {
     // via GoToBox click handlers
     if (editMenu[9].showGoToBox) {
       if (!(event.target).closest('.goToBox')) {
-        editMenu[9].showGoToBox = false
+        // editMenu[9].showGoToBox = false
         this.setState({mainMenuData})
       }
     }
@@ -314,7 +449,7 @@ class App extends Component {
     // format submenu dialog boxes    
     if (formatMenu[1].showFontBox) {
       if (!(event.target).closest('.fontBox')) {
-        formatMenu[1].showFontBox = false
+        // formatMenu[1].showFontBox = false
         this.setState({mainMenuData})
       }
     }
@@ -322,13 +457,13 @@ class App extends Component {
     // help submenu dialog boxes
     if (helpMenu[0].showHelpBox) {
       if (!(event.target).closest('.helpBox')) {
-        helpMenu[0].showHelpBox = false
+        // helpMenu[0].showHelpBox = false
         this.setState({mainMenuData})
       }
     }
     if (helpMenu[1].showAboutBox) {
       if (!(event.target).closest('.aboutBox')) {
-        helpMenu[1].showAboutBox = false
+        // helpMenu[1].showAboutBox = false
         this.setState({mainMenuData})
       }
     } 
@@ -402,7 +537,6 @@ class App extends Component {
       
     }
     
-
   }
 
   onNotepadMouseLeave () {
@@ -417,7 +551,6 @@ class App extends Component {
       this.setState({documentSelection})
       
     }
-    // console.log(event.target)
     
   }
 
@@ -560,19 +693,22 @@ class App extends Component {
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const showModal = true
+    let dialogBoxType = ''
     this.setState((prevState) => {
       mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       if (!this.state.hasSaved) {
-        fileMenu[3].showSaveAsBox = true
+        // fileMenu[3].showSaveAsBox = true
+        dialogBoxType = 'renderSaveAsBox'        
         fileMenu[3].disableOtherMenuHandlers = true
       } else {
         // TODO: call save functionality not save as here
         console.warn('call save NOT save as functionality here')
         console.warn(`value of hasSaved: ${this.state.hasSaved}`)
         // alert('Calling SAVE (patch request) here!')
+        dialogBoxType = ''
         this.fileSaveMenu()
       }
-      return {mainMenuData, showModal}
+      return {mainMenuData, showModal, dialogBoxType}
     })
   }
   
@@ -583,8 +719,9 @@ class App extends Component {
     let fileOpenControl = new Promise((resolve, reject) => {
       this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.visible = false
-        mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
-        return {mainMenuData, saved}
+        // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
+        const dialogBoxType = 'renderNotSavedWarningBox'        
+        return {mainMenuData, saved, dialogBoxType}
       })
       resolve(mainMenuData.topLevel.warningFromMenuItem)
     })
@@ -602,6 +739,7 @@ class App extends Component {
             })
             break
           case 'fileNewMenu':
+            this.setState({showModal: false})
             this.fileNewMenu()
             break
           case 'exitNotepad':
@@ -617,16 +755,17 @@ class App extends Component {
     console.log('onClickSaveCancel was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
-      return {mainMenuData}
+      // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
+      const dialogBoxType = 'renderNotSavedWarningBox'      
+      return {mainMenuData, dialogBoxType}
     })
   }
 
-  fileNewMenu (menuItem) {
+  fileNewMenu () {
     // pop up dialog    
     // set document content to empty
     console.log(`fileNewMenu is clicked here`)
-    console.log(menuItem)
+    // console.log(menuItem)
 
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
@@ -638,8 +777,11 @@ class App extends Component {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'fileNewMenu'
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
-          return {mainMenuData}
+          // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
+          const showModal = true
+          const dialogBoxType = 'renderNotSavedWarningBox'   
+          console.log(dialogBoxType)       
+          return {mainMenuData, showModal, dialogBoxType}
         })
       return
     }
@@ -689,8 +831,9 @@ class App extends Component {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData, showModal}
+          // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          const dialogBoxType = 'renderNotSavedWarningBox'          
+          return {mainMenuData, showModal, dialogBoxType}
         })
       
     }
@@ -775,7 +918,7 @@ class App extends Component {
   fileSaveMenu (menuItem) {
     // save to your gists
     const mainMenuData = {...this.state.mainMenuData}
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    //const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = this.state.hasSaved
     const saved = true
     const showModal = true 
@@ -818,24 +961,26 @@ class App extends Component {
       })
     } else {
       this.setState((prevState) => {
-        fileMenu[3].showSaveAsBox = true
-        fileMenu[3].disableOtherMenuHandlers = true
+        // fileMenu[3].showSaveAsBox = true
+        const dialogBoxType = "renderSaveAsBox"
+        // fileMenu[3].disableOtherMenuHandlers = true
         mainMenuData.topLevel.items[0].subLevel.visible = false
-        return {mainMenuData, showModal}
+        return {mainMenuData, showModal, dialogBoxType}
       })
     }
   }
   fileSaveAsMenu (menuItem) {
     // ask you for different name and where to save it
     const mainMenuData = {...this.state.mainMenuData}
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    // const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const showModal = true
     console.log(`fileSaveAsMenu is clicked here`)
     this.setState((prevState) => {
-      fileMenu[3].showSaveAsBox = true
-      fileMenu[3].disableOtherMenuHandlers = true
+      // fileMenu[3].showSaveAsBox = true
+      const dialogBoxType = "renderSaveAsBox"
+      // fileMenu[3].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, showModal}
+      return {mainMenuData, showModal, dialogBoxType}
     })
   }
 
@@ -941,8 +1086,9 @@ class App extends Component {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'exitNotepad'
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
-          return {mainMenuData}
+          // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
+          const dialogBoxType = 'renderNotSavedWarningBox'          
+          return {mainMenuData, dialogBoxType}
         })
 
       return
@@ -1200,12 +1346,14 @@ class App extends Component {
     console.log('editFind clicked here')  
     console.log(menuItem) 
     const mainMenuData = {...this.state.mainMenuData}
-    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    // const editMenu = mainMenuData.topLevel.items[1].subLevel.items
     this.setState((prevState) => {
-      editMenu[6].showFindBox = true
-      editMenu[6].disableOtherMenuHandlers = true
+      // editMenu[6].showFindBox = true
+      const showModal = true
+      const dialogBoxType = "renderFindBox"
+      // editMenu[6].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, showModal, dialogBoxType}
     })         
   }
 
@@ -1221,12 +1369,14 @@ class App extends Component {
     console.log('editReplace clicked here')  
     console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
-    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    // const editMenu = mainMenuData.topLevel.items[1].subLevel.items
     this.setState((prevState) => {
-      editMenu[8].showReplaceBox = true
-      editMenu[8].disableOtherMenuHandlers = true
+      // editMenu[8].showReplaceBox = true
+      // editMenu[8].disableOtherMenuHandlers = true
+      const showModal = true
+      const dialogBoxType = "renderReplaceBox"
       mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, showModal, dialogBoxType}
     })          
   }
 
@@ -1235,12 +1385,14 @@ class App extends Component {
     console.log('editGoTo clicked here')     
     console.log(menuItem)  
     const mainMenuData = {...this.state.mainMenuData}
-    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    // const editMenu = mainMenuData.topLevel.items[1].subLevel.items
     this.setState((prevState) => {
-      editMenu[9].showGoToBox = true
-      editMenu[9].disableOtherMenuHandlers = true
+      // editMenu[9].showGoToBox = true
+      // editMenu[9].disableOtherMenuHandlers = true
+      const showModal = true
+      const dialogBoxType = "renderGoToBox"
       mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, showModal, dialogBoxType}
     })        
   }
 
@@ -1268,12 +1420,14 @@ class App extends Component {
     console.log('formatFont clicked here') 
     console.log(menuItem)
     const mainMenuData = {...this.state.mainMenuData}
-    const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
+    // const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
     this.setState((prevState) => {
-      formatMenu[1].showFontBox = true
-      formatMenu[1].disableOtherMenuHandlers = true
+      // formatMenu[1].showFontBox = true
+      // formatMenu[1].disableOtherMenuHandlers = true
+      const showModal = true
+      const dialogBoxType = "renderFontBox"
       mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, showModal, dialogBoxType}
     })          
   }
 
@@ -1290,12 +1444,14 @@ class App extends Component {
     console.log('viewHelpBox clicked here')   
     console.log(menuItem)   
     const mainMenuData = {...this.state.mainMenuData}
-    const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    // const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
     this.setState((prevState) => {
-      helpMenu[0].showHelpBox = true
-      helpMenu[0].disableOtherMenuHandlers = true
+      // helpMenu[0].showHelpBox = true
+      // helpMenu[0].disableOtherMenuHandlers = true
+      const showModal = true
+      const dialogBoxType = "renderHelpBox"
       mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, showModal, dialogBoxType}
     })     
   }
 
@@ -1304,12 +1460,14 @@ class App extends Component {
     console.log('helpAboutNotepad clicked here')
     console.log(menuItem)    
     const mainMenuData = {...this.state.mainMenuData}
-    const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    // const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
     this.setState((prevState) => {
-      helpMenu[1].showAboutBox = true
-      helpMenu[1].disableOtherMenuHandlers = true
+      // helpMenu[1].showAboutBox = true
+      // helpMenu[1].disableOtherMenuHandlers = true
+      const showModal = true
+      const dialogBoxType = "renderAboutBox"
       mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      return {mainMenuData, showModal, dialogBoxType}
     })
   }
 
@@ -1684,18 +1842,18 @@ class App extends Component {
               // openFileName={this.openFileName}   
               // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
               // into something more readable
-              showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
-              onClickSaveYes={this.onClickSaveYes}
-              onClickSaveNo={this.onClickSaveNo}
-              onClickSaveCancel={this.onClickSaveCancel}
+              //showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
+              // onClickSaveYes={this.onClickSaveYes}
+              // onClickSaveNo={this.onClickSaveNo}
+              // onClickSaveCancel={this.onClickSaveCancel}
               
-              saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
-              gistType={this.state.gistType}
-              saveAsHandleChange={this.saveAsHandleChange}
-              saveAsFormFileName={this.state.saveAsFormFileName}
-              saveAsFormFileDescription={this.state.saveAsFormFileDescription}
-              saveAsHandleSubmit={this.saveAsHandleSubmit}
-              saveAsHandleCancel={this.saveAsHandleCancel}
+              // saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
+              // gistType={this.state.gistType}
+              // saveAsHandleChange={this.saveAsHandleChange}
+              // saveAsFormFileName={this.state.saveAsFormFileName}
+              // saveAsFormFileDescription={this.state.saveAsFormFileDescription}
+              // saveAsHandleSubmit={this.saveAsHandleSubmit}
+              // saveAsHandleCancel={this.saveAsHandleCancel}
               
               findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
               replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
@@ -1719,7 +1877,9 @@ class App extends Component {
             />
           </div>
           <div className="app__status-container">
-            <StatusBar />
+            <StatusBar 
+              cursor={this.state.documentCursor}
+            />
           </div>
           <div className="dev__stack-view-container">
               <UndoStackView

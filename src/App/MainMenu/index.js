@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import NotSavedWarningBox from './NotSavedWarningBox'
+// import NotSavedWarningBox from './NotSavedWarningBox'
 // import OpenFileBox from './OpenFileBox'
-import SaveAsBox from './SaveAsBox'
-import FindBox from './FindBox'
-import ReplaceBox from './ReplaceBox'
-import GoToBox from './GoToBox'
-import FontBox from './FontBox'
-import HelpBox from './HelpBox'
-import AboutBox from './AboutBox'
+// import SaveAsBox from './SaveAsBox'
+// import FindBox from './FindBox'
+// import ReplaceBox from './ReplaceBox'
+// import GoToBox from './GoToBox'
+// import FontBox from './FontBox'
+// import HelpBox from './HelpBox'
+// import AboutBox from './AboutBox'
 import './index.css'
 
 export default class MainMenu extends Component {
@@ -43,12 +43,12 @@ export default class MainMenu extends Component {
           onMouseUp={() => this.props.onMouseUp()}>
             {this.props.menu.topLevel.items.map(this.topLevelMenu)}
         </ul>
-        <NotSavedWarningBox
+        {/*<NotSavedWarningBox
           showNotSavedWarningBox={this.props.showNotSavedWarningBox}
           onClickSaveYes={this.props.onClickSaveYes}
           onClickSaveNo={this.props.onClickSaveNo}
           onClickSaveCancel={this.props.onClickSaveCancel}
-        />
+        />*/}
         {/*<OpenFileBox 
           onGistClick={this.props.onGistClick}
           openFileHandleChange={this.props.openFileHandleChange}
@@ -57,7 +57,7 @@ export default class MainMenu extends Component {
           openFileName={this.props.openFileName}
           openFileBox={this.props.openFileBox}
         />*/}        
-        <SaveAsBox 
+        {/*<SaveAsBox 
           saveAsBox={this.props.saveAsBox}
           gistType={this.props.gistType}
           saveAsFormFileName={this.props.saveAsFormFileName}
@@ -65,8 +65,8 @@ export default class MainMenu extends Component {
           saveAsHandleChange={this.props.saveAsHandleChange}
           saveAsHandleSubmit={this.props.saveAsHandleSubmit}
           saveAsHandleCancel={this.props.saveAsHandleCancel}
-        />
-        <FindBox 
+        />*/}
+        {/*<FindBox 
           findBox={this.props.findBox}
         />
         <ReplaceBox 
@@ -83,7 +83,7 @@ export default class MainMenu extends Component {
         />
         <AboutBox 
           aboutBox={this.props.aboutBox}
-        />
+        />*/}
       </div>
     )
   }
