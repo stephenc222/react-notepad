@@ -48,7 +48,11 @@
   
 }
 
-.open-file-form-container input:hover {
+.open-file-form-container input:hover[type='submit'] {
+  background-color: lavender;
+}
+
+.open-file-form-container input:hover[type='button'] {
   background-color: lavender;
 }
 

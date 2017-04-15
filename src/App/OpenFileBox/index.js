@@ -8,6 +8,11 @@ class OpenFileBox extends Component {
     this.renderEachGistFile = this.renderEachGistFile.bind(this)
   }
 
+  componentDidMount () {
+    this.fileInput.focus()
+  }
+
+
 
   renderGists (gists, index) {
     return (<ul key={index}>{gists.map((file, index) => this.renderEachGistFile(file, index))}</ul>)
@@ -19,10 +24,10 @@ class OpenFileBox extends Component {
 
   render () {
     return (
-      <div className={(this.props.openFileBox.showOpenFileBox) ? 'openFileBox': 'openFileBoxHidden'}>
+      <div className="openFileBox">
         <div className="openFile-title">
           <div className="openFile-title--item">Open Gists</div>
-          <div className="openFile-title--item-X" onClick={this.props.openFileHandleCancel}>X</div>
+          <div className="openFile-title--item-X" onClick={this.props.handlers.onCancel}>X</div>
         </div>
         <div className="file-container">
           <div>{this.props.openFileBox.gists.files.map(this.renderGists)}</div>
@@ -31,10 +36,14 @@ class OpenFileBox extends Component {
           <form onSubmit={this.props.openFileHandleSubmit}>
             <label>
               File Name:
-              <input type="text" value={this.props.openFileFormValue} onChange={this.props.openFileHandleChange}/>
+              <input 
+                type="text" 
+                ref={(input) => { this.fileInput = input; }}
+                value={this.props.openFileName} 
+                onChange={this.props.openFileHandleChange}/>
             </label>
             <input type="submit" value="Open" />
-            <input type="button" value="Cancel" onClick={this.props.openFileHandleCancel}/>            
+            <input type="button" value="Cancel" onClick={this.props.handlers.onCancel}/>            
           </form> 
         </div>
       </div>

@@ -9,6 +9,7 @@ class Notepad extends Component {
     this.renderContentColumn = this.renderContentColumn.bind(this)
   }
 
+
   renderContentRow (contentRow, row) {
     const {cursor} = this.props
     //console.log(cursor)
@@ -42,16 +43,7 @@ class Notepad extends Component {
 
   // contentColumn is each individual character in each row
   renderContentColumn (contentColumn, column, row) {
-    // console.log ( `
-    //   renderContentColumn args: 
-    //     contentColumn:${contentColumn} 
-    //     column: ${column}
-    //     row: ${row}`)
     const { cursor, isSelected } = this.props
-    // const { cursor, selection, isSelected } = this.props
-
-    // console.log(selection)
-
     let glyph = contentColumn
     if (contentColumn === ' ') {
       glyph = String.fromCharCode(0xA0)
@@ -63,7 +55,7 @@ class Notepad extends Component {
           key={column} 
           className={
             `notepadArea__column${isSelected(column, row) ? '--selected' : ''} 
-            notepadArea__cursor${this.props.dialogBoxisVisible ? '-hidden': ''}`}
+            notepadArea__cursor${this.props.showModal ? '-hidden': ''}`}
           onMouseDown={(event) => this.props.onMouseDown(event, column, row)}
           onMouseEnter={(event) => this.props.onMouseEnter(event, column, row)}
           onMouseUp={(event) => this.props.onMouseUp(event)}>

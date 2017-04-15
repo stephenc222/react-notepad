@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import NotSavedWarningBox from './NotSavedWarningBox'
-import NewFileBox from './NewFileBox'
-import OpenFileBox from './OpenFileBox'
+// import OpenFileBox from './OpenFileBox'
 import SaveAsBox from './SaveAsBox'
 import FindBox from './FindBox'
 import ReplaceBox from './ReplaceBox'
@@ -50,17 +49,14 @@ export default class MainMenu extends Component {
           onClickSaveNo={this.props.onClickSaveNo}
           onClickSaveCancel={this.props.onClickSaveCancel}
         />
-        <NewFileBox 
-          newFileBox={this.props.newFileBox}
-        />
-        <OpenFileBox 
+        {/*<OpenFileBox 
           onGistClick={this.props.onGistClick}
           openFileHandleChange={this.props.openFileHandleChange}
           openFileHandleSubmit={this.props.openFileHandleSubmit}
           openFileHandleCancel={this.props.openFileHandleCancel}
-          openFileFormValue={this.props.openFileFormValue}
+          openFileName={this.props.openFileName}
           openFileBox={this.props.openFileBox}
-        />        
+        />*/}        
         <SaveAsBox 
           saveAsBox={this.props.saveAsBox}
           gistType={this.props.gistType}

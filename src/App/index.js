@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 import {getGists, saveAsGist, saveGist} from './helpers/Api'
 import MainMenu from './MainMenu'
 import mainMenuData from './mainMenuData'
-// import OpenFileBox from './OpenFileBox'
+import OpenFileBox from './OpenFileBox'
 
 import NotePad from './Notepad'
 import StatusBar from './StatusBar'
@@ -13,7 +13,7 @@ import StatusBar from './StatusBar'
 import RedoStackView from './RedoStackView'
 import UndoStackView from './UndoStackView'
 
-// json data for testing GitHub API requests for user-level permission
+// For testing GitHub API requests for user-level permission
 import myInfo from './mySecretStuff.js'
 import './index.css'
 
@@ -67,6 +67,12 @@ class App extends Component {
     this.isSelected = this.isSelected.bind(this)
 
     this.toggleFileMenu = this.toggleFileMenu.bind(this)
+
+    this.renderModal = this.renderModal.bind(this)
+    this.openModal = this.openModal.bind(this)
+    this.closeModal = this.closeModal.bind(this)
+    this.renderOpenFileDialog = this.renderOpenFileDialog.bind(this)
+
     this.onClickSaveYes = this.onClickSaveYes.bind(this)
     this.onClickSaveNo = this.onClickSaveNo.bind(this)
     this.onClickSaveCancel = this.onClickSaveCancel.bind(this)
@@ -140,7 +146,6 @@ class App extends Component {
     
     this.state = {
       mainMenuData,
-      isDirty: true,
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: startData,
@@ -162,8 +167,10 @@ class App extends Component {
       redoStack: [],
       saved: false,
       hasSaved: false,
-      dialogBoxisVisible: false,
-      openFileFormValue: '',
+      showModal: false,
+      dialogBoxType: '',
+      // showModal: false,
+      openFileName: '',
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -183,6 +190,55 @@ class App extends Component {
     // })
   }
 
+  renderModal() {
+    const dialogBox = this[this.state.dialogBoxType]
+    return (              
+      <div className='backdrop__container'>
+        {dialogBox && dialogBox()}
+      </div>          
+    )
+  }
+
+  openModal (type) {
+    this.setState(
+      {
+        showModal: true,
+        dialogType: type,
+      }
+    )
+  }
+
+  closeModal () {
+    this.setState(
+      {
+        showModal: false,
+      }
+    )
+  }
+
+  renderOpenFileDialog () {
+    const handlers = {
+      onCancel: this.closeModal,
+      // onOpen: this.openFile
+    }
+            // {...this.state.openFileProps}
+
+    return (
+        <div className='dialog-box__container'>
+          <OpenFileBox
+            handlers={handlers}
+            onGistClick={this.onGistClick}
+            openFileHandleSubmit={this.openFileHandleSubmit}
+            openFileHandleChange={this.openFileHandleChange}
+            openFileHandleCancel={this.openFileHandleCancel}
+            openFileName={this.state.openFileName}
+            openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+          />
+        </div>
+      )
+  }
+
+
   onClickCloseMenuItem (event) {
     const mainMenuData = {...this.state.mainMenuData}
 
@@ -201,14 +257,6 @@ class App extends Component {
         mainMenuData.topLevel.items[0].subLevel.visible = false
         return {mainMenuData}
       })
-    }
-
-    // file submenu dialog boxes
-    if (fileMenu[0].showNewFileBox) {
-      if (!(event.target).closest('.newFileBox')) {
-        fileMenu[0].showNewFileBox = false
-        this.setState({mainMenuData})
-      }
     }
 
     if (fileMenu[1].showOpenFileBox) {
@@ -511,7 +559,7 @@ class App extends Component {
     console.log('onClickSaveYes was clicked!')
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
-    const dialogBoxisVisible = true
+    const showModal = true
     this.setState((prevState) => {
       mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       if (!this.state.hasSaved) {
@@ -524,7 +572,7 @@ class App extends Component {
         // alert('Calling SAVE (patch request) here!')
         this.fileSaveMenu()
       }
-      return {mainMenuData, dialogBoxisVisible}
+      return {mainMenuData, showModal}
     })
   }
   
@@ -548,8 +596,9 @@ class App extends Component {
           case 'fileOpenMenu':
             this.setState((prevState) => {
               mainMenuData.topLevel.items[0].subLevel.visible = false
-              mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-              return {mainMenuData, saved}
+              const dialogBoxType = 'renderOpenFileDialog'              
+              //mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+              return {mainMenuData, saved, dialogBoxType}
             })
             break
           case 'fileNewMenu':
@@ -622,24 +671,26 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
-    const dialogBoxisVisible = true
+    const showModal = true
 
     console.log(`fileOpenMenu is clicked here`)
     if (documentContent.every(line => line === '') || saved) {
+      this.openModal()
 
       console.log('need to save file!')
         this.setState((prevState) => {
-          mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-          mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
+          const dialogBoxType = 'renderOpenFileDialog'
+          // mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
+          //mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
           mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData, dialogBoxisVisible}
+          return {mainMenuData, showModal, dialogBoxType}
         })
     } else if (!saved) {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
           mainMenuData.topLevel.items[0].subLevel.visible = false
           mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData, dialogBoxisVisible}
+          return {mainMenuData, showModal}
         })
       
     }
@@ -684,40 +735,40 @@ class App extends Component {
       nextState.mainMenuData = mainMenuData
       nextState.saved = true // MIGHT need to change...
       nextState.hasSaved = true
-      nextState.dialogBoxisVisible = false
+      nextState.showModal = false
       this.setState(nextState)
-    })
+    }).then (this.closeModal())
     .catch ( error => {
       console.error(`gist fetch error: ${error}`)
     })
   }
 
   openFileHandleChange (event) {
-    this.setState({openFileFormValue: event.target.value})
+    this.setState({openFileName: event.target.value})
   }
 
   openFileHandleSubmit (event) {
-    console.log(`openFile input value is: ${this.state.openFileFormValue}`)
+    console.log(`openFile input value is: ${this.state.openFileName}`)
     event.preventDefault()
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
-    const dialogBoxisVisible = false
+    const showModal = false
     this.setState((prevState) => {
       fileMenu[1].showOpenFileBox = false
       fileMenu[1].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, dialogBoxisVisible}
+      return {mainMenuData, showModal}
     })
   }
 
   openFileHandleCancel (event) {
     event.preventDefault()
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
-    const dialogBoxisVisible = false
+    const showModal = false
     this.setState((prevState) => {
       fileMenu[1].showOpenFileBox = false
       fileMenu[1].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, dialogBoxisVisible}
+      return {mainMenuData, showModal}
     })
   }
 
@@ -727,7 +778,7 @@ class App extends Component {
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = this.state.hasSaved
     const saved = true
-    const dialogBoxisVisible = true 
+    const showModal = true 
     console.log(`fileSaveMenu is clicked here`)
     if (hasSaved) {
       const documentFileName = this.state.documentFileName
@@ -770,7 +821,7 @@ class App extends Component {
         fileMenu[3].showSaveAsBox = true
         fileMenu[3].disableOtherMenuHandlers = true
         mainMenuData.topLevel.items[0].subLevel.visible = false
-        return {mainMenuData, dialogBoxisVisible}
+        return {mainMenuData, showModal}
       })
     }
   }
@@ -778,13 +829,13 @@ class App extends Component {
     // ask you for different name and where to save it
     const mainMenuData = {...this.state.mainMenuData}
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
-    const dialogBoxisVisible = true
+    const showModal = true
     console.log(`fileSaveAsMenu is clicked here`)
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = true
       fileMenu[3].disableOtherMenuHandlers = true
       mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, dialogBoxisVisible}
+      return {mainMenuData, showModal}
     })
   }
 
@@ -800,7 +851,7 @@ class App extends Component {
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = true
     const saved = true
-    const dialogBoxisVisible = false
+    const showModal = false
     const url = `https://api.github.com/gists`   
 
     const getOptions = {
@@ -837,7 +888,7 @@ class App extends Component {
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = false     
       fileMenu[3].disableOtherMenuHandlers = false  
-      return {documentFileName, hasSaved,saved, dialogBoxisVisible}     
+      return {documentFileName, hasSaved,saved, showModal}     
     })
 
     // TODO: handle OAuth, this works right now because this is my personal access token
@@ -847,7 +898,7 @@ class App extends Component {
           const newSavedGistID = filesArray[0][0].id
           mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
           mainMenuData.topLevel.items[0].subLevel.visible = false
-          return {mainMenuData, dialogBoxisVisible, saved, hasSaved, newSavedGistID}
+          return {mainMenuData, showModal, saved, hasSaved, newSavedGistID}
         })
       })
     }
@@ -859,12 +910,12 @@ class App extends Component {
   saveAsHandleCancel (event) {
     event.preventDefault()
     const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
-    const dialogBoxisVisible = false
+    const showModal = false
     this.setState((prevState) => {
       fileMenu[3].showSaveAsBox = false
       fileMenu[3].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, dialogBoxisVisible}
+      return {mainMenuData, showModal}
     })
   }
 
@@ -1446,7 +1497,7 @@ class App extends Component {
     }
   }
   onKeyDown (event) {
-    if (this.state.dialogBoxisVisible) {
+    if (this.state.showModal) {
       return
     }
 
@@ -1559,7 +1610,7 @@ class App extends Component {
   }
 
   onKeyPress (event) {
-    if (this.state.dialogBoxisVisible) {
+    if (this.state.showModal) {
       return
     }
     const {
@@ -1625,20 +1676,18 @@ class App extends Component {
               onMainMenuClick={this.onMainMenuClick}
               onMouseUp={this.onNotepadMouseUp}  
 
-              openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
-              onGistClick={this.onGistClick}  
-              openFileHandleChange={this.openFileHandleChange}
-              openFileHandleSubmit={this.openFileHandleSubmit}
-              openFileHandleCancel={this.openFileHandleCancel}
-              openFileFormValue={this.openFileFormValue}   
+              // openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+              // onGistClick={this.onGistClick}  
+              // openFileHandleChange={this.openFileHandleChange}
+              // openFileHandleSubmit={this.openFileHandleSubmit}
+              // openFileHandleCancel={this.openFileHandleCancel}
+              // openFileName={this.openFileName}   
               // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
               // into something more readable
               showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
               onClickSaveYes={this.onClickSaveYes}
               onClickSaveNo={this.onClickSaveNo}
               onClickSaveCancel={this.onClickSaveCancel}
-              
-              newFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[0]}
               
               saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
               gistType={this.state.gistType}
@@ -1666,7 +1715,7 @@ class App extends Component {
               onMouseEnter={this.onNotepadMouseEnter}
               onMouseLeave={this.onNotepadMouseLeave}
               onMouseUp={this.onNotepadMouseUp}
-              dialogBoxisVisible={this.state.dialogBoxisVisible}
+              showModal={this.state.showModal}
             />
           </div>
           <div className="app__status-container">
@@ -1681,6 +1730,7 @@ class App extends Component {
               />
             </div>
         </div>
+        {this.state.showModal && this.renderModal()}
       </div>
     )
   }
