@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import HelpBox from '.';
-import MainMenuData from '../../App/ui-data'
+
 
 describe('HelpBox Component', () => {
   const props = {

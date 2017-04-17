@@ -71,6 +71,34 @@ function saveGist (url,patchOptions) {
   })
 }
 
+function openGist (url, options) {
+  //put fetch of onGistClick here
+  const open = fetch(url, options)
+    .then(response => {
+      if (response.ok) {
+        return response.text()
+      }
+    }).then ( text => {
+      const gistTextData = text.split('\n')
+      const newDocumentContent = []
+      gistTextData.forEach(line => newDocumentContent.push(line))
+      // 13 lines is how a full textarea is, roughly
+      while (newDocumentContent.length < 13) { newDocumentContent.push('') }
+      return newDocumentContent
+    })
+    .catch ( error => {
+      console.error(`gist fetch error: ${error}`)
+    })
+  return Promise.resolve(open)
+}
+
+const Api = {
+  getGists,
+  saveAsGist,
+  saveGist,
+  openGist
+}
 
 
-export {getGists, saveAsGist, saveGist}
+// export {getGists, saveAsGist, saveGist}
+export default Api

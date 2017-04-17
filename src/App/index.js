@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import 'whatwg-fetch'
 // also import PropTypes
-import {getGists, saveAsGist, saveGist} from './helpers/Api'
+// import {getGists, saveAsGist, saveGist} from './helpers/Api'
+import {Api, typeAhead} from './helpers'
+// import typeAhead from './helpers/typeAhead'
 import MainMenu from './MainMenu'
 import fileMenu from './ui-data/fileMenu'
 import editMenu from './ui-data/editMenu'
@@ -28,6 +30,7 @@ import UndoStackView from './UndoStackView'
 // For testing GitHub API requests for user-level permission
 import myInfo from './mySecretStuff.js'
 import './index.css'
+
 const startData = [
   '',
   '',
@@ -197,6 +200,8 @@ class App extends Component {
       showModal: false,
       dialogBoxType: '',
       openFileName: '',
+      openFilePlaceHolder: '',
+      openFileURL: '',
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -256,6 +261,7 @@ class App extends Component {
             openFileHandleChange={this.openFileHandleChange}
             openFileHandleCancel={this.openFileHandleCancel}
             openFileName={this.state.openFileName}
+            openFilePlaceHolder={this.state.openFilePlaceHolder}
             userGists={this.state.userGists}
           />
         </div>
@@ -775,20 +781,20 @@ class App extends Component {
     const options = {
       method: 'GET'
     }
-
-    fetch(gist.url, options)
-    .then(response => {
-      if (response.ok) {
-        return response.text()
-      }
-    }).then ( text => {
-      const gistTextData = text.split('\n')
-      const newDocumentContent = []
-      gistTextData.forEach(line => newDocumentContent.push(line))
-      // 13 lines is how a full textarea is, roughly
-      while (newDocumentContent.length < 13) { newDocumentContent.push('') }
-      return newDocumentContent
-    })
+    // fetch(gist.url, options)
+    // .then(response => {
+    //   if (response.ok) {
+    //     return response.text()
+    //   }
+    // }).then ( text => {
+    //   const gistTextData = text.split('\n')
+    //   const newDocumentContent = []
+    //   gistTextData.forEach(line => newDocumentContent.push(line))
+    //   // 13 lines is how a full textarea is, roughly
+    //   while (newDocumentContent.length < 13) { newDocumentContent.push('') }
+    //   return newDocumentContent
+    // })
+    Api.openGist (gist.url, options)    
     .then ( newDocumentContent => {
 
       const nextState = {}
@@ -813,18 +819,29 @@ class App extends Component {
   }
 
   openFileHandleChange (event) {
-    this.setState({openFileName: event.target.value})
+    const userGists = this.state.userGists.slice()
+    console.log('will find:')
+    const result = {...typeAhead(event.target.value.toString(), userGists)}
+    console.log(result.gistName)
+    console.log(result.gistRawURL)
+    this.setState({
+      openFileName: event.target.value,
+      openFilePlaceHolder: result.gistName,
+      openFileURL: result.gistRawURL
+    })
+    
   }
 
   openFileHandleSubmit (event) {
-    const fileMenu = {...this.state.fileMenu}    
-    console.log(`openFile input value is: ${this.state.openFileName}`)
+    // const fileMenu = {...this.state.fileMenu}    
+    console.log(`openFile input value is: ${this.state.openFilePlaceHolder}`)
     event.preventDefault()
     const showModal = false
     this.setState((prevState) => {
-      fileMenu.visible = false
-      return {fileMenu, showModal}
+      // fileMenu.visible = false
+      return {showModal}
     })
+    
   }
 
   openFileHandleCancel (event) {
@@ -874,7 +891,7 @@ class App extends Component {
         body: JSON.stringify(patchContent)
       }
 
-      saveGist(url, patchOptions)
+      Api.saveGist(url, patchOptions)
 
       this.setState((prevState) => {
         fileMenu.visible =  false
@@ -953,7 +970,7 @@ class App extends Component {
 
     // TODO: handle OAuth, this works right now because this is my personal access token
     const updateGists = () => {
-      return getGists(userGistsUrl, getOptions, (filesArray) => {
+      return Api.getGists(userGistsUrl, getOptions, (filesArray) => {
         this.setState((prevState) => {
           const newSavedGistID = filesArray[0][0].id
           const userGists = filesArray
@@ -963,7 +980,7 @@ class App extends Component {
       })
     }
 
-    return saveAsGist(url, postOptions).then(updateGists)
+    return Api.saveAsGist(url, postOptions).then(updateGists)
     
   }
 
@@ -1376,7 +1393,7 @@ class App extends Component {
 
     const url = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
 
-    getGists(url, getOptions, (filesArray) => {
+    Api.getGists(url, getOptions, (filesArray) => {
       this.setState((prevState) => {
         const userGists = filesArray
         return {userGists}

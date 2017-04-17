@@ -3,12 +3,23 @@ import ReactDOM from 'react-dom';
 import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
-import MainMenuData from '.';
-import MainMenuData from '../../App/ui-data'
+import MainMenu from '.'
+import fileMenu from '../ui-data/fileMenu'
+import editMenu from '../ui-data/editMenu'
+import formatMenu from '../ui-data/formatMenu'
+import viewMenu from '../ui-data/viewMenu'
+import helpMenu from '../ui-data/helpMenu'
+
 
 describe('MainMenu Component', () => {
   const props = {
-    mainMenu: mainMenuData,
+    mainMenu: [
+      fileMenu,
+      editMenu,
+      formatMenu,
+      viewMenu,
+      helpMenu
+    ],
     onMainMenuClick: sinon.spy(),
     onMouseUp: sinon.spy(),
   }

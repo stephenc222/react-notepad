@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import SaveAsBox from '.';
-import MainMenuData from '../../App/ui-data'
+
 
 describe('SaveAsBox Component', () => {
   const props = {

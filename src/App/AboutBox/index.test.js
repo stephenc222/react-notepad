@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import AboutBox from '.';
-import MainMenuData from '../../App/ui-data'
+
 
 describe('AboutBox Component', () => {
   const props = {
