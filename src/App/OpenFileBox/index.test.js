@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import OpenFileBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('OpenFileBox Component', () => {
   const props = {
-    openFileBox: mainMenuData.topLevel.items[0].subLevel.items[1],
+    userGists: [],
     onGistClick: sinon.spy(),
     handlers: {
       onCancel: sinon.spy()

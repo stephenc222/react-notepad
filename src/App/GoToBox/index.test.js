@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import GoToBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('GoToBox Component', () => {
   const props = {
-    goToBox: mainMenuData.topLevel.items[1].subLevel.items[9],
+    // goToBox: mainMenuData.topLevel.items[1].subLevel.items[9],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

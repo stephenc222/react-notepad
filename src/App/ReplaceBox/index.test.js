@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import ReplaceBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('ReplaceBox Component', () => {
   const props = {
-    replaceBox: mainMenuData.topLevel.items[1].subLevel.items[8]
+    // replaceBox: mainMenuData.topLevel.items[1].subLevel.items[8]
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

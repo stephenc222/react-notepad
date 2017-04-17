@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import SaveAsBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('SaveAsBox Component', () => {
   const props = {
-    saveAsBox: mainMenuData.topLevel.items[0].subLevel.items[1],
+    // saveAsBox: mainMenuData.topLevel.items[0].subLevel.items[1],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

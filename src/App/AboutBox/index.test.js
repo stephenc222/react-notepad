@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import AboutBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('AboutBox Component', () => {
   const props = {
-    aboutBox: mainMenuData.topLevel.items[0].subLevel.items[1],
+    // aboutBox: mainMenuData.topLevel.items[0].subLevel.items[1],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

@@ -30,7 +30,7 @@ class OpenFileBox extends Component {
           <div className="openFile-title--item-X" onClick={this.props.handlers.onCancel}>X</div>
         </div>
         <div className="file-container">
-          <div>{this.props.openFileBox.gists.files.map(this.renderGists)}</div>
+          <div>{this.props.userGists.map(this.renderGists)}</div>
         </div>
         <div className="open-file-form-container">
           <form onSubmit={this.props.openFileHandleSubmit}>

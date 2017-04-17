@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
-import MainMenu from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '.';
+import MainMenuData from '../../App/ui-data'
 
 describe('MainMenu Component', () => {
   const props = {
-    menu: mainMenuData,
+    mainMenu: mainMenuData,
     onMainMenuClick: sinon.spy(),
     onMouseUp: sinon.spy(),
   }

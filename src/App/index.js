@@ -3,7 +3,11 @@ import 'whatwg-fetch'
 // also import PropTypes
 import {getGists, saveAsGist, saveGist} from './helpers/Api'
 import MainMenu from './MainMenu'
-import mainMenuData from './mainMenuData'
+import fileMenu from './ui-data/fileMenu'
+import editMenu from './ui-data/editMenu'
+import formatMenu from './ui-data/formatMenu'
+import viewMenu from './ui-data/viewMenu'
+import helpMenu from './ui-data/helpMenu'
 import OpenFileBox from './OpenFileBox'
 import NotSavedWarningBox from './NotSavedWarningBox'
 import SaveAsBox from './SaveAsBox'
@@ -24,7 +28,6 @@ import UndoStackView from './UndoStackView'
 // For testing GitHub API requests for user-level permission
 import myInfo from './mySecretStuff.js'
 import './index.css'
-
 const startData = [
   '',
   '',
@@ -163,7 +166,11 @@ class App extends Component {
     // }
     
     this.state = {
-      mainMenuData,
+      fileMenu,
+      editMenu,
+      formatMenu,
+      viewMenu,
+      helpMenu,
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: startData,
@@ -184,11 +191,11 @@ class App extends Component {
       statusBarIsHidden: false,
       undoStack: [],
       redoStack: [],
+      warningFromMenuItem: '',
       saved: false,
       hasSaved: false,
       showModal: false,
       dialogBoxType: '',
-      // showModal: false,
       openFileName: '',
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
@@ -196,7 +203,7 @@ class App extends Component {
       gistType: 'secret',
       openFileGistID: '',
       openFileGistType: '',
-      myGISTS: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files
+      userGists: []
     }
 
     //TODO: customize the confirm dialog to prevent or enable reload of browser tab
@@ -238,9 +245,7 @@ class App extends Component {
   renderOpenFileDialog () {
     const handlers = {
       onCancel: this.closeModal,
-      // onOpen: this.openFile
     }
-    // {...this.state.openFileProps}
 
     return (
         <div className="dialog-box__container">
@@ -251,7 +256,7 @@ class App extends Component {
             openFileHandleChange={this.openFileHandleChange}
             openFileHandleCancel={this.openFileHandleCancel}
             openFileName={this.state.openFileName}
-            openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
+            userGists={this.state.userGists}
           />
         </div>
       )
@@ -263,7 +268,7 @@ class App extends Component {
       onSaveNo: this.onClickSaveNo,
       onCancel: this.onClickSaveCancel
     }
-          // {/*showNotSavedWarningBox={this.props.showNotSavedWarningBox}*/}    
+    
     return ( 
       <div className="dialog-box__container">
         <NotSavedWarningBox
@@ -282,9 +287,6 @@ class App extends Component {
       onSubmit: this.saveAsHandleSubmit,
       onCancel: this.saveAsHandleCancel
     }
-
-    //saveAsBox={this.state.saveAsBox}
-    //{...this.state.saveAsBoxProps}
 
     return (
       <div className="dialog-box__container">
@@ -387,86 +389,22 @@ class App extends Component {
 
 
   onClickCloseMenuItem (event) {
-    const mainMenuData = {...this.state.mainMenuData}
-
-    // no view menu dialog boxes
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
-    const editMenu = mainMenuData.topLevel.items[1].subLevel.items
-    const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
-    const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    const fileMenu = {...this.state.fileMenu}
+    const editMenu = {...this.state.editMenu}
+    const formatMenu = {...this.state.formatMenu}
+    const viewMenu = {...this.state.viewMenu}
+    const helpMenu = {...this.state.helpMenu}
 
     if (!(event.target).closest('.app__menu-bar-container')) {
       this.setState((prevState) => {
-        mainMenuData.topLevel.items[4].subLevel.visible = false
-        mainMenuData.topLevel.items[3].subLevel.visible = false
-        mainMenuData.topLevel.items[2].subLevel.visible = false
-        mainMenuData.topLevel.items[1].subLevel.visible = false
-        mainMenuData.topLevel.items[0].subLevel.visible = false
-        return {mainMenuData}
+        helpMenu.visible = false
+        viewMenu.visible = false
+        formatMenu.visible = false
+        editMenu.visible = false
+        fileMenu.visible = false
+        return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
       })
     }
-
-    if (fileMenu[1].showOpenFileBox) {
-      if (!(event.target).closest('.openFileBox')) {
-        console.log('blink!')
-        // fileMenu[1].showOpenFileBox = false
-        // this.setState({mainMenuData})
-        // TODO: make OpenFile box blink, just like in notepad?
-      }
-    }
-    
-    if (fileMenu[3].showSaveAsBox) {
-      if (!(event.target).closest('.saveAsBox')) {
-        // TODO: make OpenFile box blink, just like in notepad?        
-        // fileMenu[3].showSaveAsBox = false
-        // this.setState({mainMenuData})
-        console.log('blink!')
-      }
-    }
-
-    // edit submenu dialog boxes
-    if (editMenu[6].showFindBox) {
-      if (!(event.target).closest('.findBox')) {
-        // editMenu[6].showFindBox = false
-        this.setState({mainMenuData})
-      }
-    }
-    if (editMenu[8].showReplaceBox) {
-      if (!(event.target).closest('.replaceBox')) {
-        // editMenu[8].showReplaceBox = false
-        this.setState({mainMenuData})
-      }
-    }
-    // TODO: probably need to remove this and handle return to textarea
-    // via GoToBox click handlers
-    if (editMenu[9].showGoToBox) {
-      if (!(event.target).closest('.goToBox')) {
-        // editMenu[9].showGoToBox = false
-        this.setState({mainMenuData})
-      }
-    }
-
-    // format submenu dialog boxes    
-    if (formatMenu[1].showFontBox) {
-      if (!(event.target).closest('.fontBox')) {
-        // formatMenu[1].showFontBox = false
-        this.setState({mainMenuData})
-      }
-    }
-
-    // help submenu dialog boxes
-    if (helpMenu[0].showHelpBox) {
-      if (!(event.target).closest('.helpBox')) {
-        // helpMenu[0].showHelpBox = false
-        this.setState({mainMenuData})
-      }
-    }
-    if (helpMenu[1].showAboutBox) {
-      if (!(event.target).closest('.aboutBox')) {
-        // helpMenu[1].showAboutBox = false
-        this.setState({mainMenuData})
-      }
-    } 
   }
 
   onMainMenuClick (event, menuItem) {
@@ -478,8 +416,6 @@ class App extends Component {
 
   onNotepadMouseDown (event, column, row) {
     event.stopPropagation()    
-    // console.log(event.target.innerHTML) // how to get the actual character
-    // console.log(event.target)
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
@@ -518,19 +454,16 @@ class App extends Component {
   }
 
   onNotepadMouseEnter (event, column, row) {
-    // console.log('onNotepadMouseEnter')
     // *hint* this seems to miss the first item to be captured by the selection object    
     event.stopPropagation()    
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
-    //const documentContent = this.state.documentContent.slice()
     if (documentSelection.isSelected && documentSelection.isSelectedChanging) {
       console.log ('Enter - isSelected true')
       documentCursor.column = column 
       documentCursor.row = row
       documentSelection.selectionEnd.column = column
       documentSelection.selectionEnd.row = row
-      //documentCursor
       // change css class here or some kind of flag
       // also move the cursor here
       this.setState({documentCursor})
@@ -540,14 +473,11 @@ class App extends Component {
   }
 
   onNotepadMouseLeave () {
-    // console.log('onNotepadMouseLeave')
     // *hint* this seems to non-duplicately capture all items that are supposed to be selected   
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
       console.log ('Leave - isSelected true and event.target is: ')
-      // console.log(event.target) returns: <react></react> 
       documentSelection.isSelectedChanging = false
-      // change css class here or some kind of flag
       this.setState({documentSelection})
       
     }
@@ -556,12 +486,9 @@ class App extends Component {
 
   onNotepadMouseUp () {
     const documentSelection = {...this.state.documentSelection}
-    // console.log('onNotepadMouseUp')
-    //documentSelection.isSelected = false
     if (documentSelection.isSelected) {
       console.log ('Leave - isSelected true and event.target is: ')
       documentSelection.isSelectedChanging = false
-      // console.log(event.target) returns: <react></react> 
     }
 
     let updateDocument = true
@@ -580,9 +507,6 @@ class App extends Component {
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
     const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
-    // var x = ['jack','bob','jill','went','up','a','hill'].reduce( function (index, column) { 
-    // console.log(column.length)
-    // return index += column.length }, 0)
     if (!documentSelection.isSelected) {
       return false
     }
@@ -609,13 +533,8 @@ class App extends Component {
     }
 
     const startIndex = indexOfPosition(documentContent,start.column, start.row)
-    //console.log('start index', startIndex)
-
     const currentIndex = indexOfPosition(documentContent, column, row)
-    //console.log('start index', currentIndex)
-
     const endIndex = indexOfPosition(documentContent,end.column, end.row)
-    //console.log('end index', endIndex)
 
       return documentSelection.isSelected && !startEndAreSame(start,end) && (
         (currentIndex >= startIndex && currentIndex <= endIndex) || (
@@ -625,118 +544,132 @@ class App extends Component {
     }
 
   toggleFileMenu () {
+    const fileMenu = {...this.state.fileMenu}
+    const editMenu = {...this.state.editMenu}
+    const formatMenu = {...this.state.formatMenu}
+    const viewMenu = {...this.state.viewMenu}
+    const helpMenu = {...this.state.helpMenu}
+    console.log(fileMenu)
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false
-      mainMenuData.topLevel.items[3].subLevel.visible = false
-      mainMenuData.topLevel.items[2].subLevel.visible = false
-      mainMenuData.topLevel.items[1].subLevel.visible = false
-      mainMenuData.topLevel.items[0].subLevel.visible = !prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData}
+      helpMenu.visible = false
+      viewMenu.visible = false
+      formatMenu.visible = false
+      editMenu.visible = false
+      fileMenu.visible = !prevState.fileMenu.visible
+      return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
     console.log('hey, this runs inside toggleFileMenu!')
   }
 
   toggleEditMenu () {
-    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = {...this.state.fileMenu}
+    const editMenu = {...this.state.editMenu}
+    const formatMenu = {...this.state.formatMenu}
+    const viewMenu = {...this.state.viewMenu}
+    const helpMenu = {...this.state.helpMenu}  
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[3].subLevel.visible = false
-      mainMenuData.topLevel.items[4].subLevel.visible = false
-      mainMenuData.topLevel.items[2].subLevel.visible = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      mainMenuData.topLevel.items[1].subLevel.visible = !prevState.mainMenuData.topLevel.items[1].subLevel.visible
-      return {mainMenuData}
+      viewMenu.visible = false
+      helpMenu.visible = false
+      formatMenu.visible = false
+      fileMenu.visible = false
+      editMenu.visible = !prevState.editMenu.visible
+      return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
     console.log('hey, this runs inside toggleEditMenu!')
   }
 
   toggleFormatMenu () {
-    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = {...this.state.fileMenu}
+    const editMenu = {...this.state.editMenu}
+    const formatMenu = {...this.state.formatMenu}
+    const viewMenu = {...this.state.viewMenu}
+    const helpMenu = {...this.state.helpMenu}   
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false 
-      mainMenuData.topLevel.items[3].subLevel.visible = false 
-      mainMenuData.topLevel.items[1].subLevel.visible = false 
-      mainMenuData.topLevel.items[0].subLevel.visible = false 
-      mainMenuData.topLevel.items[2].subLevel.visible = !prevState.mainMenuData.topLevel.items[2].subLevel.visible
-      return {mainMenuData}
+      helpMenu.visible = false 
+      viewMenu.visible = false 
+      editMenu.visible = false 
+      fileMenu.visible = false 
+      formatMenu.visible = !prevState.formatMenu.visible
+      return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
     console.log('hey, this runs inside toggleFormatMenu!')
   }
 
   toggleViewMenu () {
-    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = {...this.state.fileMenu}
+    const editMenu = {...this.state.editMenu}
+    const formatMenu = {...this.state.formatMenu}
+    const viewMenu = {...this.state.viewMenu}
+    const helpMenu = {...this.state.helpMenu}
+    
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[4].subLevel.visible = false
-      mainMenuData.topLevel.items[2].subLevel.visible = false
-      mainMenuData.topLevel.items[1].subLevel.visible = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      mainMenuData.topLevel.items[3].subLevel.visible = !prevState.mainMenuData.topLevel.items[3].subLevel.visible
-      return {mainMenuData}
+      helpMenu.visible = false
+      formatMenu.visible = false
+      editMenu.visible = false
+      fileMenu.visible = false
+      viewMenu.visible = !prevState.viewMenu.visible
+      return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
     console.log('hey, this runs inside toggleViewMenu!')
   }
 
   toggleHelpMenu () {
-    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = {...this.state.fileMenu}
+    const editMenu = {...this.state.editMenu}
+    const formatMenu = {...this.state.formatMenu}
+    const viewMenu = {...this.state.viewMenu}
+    const helpMenu = {...this.state.helpMenu}
+    
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.visible = false 
-      mainMenuData.topLevel.items[1].subLevel.visible = false 
-      mainMenuData.topLevel.items[2].subLevel.visible = false 
-      mainMenuData.topLevel.items[3].subLevel.visible = false 
-      mainMenuData.topLevel.items[4].subLevel.visible = !prevState.mainMenuData.topLevel.items[4].subLevel.visible
-      return {mainMenuData}
+      fileMenu.visible = false 
+      editMenu.visible = false 
+      formatMenu.visible = false 
+      viewMenu.visible = false 
+      helpMenu.visible = !prevState.helpMenu.visible
+      return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
     console.log('hey, this runs inside toggleHelpMenu!')
   }
 
   onClickSaveYes () {
     console.log('onClickSaveYes was clicked!')
-    const mainMenuData = {...this.state.mainMenuData}
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const showModal = true
     let dialogBoxType = ''
     this.setState((prevState) => {
-      // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       if (!this.state.hasSaved) {
-        // fileMenu[3].showSaveAsBox = true
         dialogBoxType = 'renderSaveAsBox'        
-        fileMenu[3].disableOtherMenuHandlers = true
       } else {
-        // TODO: call save functionality not save as here
-        console.warn('call save NOT save as functionality here')
-        console.warn(`value of hasSaved: ${this.state.hasSaved}`)
-        // alert('Calling SAVE (patch request) here!')
         dialogBoxType = ''
         this.fileSaveMenu()
       }
-      return {mainMenuData, showModal, dialogBoxType}
+      return {showModal, dialogBoxType}
     })
   }
   
   onClickSaveNo () {
     console.log('onClickSaveNo was clicked!')
-    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = {...this.state.fileMenu}
+    
+    const warningFromMenuItem = this.state.warningFromMenuItem
     const saved = true
     let fileOpenControl = new Promise((resolve, reject) => {
       this.setState((prevState) => {
-        mainMenuData.topLevel.items[0].subLevel.visible = false
-        // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
+        fileMenu.visible = false
         const dialogBoxType = 'renderNotSavedWarningBox'        
-        return {mainMenuData, saved, dialogBoxType}
+        return {fileMenu, saved, dialogBoxType}
       })
-      resolve(mainMenuData.topLevel.warningFromMenuItem)
+      resolve(warningFromMenuItem)
     })
 
     fileOpenControl.then((priorMenuItem) => {
-        mainMenuData.topLevel.items[0].subLevel.visible = false
 
         switch (priorMenuItem) {
           case 'fileOpenMenu':
             this.setState((prevState) => {
-              mainMenuData.topLevel.items[0].subLevel.visible = false
+              fileMenu.visible = false
               const dialogBoxType = 'renderOpenFileDialog' 
               const showModal = true             
-              //mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-              return {mainMenuData, saved, dialogBoxType, showModal}
+              return {fileMenu, saved, dialogBoxType, showModal}
             })
             break
           case 'fileNewMenu':
@@ -754,14 +687,10 @@ class App extends Component {
   
   onClickSaveCancel () {
     console.log('onClickSaveCancel was clicked!')
-    const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
-      // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       const showModal = false
       const saved = true
-      // const dialogBoxType = 'renderNotSavedWarningBox'      
-      // return {mainMenuData, dialogBoxType}
-      return {mainMenuData, showModal, saved}
+      return {showModal, saved}
     })
   }
 
@@ -769,23 +698,22 @@ class App extends Component {
     // pop up dialog    
     // set document content to empty
     console.log(`fileNewMenu is clicked here`)
-    // console.log(menuItem)
 
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
-    const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
+    const fileMenu = {...this.state.fileMenu}
+    
     
     if (!documentContent.every(line => line === '') && !saved) {
       console.log('need to save file!')
         this.setState((prevState) => {
-          mainMenuData.topLevel.warningFromMenuItem = 'fileNewMenu'
-          mainMenuData.topLevel.items[0].subLevel.visible = false
-          // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
+          const warningFromMenuItem = 'fileNewMenu'
+          fileMenu.visible = false
           const showModal = true
           const dialogBoxType = 'renderNotSavedWarningBox'   
           console.log(dialogBoxType)       
-          return {mainMenuData, showModal, dialogBoxType}
+          return {fileMenu, showModal, dialogBoxType, warningFromMenuItem}
         })
       return
     }
@@ -797,8 +725,7 @@ class App extends Component {
 
     documentCursor.row = 0
     documentCursor.column = 0
-    nextState.mainMenuData = mainMenuData
-    nextState.mainMenuData.topLevel.items[0].subLevel.visible = false
+    nextState.fileMenu.visible = false
     nextState.documentFileName = 'Untitled.txt'
     nextState.documentContent = resetDocumentContent
     nextState.documentCursor = documentCursor
@@ -814,10 +741,10 @@ class App extends Component {
 
   fileOpenMenu (menuItem = null) {
     // display all of your gists
-    // invoke local file system
-    // hint: fileInput element type === 'file'
+    // possibly also invoke local file system
     const documentContent = this.state.documentContent.slice()
-    const mainMenuData = {...this.state.mainMenuData}
+    const fileMenu = {...this.state.fileMenu}
+    
     const saved = this.state.saved
     const showModal = true
 
@@ -828,18 +755,15 @@ class App extends Component {
       console.log('need to save file!')
         this.setState((prevState) => {
           const dialogBoxType = 'renderOpenFileDialog'
-          // mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-          //mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = true
-          mainMenuData.topLevel.items[0].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-          return {mainMenuData, showModal, dialogBoxType}
+          fileMenu.visible = false
+          return {fileMenu, showModal, dialogBoxType}
         })
     } else if (!saved) {
         this.setState((prevState) => {
-          mainMenuData.topLevel.warningFromMenuItem = 'fileOpenMenu'          
-          mainMenuData.topLevel.items[0].subLevel.visible = false
-          // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true//!prevState.mainMenuData.topLevel.items[0].subLevel.visible
+          const warningFromMenuItem = 'fileOpenMenu'          
+          fileMenu.visible = false
           const dialogBoxType = 'renderNotSavedWarningBox'          
-          return {mainMenuData, showModal, dialogBoxType}
+          return {fileMenu, showModal, dialogBoxType, warningFromMenuItem}
         })
       
     }
@@ -848,7 +772,6 @@ class App extends Component {
 
   onGistClick (event, gist) {
     const documentCursor = {...this.state.documentCursor}
-    const mainMenuData = {...this.state.mainMenuData}
     const options = {
       method: 'GET'
     }
@@ -873,15 +796,12 @@ class App extends Component {
       documentCursor.row = 0
       documentCursor.column = 0
 
-      mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = false
-      mainMenuData.topLevel.items[0].subLevel.items[1].disableOtherMenuHandlers = false   
       
       nextState.documentCursor = documentCursor
       nextState.documentFileName = gist.name
       nextState.documentContent = newDocumentContent
       nextState.openFileGistID = gist.id
       nextState.openFileGistType = gist.public
-      nextState.mainMenuData = mainMenuData
       nextState.saved = true // MIGHT need to change...
       nextState.hasSaved = true
       nextState.showModal = false
@@ -897,34 +817,30 @@ class App extends Component {
   }
 
   openFileHandleSubmit (event) {
+    const fileMenu = {...this.state.fileMenu}    
     console.log(`openFile input value is: ${this.state.openFileName}`)
     event.preventDefault()
-    // const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const showModal = false
     this.setState((prevState) => {
-      // fileMenu[1].showOpenFileBox = false
-      // fileMenu[1].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, showModal}
+      fileMenu.visible = false
+      return {fileMenu, showModal}
     })
   }
 
   openFileHandleCancel (event) {
+    const fileMenu = {...this.state.fileMenu}    
     event.preventDefault()
-    // const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
     const showModal = false
     this.setState((prevState) => {
-      // fileMenu[1].showOpenFileBox = false
-      // fileMenu[1].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, showModal}
+      fileMenu.visible = false
+      return {fileMenu, showModal}
     })
   }
 
   fileSaveMenu (menuItem) {
     // save to your gists
-    const mainMenuData = {...this.state.mainMenuData}
-    //const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const fileMenu = {...this.state.fileMenu}
+    
     const hasSaved = this.state.hasSaved
     const saved = true
     const showModal = true 
@@ -936,7 +852,6 @@ class App extends Component {
       const gistID = this.state.openFileGistID || this.state.newSavedGistID
       const gistType = this.state.gistType
 
-      console.log('gistType: ' + gistType)
       const url = `https://api.github.com/gists/${gistID}`
 
       const patchContent = {
@@ -962,31 +877,27 @@ class App extends Component {
       saveGist(url, patchOptions)
 
       this.setState((prevState) => {
-        mainMenuData.topLevel.items[0].subLevel.visible =  false
-        return {mainMenuData, saved}
+        fileMenu.visible =  false
+        return {fileMenu, saved}
       })
     } else {
       this.setState((prevState) => {
-        // fileMenu[3].showSaveAsBox = true
         const dialogBoxType = "renderSaveAsBox"
-        // fileMenu[3].disableOtherMenuHandlers = true
-        mainMenuData.topLevel.items[0].subLevel.visible = false
-        return {mainMenuData, showModal, dialogBoxType}
+        fileMenu.visible = false
+        return {fileMenu, showModal, dialogBoxType}
       })
     }
   }
   fileSaveAsMenu (menuItem) {
     // ask you for different name and where to save it
-    const mainMenuData = {...this.state.mainMenuData}
-    // const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    const fileMenu = {...this.state.fileMenu}
+    
     const showModal = true
     console.log(`fileSaveAsMenu is clicked here`)
     this.setState((prevState) => {
-      // fileMenu[3].showSaveAsBox = true
       const dialogBoxType = "renderSaveAsBox"
-      // fileMenu[3].disableOtherMenuHandlers = true
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, showModal, dialogBoxType}
+      fileMenu.visible = false
+      return {fileMenu, showModal, dialogBoxType}
     })
   }
 
@@ -996,10 +907,10 @@ class App extends Component {
   saveAsHandleSubmit (event) {
     event.preventDefault()  
     const gistType = this.state.gistType  
+    const fileMenu = {...this.state.fileMenu}    
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const hasSaved = true
     const saved = true
     const showModal = false
@@ -1037,8 +948,6 @@ class App extends Component {
     const userGistsUrl = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
 
     this.setState((prevState) => {
-      fileMenu[3].showSaveAsBox = false     
-      fileMenu[3].disableOtherMenuHandlers = false  
       return {documentFileName, hasSaved,saved, showModal}     
     })
 
@@ -1047,9 +956,9 @@ class App extends Component {
       return getGists(userGistsUrl, getOptions, (filesArray) => {
         this.setState((prevState) => {
           const newSavedGistID = filesArray[0][0].id
-          mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
-          mainMenuData.topLevel.items[0].subLevel.visible = false
-          return {mainMenuData, showModal, saved, hasSaved, newSavedGistID}
+          const userGists = filesArray
+          fileMenu.visible = false
+          return {fileMenu, showModal, saved, hasSaved, newSavedGistID, userGists}
         })
       })
     }
@@ -1059,43 +968,40 @@ class App extends Component {
   }
 
   saveAsHandleCancel (event) {
+    const fileMenu = {...this.state.fileMenu}    
     event.preventDefault()
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
     const showModal = false
     this.setState((prevState) => {
-      fileMenu[3].showSaveAsBox = false
-      fileMenu[3].disableOtherMenuHandlers = false
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData, showModal}
+      fileMenu.visible = false
+      return {fileMenu, showModal}
     })
   }
 
   printMenu (menuItem) {
     console.log(`printMenu is clicked here`)
+    const fileMenu = {...this.state.fileMenu}    
     console.log(menuItem)
-    const mainMenuData = {...this.state.mainMenuData}
     window.print()
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].subLevel.visible = false
-      return {mainMenuData}
+      fileMenu.visible = false
+      return {fileMenu}
     })
   }
   exitNotepad (menuItem) {
     // navigate to user's homepage or google.com if IE
+    const fileMenu = {...this.state.fileMenu}    
     console.log(`exitNotepad is clicked here`)
     const documentContent = this.state.documentContent.slice()
-    const mainMenuData = {...this.state.mainMenuData}
     const saved = this.state.saved
 
     if (!documentContent.every(line => line === '') && !saved) {
         this.setState((prevState) => {
-          mainMenuData.topLevel.warningFromMenuItem = 'exitNotepad'
-          mainMenuData.topLevel.items[0].subLevel.visible = false
+          const warningFromMenuItem = 'exitNotepad'
+          fileMenu.visible = false
           const showModal = true
           console.log('this code is showing')
-          // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
           const dialogBoxType = 'renderNotSavedWarningBox'          
-          return {mainMenuData, dialogBoxType, showModal}
+          return {fileMenu, dialogBoxType, showModal, warningFromMenuItem}
         })
 
       return
@@ -1114,7 +1020,6 @@ class App extends Component {
     // undo last action
     console.log('editUndo clicked here')
     const documentCursor = {...this.state.documentCursor}
-    // console.log(menuItem)
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
@@ -1352,15 +1257,12 @@ class App extends Component {
     // open up Find dialog, then finds character sequence 
     console.log('editFind clicked here')  
     console.log(menuItem) 
-    const mainMenuData = {...this.state.mainMenuData}
-    // const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    const editMenu = {...this.state.editMenu}
     this.setState((prevState) => {
-      // editMenu[6].showFindBox = true
       const showModal = true
       const dialogBoxType = "renderFindBox"
-      // editMenu[6].disableOtherMenuHandlers = true
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, showModal, dialogBoxType}
+      editMenu.visible = false
+      return {editMenu, showModal, dialogBoxType}
     })         
   }
 
@@ -1375,15 +1277,12 @@ class App extends Component {
     // TODO: eitReplace needs to be added to the undo and redo stacks    
     console.log('editReplace clicked here')  
     console.log(menuItem)
-    const mainMenuData = {...this.state.mainMenuData}
-    // const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    const editMenu = {...this.state.editMenu}
     this.setState((prevState) => {
-      // editMenu[8].showReplaceBox = true
-      // editMenu[8].disableOtherMenuHandlers = true
       const showModal = true
       const dialogBoxType = "renderReplaceBox"
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, showModal, dialogBoxType}
+      editMenu.visible = false
+      return {editMenu, showModal, dialogBoxType}
     })          
   }
 
@@ -1391,15 +1290,12 @@ class App extends Component {
     // goes to specific line number if word wrap NOT selected
     console.log('editGoTo clicked here')     
     console.log(menuItem)  
-    const mainMenuData = {...this.state.mainMenuData}
-    // const editMenu = mainMenuData.topLevel.items[1].subLevel.items
+    const editMenu = {...this.state.editMenu}        
     this.setState((prevState) => {
-      // editMenu[9].showGoToBox = true
-      // editMenu[9].disableOtherMenuHandlers = true
       const showModal = true
       const dialogBoxType = "renderGoToBox"
-      mainMenuData.topLevel.items[1].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, showModal, dialogBoxType}
+      editMenu.visible = false
+      return {editMenu, showModal, dialogBoxType}
     })        
   }
 
@@ -1426,15 +1322,12 @@ class App extends Component {
     // also includes "Script Type:", which includes "Western", "Greek", "Turkish", etc.,
     console.log('formatFont clicked here') 
     console.log(menuItem)
-    const mainMenuData = {...this.state.mainMenuData}
-    // const formatMenu = mainMenuData.topLevel.items[2].subLevel.items
+    const formatMenu = {...this.state.formatMenu}
     this.setState((prevState) => {
-      // formatMenu[1].showFontBox = true
-      // formatMenu[1].disableOtherMenuHandlers = true
       const showModal = true
       const dialogBoxType = "renderFontBox"
-      mainMenuData.topLevel.items[2].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, showModal, dialogBoxType}
+      formatMenu.visible = false
+      return {formatMenu, showModal, dialogBoxType}
     })          
   }
 
@@ -1450,15 +1343,12 @@ class App extends Component {
     // opens up new searchable help tab 
     console.log('viewHelpBox clicked here')   
     console.log(menuItem)   
-    const mainMenuData = {...this.state.mainMenuData}
-    // const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    const helpMenu = {...this.state.helpMenu}
     this.setState((prevState) => {
-      // helpMenu[0].showHelpBox = true
-      // helpMenu[0].disableOtherMenuHandlers = true
       const showModal = true
       const dialogBoxType = "renderHelpBox"
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, showModal, dialogBoxType}
+      helpMenu.visible = false
+      return {helpMenu, showModal, dialogBoxType}
     })     
   }
 
@@ -1466,22 +1356,19 @@ class App extends Component {
     // basic about this application stuff
     console.log('helpAboutNotepad clicked here')
     console.log(menuItem)    
-    const mainMenuData = {...this.state.mainMenuData}
-    // const helpMenu = mainMenuData.topLevel.items[4].subLevel.items
+    const helpMenu = {...this.state.helpMenu}        
     this.setState((prevState) => {
-      // helpMenu[1].showAboutBox = true
-      // helpMenu[1].disableOtherMenuHandlers = true
       const showModal = true
       const dialogBoxType = "renderAboutBox"
-      mainMenuData.topLevel.items[4].subLevel.visible = false //!prevState.mainMenuData.topLevel.items[0].subLevel.visible
-      return {mainMenuData, showModal, dialogBoxType}
+      helpMenu.visible = false
+      return {helpMenu, showModal, dialogBoxType}
     })
   }
 
   componentDidMount () {
     this.topLevel.focus()
     const getOptions = {
-      method: 'GET', // gonna be POST
+      method: 'GET',
       headers: {
         'Authorization': `token ${myInfo.TestToken}`
       }
@@ -1491,8 +1378,8 @@ class App extends Component {
 
     getGists(url, getOptions, (filesArray) => {
       this.setState((prevState) => {
-        mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
-        return {mainMenuData}
+        const userGists = filesArray
+        return {userGists}
       })
     })
   }
@@ -1640,10 +1527,6 @@ class App extends Component {
     // TODO: this if statement seems to be preventing correct delete events,
     // check to see if null values for 'post' don't mess anything up!
     changeRow(`${pre}${post}`)
-
-    console.log(`insertDelete called, 
-      documentCursor: ${documentCursor}, 
-      documentContent: ${documentContent}`)
   }
 
   insertCharacter (character, documentCursor, documentContent) {
@@ -1837,37 +1720,17 @@ class App extends Component {
         <div className='app__main-container'>
           <div className='app__menu-bar-container'>
             <MainMenu 
-              menu={this.state.mainMenuData} 
+              mainMenu={
+                [
+                  this.state.fileMenu,
+                  this.state.editMenu,
+                  this.state.formatMenu,
+                  this.state.viewMenu,
+                  this.state.helpMenu,
+                ]
+              } 
               onMainMenuClick={this.onMainMenuClick}
               onMouseUp={this.onNotepadMouseUp}  
-
-              // openFileBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[1]}
-              // onGistClick={this.onGistClick}  
-              // openFileHandleChange={this.openFileHandleChange}
-              // openFileHandleSubmit={this.openFileHandleSubmit}
-              // openFileHandleCancel={this.openFileHandleCancel}
-              // openFileName={this.openFileName}   
-              // TODO: refactor "this.state.mainMenuData.topLevel.items[#].sublevel.items[#]"       
-              // into something more readable
-              //showNotSavedWarningBox={this.state.mainMenuData.topLevel.items[0].showNotSavedWarningBox}
-              // onClickSaveYes={this.onClickSaveYes}
-              // onClickSaveNo={this.onClickSaveNo}
-              // onClickSaveCancel={this.onClickSaveCancel}
-              
-              // saveAsBox={this.state.mainMenuData.topLevel.items[0].subLevel.items[3]}
-              // gistType={this.state.gistType}
-              // saveAsHandleChange={this.saveAsHandleChange}
-              // saveAsFormFileName={this.state.saveAsFormFileName}
-              // saveAsFormFileDescription={this.state.saveAsFormFileDescription}
-              // saveAsHandleSubmit={this.saveAsHandleSubmit}
-              // saveAsHandleCancel={this.saveAsHandleCancel}
-              
-              // findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
-              // replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
-              // goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
-              // fontBox={this.state.mainMenuData.topLevel.items[2].subLevel.items[1]}
-              // helpBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[0]}
-              // aboutBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[1]}
             />
           </div>
           <div className="app__document-container">

@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import FindBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('FindBox Component', () => {
   const props = {
-    findBox: mainMenuData.topLevel.items[1].subLevel.items[6],
+    // findBox: mainMenuData.topLevel.items[1].subLevel.items[6],
     // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
     // onGistClick: sinon.spy()
   }

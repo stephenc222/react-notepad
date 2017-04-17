@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import NotSavedWarningBox from '.';
-import mainMenuData from '../mainMenuData'
+import MainMenuData from '../../App/ui-data'
 
 describe('NotSavedWarningBox Component', () => {
   const props = {
-    showNotSavedWarningBox: mainMenuData.topLevel.items[0].showNotSavedWarningBox,
+    // showNotSavedWarningBox: mainMenuData.topLevel.items[0].showNotSavedWarningBox,
     onClickSaveYes: sinon.spy(),
     onClickSaveNo: sinon.spy(),
     onClickSaveCancel: sinon.spy(),
