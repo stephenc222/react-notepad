@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import ReplaceBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('ReplaceBox Component', () => {
   const props = {
@@ -15,6 +15,6 @@ describe('ReplaceBox Component', () => {
   it('renders with props passed to it', function () {
     const onClickStub = sinon.spy()
     expect(shallow(<ReplaceBox {...props}/>)
-    .find('.replaceBoxHidden').length).to.equal(1)
+    .find('.replaceBox').length).to.equal(1)
   })
 })

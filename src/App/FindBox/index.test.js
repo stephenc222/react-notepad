@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import FindBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('FindBox Component', () => {
   const props = {
@@ -13,6 +13,6 @@ describe('FindBox Component', () => {
     // onGistClick: sinon.spy()
   }
   it('renders with props passed to it', function () {
-    expect(shallow(<FindBox {...props}/>).find('.findBoxHidden').length).to.equal(1)
+    expect(shallow(<FindBox {...props}/>).find('.findBox').length).to.equal(1)
   })
 })

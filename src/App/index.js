@@ -695,7 +695,7 @@ class App extends Component {
     const showModal = true
     let dialogBoxType = ''
     this.setState((prevState) => {
-      mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
+      // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
       if (!this.state.hasSaved) {
         // fileMenu[3].showSaveAsBox = true
         dialogBoxType = 'renderSaveAsBox'        
@@ -733,16 +733,17 @@ class App extends Component {
           case 'fileOpenMenu':
             this.setState((prevState) => {
               mainMenuData.topLevel.items[0].subLevel.visible = false
-              const dialogBoxType = 'renderOpenFileDialog'              
+              const dialogBoxType = 'renderOpenFileDialog' 
+              const showModal = true             
               //mainMenuData.topLevel.items[0].subLevel.items[1].showOpenFileBox = true
-              return {mainMenuData, saved, dialogBoxType}
+              return {mainMenuData, saved, dialogBoxType, showModal}
             })
             break
           case 'fileNewMenu':
-            this.setState({showModal: false})
             this.fileNewMenu()
             break
           case 'exitNotepad':
+            this.setState({saved:true})
             this.exitNotepad()
             break
           default:
@@ -756,8 +757,11 @@ class App extends Component {
     const mainMenuData = {...this.state.mainMenuData}
     this.setState((prevState) => {
       // mainMenuData.topLevel.items[0].showNotSavedWarningBox = false
-      const dialogBoxType = 'renderNotSavedWarningBox'      
-      return {mainMenuData, dialogBoxType}
+      const showModal = false
+      const saved = true
+      // const dialogBoxType = 'renderNotSavedWarningBox'      
+      // return {mainMenuData, dialogBoxType}
+      return {mainMenuData, showModal, saved}
     })
   }
 
@@ -789,7 +793,8 @@ class App extends Component {
     const nextState = {}
     // just to keep 13 lines for a full textarea
     const resetDocumentContent = ['','','','','','','','','','','','','']
-    
+    const showModal = false
+
     documentCursor.row = 0
     documentCursor.column = 0
     nextState.mainMenuData = mainMenuData
@@ -801,6 +806,7 @@ class App extends Component {
     nextState.saveAsFormFileDescription = ''
     nextState.undoStack = []
     nextState.redoStack = []
+    nextState.showModal = showModal
 
     this.setState(nextState)
     return
@@ -893,11 +899,11 @@ class App extends Component {
   openFileHandleSubmit (event) {
     console.log(`openFile input value is: ${this.state.openFileName}`)
     event.preventDefault()
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
+    // const fileMenu = mainMenuData.topLevel.items[0].subLevel.items
     const showModal = false
     this.setState((prevState) => {
-      fileMenu[1].showOpenFileBox = false
-      fileMenu[1].disableOtherMenuHandlers = false
+      // fileMenu[1].showOpenFileBox = false
+      // fileMenu[1].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData, showModal}
     })
@@ -905,11 +911,11 @@ class App extends Component {
 
   openFileHandleCancel (event) {
     event.preventDefault()
-    const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
+    // const fileMenu = mainMenuData.topLevel.items[0].subLevel.items    
     const showModal = false
     this.setState((prevState) => {
-      fileMenu[1].showOpenFileBox = false
-      fileMenu[1].disableOtherMenuHandlers = false
+      // fileMenu[1].showOpenFileBox = false
+      // fileMenu[1].disableOtherMenuHandlers = false
       mainMenuData.topLevel.items[0].subLevel.visible = false
       return {mainMenuData, showModal}
     })
@@ -1075,8 +1081,7 @@ class App extends Component {
     })
   }
   exitNotepad (menuItem) {
-    // close the tab -> DO NOT close window
-    // or navigate to user's homepage
+    // navigate to user's homepage or google.com if IE
     console.log(`exitNotepad is clicked here`)
     const documentContent = this.state.documentContent.slice()
     const mainMenuData = {...this.state.mainMenuData}
@@ -1086,9 +1091,11 @@ class App extends Component {
         this.setState((prevState) => {
           mainMenuData.topLevel.warningFromMenuItem = 'exitNotepad'
           mainMenuData.topLevel.items[0].subLevel.visible = false
+          const showModal = true
+          console.log('this code is showing')
           // mainMenuData.topLevel.items[0].showNotSavedWarningBox = true
           const dialogBoxType = 'renderNotSavedWarningBox'          
-          return {mainMenuData, dialogBoxType}
+          return {mainMenuData, dialogBoxType, showModal}
         })
 
       return
@@ -1473,7 +1480,7 @@ class App extends Component {
 
   componentDidMount () {
     this.topLevel.focus()
-    const options = {
+    const getOptions = {
       method: 'GET', // gonna be POST
       headers: {
         'Authorization': `token ${myInfo.TestToken}`
@@ -1482,7 +1489,7 @@ class App extends Component {
 
     const url = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
 
-    getGists(url, options, (filesArray) => {
+    getGists(url, getOptions, (filesArray) => {
       this.setState((prevState) => {
         mainMenuData.topLevel.items[0].subLevel.items[1].gists.files = filesArray
         return {mainMenuData}
@@ -1855,12 +1862,12 @@ class App extends Component {
               // saveAsHandleSubmit={this.saveAsHandleSubmit}
               // saveAsHandleCancel={this.saveAsHandleCancel}
               
-              findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
-              replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
-              goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
-              fontBox={this.state.mainMenuData.topLevel.items[2].subLevel.items[1]}
-              helpBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[0]}
-              aboutBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[1]}
+              // findBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[6]}
+              // replaceBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[8]}
+              // goToBox={this.state.mainMenuData.topLevel.items[1].subLevel.items[9]}
+              // fontBox={this.state.mainMenuData.topLevel.items[2].subLevel.items[1]}
+              // helpBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[0]}
+              // aboutBox={this.state.mainMenuData.topLevel.items[4].subLevel.items[1]}
             />
           </div>
           <div className="app__document-container">

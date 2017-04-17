@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import SaveAsBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('SaveAsBox Component', () => {
   const props = {
@@ -14,6 +14,6 @@ describe('SaveAsBox Component', () => {
   }
   it('renders with props passed to it', function () {
     expect(shallow(<SaveAsBox {...props}/>)
-    .find('.saveAsBoxHidden').length).to.equal(1)
+    .find('.saveAsBox').length).to.equal(1)
   })
 })

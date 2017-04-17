@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import FontBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('FontBox Component', () => {
   const props = {
@@ -13,6 +13,6 @@ describe('FontBox Component', () => {
     // onGistClick: sinon.spy()
   }
   it('renders with props passed to it', function () {
-    expect(shallow(<FontBox {...props}/>).find('.fontBoxHidden').length).to.equal(1)
+    expect(shallow(<FontBox {...props}/>).find('.fontBox').length).to.equal(1)
   })
 })

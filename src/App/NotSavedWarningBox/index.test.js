@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import NotSavedWarningBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('NotSavedWarningBox Component', () => {
   const props = {
@@ -16,6 +16,6 @@ describe('NotSavedWarningBox Component', () => {
     // onGistClick: sinon.spy()
   }
   it('renders with props passed to it', function () {
-    expect(shallow(<NotSavedWarningBox {...props}/>).find('.notSavedWarningBoxHidden').length).to.equal(1)
+    expect(shallow(<NotSavedWarningBox {...props}/>).find('.notSavedWarningBox').length).to.equal(1)
   })
 })

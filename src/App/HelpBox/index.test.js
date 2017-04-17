@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import HelpBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('HelpBox Component', () => {
   const props = {
@@ -13,6 +13,6 @@ describe('HelpBox Component', () => {
     // onGistClick: sinon.spy()
   }
   it('renders with props passed to it', function () {
-    expect(shallow(<HelpBox {...props}/>).find('.helpBoxHidden').length).to.equal(1)
+    expect(shallow(<HelpBox {...props}/>).find('.helpBox').length).to.equal(1)
   })
 })

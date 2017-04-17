@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import GoToBox from '.';
-import mainMenuData from '../../mainMenuData'
+import mainMenuData from '../mainMenuData'
 
 describe('GoToBox Component', () => {
   const props = {
@@ -13,6 +13,6 @@ describe('GoToBox Component', () => {
     // onGistClick: sinon.spy()
   }
   it('renders with props passed to it', function () {
-    expect(shallow(<GoToBox {...props}/>).find('.goToBoxHidden').length).to.equal(1)
+    expect(shallow(<GoToBox {...props}/>).find('.goToBox').length).to.equal(1)
   })
 })
