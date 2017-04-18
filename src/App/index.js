@@ -200,8 +200,7 @@ class App extends Component {
       showModal: false,
       dialogBoxType: '',
       openFileName: '',
-      openFilePlaceHolder: '',
-      openFileURL: '',
+      openFileOptions: [],
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -261,7 +260,7 @@ class App extends Component {
             openFileHandleChange={this.openFileHandleChange}
             openFileHandleCancel={this.openFileHandleCancel}
             openFileName={this.state.openFileName}
-            openFilePlaceHolder={this.state.openFilePlaceHolder}
+            openFileOptions={this.state.openFileOptions}
             userGists={this.state.userGists}
           />
         </div>
@@ -781,27 +780,13 @@ class App extends Component {
     const options = {
       method: 'GET'
     }
-    // fetch(gist.url, options)
-    // .then(response => {
-    //   if (response.ok) {
-    //     return response.text()
-    //   }
-    // }).then ( text => {
-    //   const gistTextData = text.split('\n')
-    //   const newDocumentContent = []
-    //   gistTextData.forEach(line => newDocumentContent.push(line))
-    //   // 13 lines is how a full textarea is, roughly
-    //   while (newDocumentContent.length < 13) { newDocumentContent.push('') }
-    //   return newDocumentContent
-    // })
+
     Api.openGist (gist.url, options)    
     .then ( newDocumentContent => {
-
       const nextState = {}
 
       documentCursor.row = 0
       documentCursor.column = 0
-
       
       nextState.documentCursor = documentCursor
       nextState.documentFileName = gist.name
@@ -812,7 +797,8 @@ class App extends Component {
       nextState.hasSaved = true
       nextState.showModal = false
       this.setState(nextState)
-    }).then (this.closeModal())
+    })
+    .then (this.closeModal())
     .catch ( error => {
       console.error(`gist fetch error: ${error}`)
     })
@@ -820,26 +806,50 @@ class App extends Component {
 
   openFileHandleChange (event) {
     const userGists = this.state.userGists.slice()
-    console.log('will find:')
-    const result = {...typeAhead(event.target.value.toString(), userGists)}
-    console.log(result.gistName)
-    console.log(result.gistRawURL)
+    //console.log('will find:')
+    // const result = {...typeAhead(event.target.value.toString(), userGists)}
+    const result = typeAhead(event.target.value.toString(), userGists)
+    console.log(result)
+    // console.log(result.name)
+    // console.log(result.url)
     this.setState({
       openFileName: event.target.value,
-      openFilePlaceHolder: result.gistName,
-      openFileURL: result.gistRawURL
+      openFileOptions: result,
     })
     
   }
 
   openFileHandleSubmit (event) {
     // const fileMenu = {...this.state.fileMenu}    
-    console.log(`openFile input value is: ${this.state.openFilePlaceHolder}`)
+    console.log(`openFile input value is: ${this.state.openFileOptions.name}`)
+    const gist = this.state.openFileOptions
     event.preventDefault()
-    const showModal = false
-    this.setState((prevState) => {
-      // fileMenu.visible = false
-      return {showModal}
+    const documentCursor = {...this.state.documentCursor}
+    const options = {
+      method: 'GET'
+    }
+
+    Api.openGist (gist[0].url, options)    
+    .then ( newDocumentContent => {
+      const nextState = {}
+
+      documentCursor.row = 0
+      documentCursor.column = 0
+      console.log('inside open:')
+      console.log(gist)
+      nextState.documentCursor = documentCursor
+      nextState.documentFileName = gist[0].name
+      nextState.documentContent = newDocumentContent
+      nextState.openFileGistID = gist[0].id
+      nextState.openFileGistType = gist[0].public
+      nextState.saved = true // MIGHT need to change...
+      nextState.hasSaved = true
+      nextState.showModal = false
+      this.setState(nextState)
+    })
+    .then (this.closeModal())
+    .catch ( error => {
+      console.error(`gist fetch error: ${error}`)
     })
     
   }

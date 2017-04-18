@@ -39,10 +39,15 @@ class OpenFileBox extends Component {
               <input 
                 type="text" 
                 ref={(input) => { this.fileInput = input; }}
-                placeholder={this.props.openFilePlaceHolder}
+                list="userFileList"
                 value={this.props.openFileName} 
                 onChange={this.props.openFileHandleChange}/>
             </label>
+            <datalist id="userFileList">
+              {this.props.openFileOptions.map((fileChoice, index) => {
+                return (index <= 5 )&&<option key={index} value={fileChoice.name}/>
+              })}
+            </datalist>
             <input type="submit" value="Open" />
             <input type="button" value="Cancel" onClick={this.props.handlers.onCancel}/>            
           </form> 

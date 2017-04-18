@@ -2,8 +2,7 @@ export default function typeAhead (fileName, userGists) {
   // console.log(`TypeAhead fileName: ${fileName}`)
   // console.log(`TypeAhead userGists:`)
   // console.log(userGists)
-  let gistName = ''
-  let gistRawURL = ''
+  const resultArr = []
   // TODO: add regex to search filenames of gists against user input
   for (let gist in userGists) {
     if (gist) {
@@ -15,14 +14,20 @@ export default function typeAhead (fileName, userGists) {
           if(fileRe.exec(`${nameToCheck}`)) {
             // console.log(`will open: ${fileRe.exec(`${nameToCheck}`)}`)
             // console.log(`will really open: ${nameToCheck}`)
-            gistName = nameToCheck
-            gistRawURL = userGists[gist][file].url
-            return {gistName, gistRawURL}
+            const result = {}
+            result.name = nameToCheck
+            result.url = userGists[gist][file].url
+            result.id = userGists[gist][file].id
+            result.public = userGists[gist][file].public
+            // return {name, url}
+            resultArr.push(result)
           }
-
           //console.log(`will open: ${/${}/nameToCheck}`)
         }
       }
     }
   }
+  console.log('array is:')
+  console.log(resultArr)
+  return resultArr
 }

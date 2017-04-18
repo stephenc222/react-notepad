@@ -9,7 +9,7 @@ describe('OpenFileBox Component', () => {
   const props = {
     userGists: [],
     openFileName: '',
-    openFilePlaceHolder: '',
+    openFileOptions: [],
     onGistClick: sinon.spy(),
     handlers: {
       onCancel: sinon.spy()
