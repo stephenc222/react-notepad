@@ -120,6 +120,9 @@ class App extends Component {
     this.exitNotepad = this.exitNotepad.bind(this)
 
     this.toggleEditMenu = this.toggleEditMenu.bind(this)
+    this.editCut = this.editCut.bind(this)
+    this.editCopy = this.editCopy.bind(this)
+    this.editPaste = this.editPaste.bind(this)
     this.editUndo = this.editUndo.bind(this)
     this.editRedo = this.editRedo.bind(this)
     this.editFind = this.editFind.bind(this)
@@ -181,7 +184,7 @@ class App extends Component {
         isSelected: false,
         // TODO: figure out if this second flag, "isSelectedChanging", is actually necessary
         isSelectedChanging: false,
-        selection: null,
+        // selection: null,
         selectionStart: {
           row: 0,
           column: 0
@@ -191,6 +194,8 @@ class App extends Component {
           column: 0
         }
       },
+      copiedDocumentContent: [],
+      cutDocumentContent: [],
       statusBarIsHidden: false,
       undoStack: [],
       redoStack: [],
@@ -414,7 +419,7 @@ class App extends Component {
 
   onMainMenuClick (event, menuItem) {
     event.stopPropagation()
-    console.warn(menuItem)
+    // console.warn(menuItem)
     const callback = this[menuItem.onClick]
     callback && callback(menuItem)
   }
@@ -481,29 +486,19 @@ class App extends Component {
     // *hint* this seems to non-duplicately capture all items that are supposed to be selected   
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
-      console.log ('Leave - isSelected true and event.target is: ')
+      //console.log ('Leave - isSelected true and event.target is: ')
       documentSelection.isSelectedChanging = false
       this.setState({documentSelection})
-      
     }
-    
   }
 
   onNotepadMouseUp () {
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
-      console.log ('Leave - isSelected true and event.target is: ')
+      // console.log ('Leave - isSelected true and event.target is: ')
       documentSelection.isSelectedChanging = false
+      this.setState({documentSelection})
     }
-
-    let updateDocument = true
-    const nextState = {}
-    if (updateDocument) {
-      nextState.documentSelection = documentSelection
-    }
-
-    this.setState(nextState)
-
   }
 
   isSelected (column, row) {
@@ -580,7 +575,7 @@ class App extends Component {
       editMenu.visible = !prevState.editMenu.visible
       return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
-    console.log('hey, this runs inside toggleEditMenu!')
+    //console.log('hey, this runs inside toggleEditMenu!')
   }
 
   toggleFormatMenu () {
@@ -1251,12 +1246,90 @@ class App extends Component {
 
   }
 
-  editCut  (menuItem){
+  editCut  (){
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
     // TODO: editCut needs to be added to the undo and redo stacks
-    console.log('editCut clicked here')        
-    console.log(menuItem)    
+    const documentSelection = this.state.documentSelection
+    const documentContent = this.state.documentContent.slice()
+    const documentCursor = this.state.documentCursor
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
+
+    const editMenu = {...this.state.editMenu}    
+    //const cutDocumentContent = []
+
+    // TODO: this will give me a 1D array that these indices will
+    // const arr1 = ["aYUI", "bGAY", "cDEF"]
+    // const tryAgain = []
+    // for (let x in arr1) {
+    //   tryAgain.push(arr1[x].split(''))
+    // }
+    // 3
+    // tryAgain
+    // > [Array(4), Array(4), Array(4)]
+    // var flattened = tryAgain.reduce(
+    //   function(a, b) {
+    //     return a.concat(b);
+    //   },
+    //   []
+    // )
+    // >
+    // flattened
+    // > ["a", "Y", "U", "I", "b", "G", "A", "Y", "c", "D", "E", "F"]
+
+
+    const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
+    if (!documentSelection.isSelected) {
+      return false
+    }
+    function indexOfPosition (content, column, row) {
+      let index = 0
+      let currentRow = 0
+
+      while (currentRow <= row) {
+        const rowData = content[currentRow]
+
+        if (rowData.length) {
+          for (let i = 0; i < rowData.length; i += 1) {
+            index += 1
+          }
+
+          if (currentRow === row) {
+            index -= (rowData.length - column)
+          }
+        }
+
+        currentRow += 1
+      }
+      return index
+    }
+
+    const startIndex = indexOfPosition(documentContent,start.column, start.row)
+    const currentIndex = indexOfPosition(documentContent, documentCursor.column, documentCursor.row)
+    const endIndex = indexOfPosition(documentContent,end.column, end.row)
+
+    console.log("startIndex")
+    console.log(startIndex)
+    console.log("currentIndex")
+    console.log(currentIndex)
+    console.log("endIndex")
+    console.log(endIndex)
+
+    this.setState((prevState) => {
+      editMenu.visible = false
+      return {editMenu}
+    })
+
+      return documentSelection.isSelected && !startEndAreSame(start,end) && (
+        (currentIndex >= startIndex && currentIndex <= endIndex) || (
+          (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
+        )
+      )
+
+    
+    //console.log(cutDocumentContent)
+    
   }
 
   editCopy (menuItem){
