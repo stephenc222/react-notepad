@@ -1253,31 +1253,18 @@ class App extends Component {
     const documentSelection = this.state.documentSelection
     const documentContent = this.state.documentContent.slice()
     const documentCursor = this.state.documentCursor
+    // const undoStack = this.state.undoStack.slice()
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
 
     const editMenu = {...this.state.editMenu}    
-    //const cutDocumentContent = []
+    // const mergedContent = []
 
-    // TODO: this will give me a 1D array that these indices will
-    // const arr1 = ["aYUI", "bGAY", "cDEF"]
-    // const tryAgain = []
-    // for (let x in arr1) {
-    //   tryAgain.push(arr1[x].split(''))
-    // }
-    // 3
-    // tryAgain
-    // > [Array(4), Array(4), Array(4)]
-    // var flattened = tryAgain.reduce(
-    //   function(a, b) {
-    //     return a.concat(b);
-    //   },
-    //   []
-    // )
-    // >
-    // flattened
-    // > ["a", "Y", "U", "I", "b", "G", "A", "Y", "c", "D", "E", "F"]
+    const test = documentContent.reduce(function(acc, val) {
+      return acc + val;
+    }, '');
 
+    // console.log(test)
 
     const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
     if (!documentSelection.isSelected) {
@@ -1309,12 +1296,18 @@ class App extends Component {
     const currentIndex = indexOfPosition(documentContent, documentCursor.column, documentCursor.row)
     const endIndex = indexOfPosition(documentContent,end.column, end.row)
 
-    console.log("startIndex")
-    console.log(startIndex)
-    console.log("currentIndex")
-    console.log(currentIndex)
-    console.log("endIndex")
-    console.log(endIndex)
+    // TODO: fix cut logic here
+    // FIXME: appears that the endIndex or possibly also the startIndex
+    // selection highlighting and thus index values are off by one
+    // selection should not go into the next line if cursor only on current
+    // line
+    console.log('cut content:')
+    console.log(test.slice(startIndex, endIndex + 1).split(''))
+    console.log('post cut documentContent')
+    // console.log(test.split(''))
+    const test2 = test.split('')
+    test2.splice(startIndex, Math.abs(startIndex - endIndex) + 1)
+    console.log(test2)
 
     this.setState((prevState) => {
       editMenu.visible = false
