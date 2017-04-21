@@ -40,6 +40,7 @@ class OpenFileBox extends Component {
                 type="text" 
                 ref={(input) => { this.fileInput = input; }}
                 list="userFileList"
+                name="openFileName"
                 value={this.props.openFileName} 
                 onChange={this.props.openFileHandleChange}/>
             </label>

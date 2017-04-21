@@ -105,7 +105,10 @@ class App extends Component {
 
     this.fileOpenMenu = this.fileOpenMenu.bind(this)
     this.onGistClick = this.onGistClick.bind(this)
+
     this.openFileHandleChange = this.openFileHandleChange.bind(this)
+    this.findInFileHandleChange = this.findInFileHandleChange.bind(this)
+
     this.openFileHandleSubmit = this.openFileHandleSubmit.bind(this)
     this.openFileHandleCancel = this.openFileHandleCancel.bind(this)
 
@@ -206,6 +209,7 @@ class App extends Component {
       dialogBoxType: '',
       openFileName: '',
       openFileOptions: [],
+      findInFile: '',
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -316,11 +320,13 @@ class App extends Component {
   renderFindBox () {
     const handlers = {
       // handlers go here
+      onChange: this.findInFileHandleChange
     }
 
     return (
       <div className="dialog-box__container">
         <FindBox
+          findInFile={this.state.findInFile}
           handlers={handlers}
         />
       </div>
@@ -429,11 +435,11 @@ class App extends Component {
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
-
+    // console.log(row)
     // successfully passing which column is selected and which row is selected
     // on click
-    console.log('column + 1')
-    console.log(column + 1)
+    // console.log('column + 1')
+    // console.log(column + 1)
     // NOTE: use column for the cursor but column + 1 for data stuff
     documentCursor.column = column 
     documentCursor.row = row
@@ -444,8 +450,8 @@ class App extends Component {
     documentSelection.isSelected = true
     documentSelection.isSelectedChanging = true
     
-    console.log('row')
-    console.log(row)
+    // console.log('row')
+    // console.log(row)
 
     let updateCursor = true
     let updateDocument = true
@@ -469,7 +475,7 @@ class App extends Component {
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     if (documentSelection.isSelected && documentSelection.isSelectedChanging) {
-      console.log ('Enter - isSelected true')
+      // console.log ('Enter - isSelected true')
       documentCursor.column = column 
       documentCursor.row = row
       documentSelection.selectionEnd.column = column
@@ -510,6 +516,12 @@ class App extends Component {
     if (!documentSelection.isSelected) {
       return false
     }
+
+    // FIXME: needs work, but I think I'm on the right track
+    // because now, only content is selected
+    if (documentContent[row][column] === undefined) {
+      return false
+    }
     function indexOfPosition (content, column, row) {
       let index = 0
       let currentRow = 0
@@ -536,9 +548,13 @@ class App extends Component {
     const currentIndex = indexOfPosition(documentContent, column, row)
     const endIndex = indexOfPosition(documentContent,end.column, end.row)
 
+    // console.log('startIndex: ' + startIndex)
+    // console.log('curentIndex: ' + currentIndex)
+    // console.log('endIndex: ' + endIndex)
+
       return documentSelection.isSelected && !startEndAreSame(start,end) && (
         (currentIndex >= startIndex && currentIndex <= endIndex) || (
-          (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
+          (startIndex >= endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
         )
       )
     }
@@ -676,8 +692,8 @@ class App extends Component {
             this.fileNewMenu()
             break
           case 'exitNotepad':
-            this.setState({saved:true})
-            this.exitNotepad()
+            this.setState({saved:true}, this.exitNotepad)
+            // this.exitNotepad()
             break
           default:
             throw new Error('unknown menu item clicked')
@@ -999,6 +1015,11 @@ class App extends Component {
     })
   }
 
+  findInFileHandleChange (event) {
+    console.log(event.target.name)
+    this.setState({[event.target.name]: event.target.value})
+  }
+
   printMenu (menuItem) {
     console.log(`printMenu is clicked here`)
     const fileMenu = {...this.state.fileMenu}    
@@ -1252,7 +1273,7 @@ class App extends Component {
     // TODO: editCut needs to be added to the undo and redo stacks
     const documentSelection = this.state.documentSelection
     const documentContent = this.state.documentContent.slice()
-    const documentCursor = this.state.documentCursor
+    //const documentCursor = this.state.documentCursor
     // const undoStack = this.state.undoStack.slice()
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
@@ -1260,13 +1281,7 @@ class App extends Component {
     const editMenu = {...this.state.editMenu}    
     // const mergedContent = []
 
-    const test = documentContent.reduce(function(acc, val) {
-      return acc + val;
-    }, '');
-
-    // console.log(test)
-
-    const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
+    //const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
     if (!documentSelection.isSelected) {
       return false
     }
@@ -1293,32 +1308,61 @@ class App extends Component {
     }
 
     const startIndex = indexOfPosition(documentContent,start.column, start.row)
-    const currentIndex = indexOfPosition(documentContent, documentCursor.column, documentCursor.row)
+    // const currentIndex = indexOfPosition(documentContent, documentCursor.column, documentCursor.row)
     const endIndex = indexOfPosition(documentContent,end.column, end.row)
+    const documentContentLengths = []
+    const flattenedContent = documentContent.reduce(function(acc, val) {
+      documentContentLengths.push({lineLength: val.length, indexValue: acc.length})
+      return acc + val
+    }, '')
 
-    // TODO: fix cut logic here
-    // FIXME: appears that the endIndex or possibly also the startIndex
-    // selection highlighting and thus index values are off by one
-    // selection should not go into the next line if cursor only on current
-    // line
-    console.log('cut content:')
-    console.log(test.slice(startIndex, endIndex + 1).split(''))
-    console.log('post cut documentContent')
-    // console.log(test.split(''))
-    const test2 = test.split('')
-    test2.splice(startIndex, Math.abs(startIndex - endIndex) + 1)
-    console.log(test2)
+    console.log('flattenedContent')
+    console.log(flattenedContent.split(''))
+    // console.log (documentContentLengths)
+
+    // console.log('cut content:')
+    // const cutContent = flattenedContent.slice(startIndex, endIndex + 2)
+    // console.log(cutContent)
+    // console.log('post cut documentContent')
+    // console.log(flattenedContent.split(''))
+    // console.log(documentContent)
+    console.log(documentContentLengths)
+    const postCutContent = flattenedContent.split('')
+    // console.log('cut content:')
+    // console.log('start index: ' + startIndex)
+    // console.log('end index ' + endIndex)
+    const cutContent = {
+      index: startIndex < endIndex ? startIndex : endIndex,
+      content: postCutContent.splice(startIndex < endIndex ? startIndex : endIndex,
+        Math.abs(startIndex - endIndex)+1)
+    }
+
+    for (let index in documentContentLengths) {
+      if ( documentContentLengths[index--].indexValue > startIndex
+        && documentContentLengths[index].indexValue < endIndex) {
+        console.log('line is here')
+        console.log(startIndex)
+        console.log(documentContentLengths[index])
+      }
+    }
+
+    console.log(cutContent)
+    console.log("postCutContent")
+    console.log(postCutContent)
+
+    const nextStackItem = {}
+    nextStackItem.value = cutContent
 
     this.setState((prevState) => {
       editMenu.visible = false
       return {editMenu}
     })
 
-      return documentSelection.isSelected && !startEndAreSame(start,end) && (
-        (currentIndex >= startIndex && currentIndex <= endIndex) || (
-          (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
-        )
-      )
+      // return documentSelection.isSelected && !startEndAreSame(start,end) && (
+      //   (currentIndex >= startIndex && currentIndex <= endIndex) || (
+      //     (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
+      //   )
+      // )
 
     
     //console.log(cutDocumentContent)

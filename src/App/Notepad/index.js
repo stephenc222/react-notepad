@@ -27,14 +27,16 @@ class Notepad extends Component {
     if (cursor.row === row) {
       return (
         <div key={row} className="notepadArea__row notepadArea__row--highlight">
-          <div className="notepadArea__line-number">{1 + row}</div>
+          {/*<div className="notepadArea__line-number">{1 + row}</div>*/}
+          <div className="notepadArea__line-number">{row}</div>
           {content}
         </div>
       )
     } else {
       return (
         <div key={row} className="notepadArea__row">
-          <div className="notepadArea__line-number">{1 + row}</div>
+          {/*<div className="notepadArea__line-number">{1 + row}</div>*/}
+          <div className="notepadArea__line-number">{row}</div>
           {content}
         </div>
       )
@@ -81,7 +83,8 @@ class Notepad extends Component {
 
     return (
       <div className="notepadArea"
-        onMouseLeave={() => this.props.onMouseLeave()}>
+        onMouseLeave={() => this.props.onMouseLeave()}
+        onClick={(event) => console.log(event.target)}>
           {content.map(this.renderContentRow)}
       </div>
     )

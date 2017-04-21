@@ -3,11 +3,22 @@ import './index.css'
 
 
 class FindBox extends Component {
+
+  componentDidMount () {
+    this.findInput.focus()
+  }
   render () {
     return (
       <div className='findBox'>
-        <div>Find</div>
-        <div>{'placeholder text'}</div>
+        <label>
+              Find:
+              <input 
+                type="text" 
+                name="findInFile"
+                ref={(input) => { this.findInput = input }}
+                value={this.props.findInFile} 
+                onChange={this.props.handlers.onChange}/>
+        </label>
       </div>
     )
   }
