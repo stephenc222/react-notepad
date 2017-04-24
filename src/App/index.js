@@ -1531,8 +1531,7 @@ class App extends Component {
     let endIndex // = getIndexOfPosition(documentContent, end)
     if (start.row === end.row && start.column === end.column) {
       console.log('yes')
-      startIndex = getIndexOfPosition(documentContent, documentCursor)
-      endIndex = getIndexOfPosition(documentContent, documentCursor)
+      startIndex = endIndex = getIndexOfPosition(documentContent, documentCursor)
     } else {
       console.log('no')
       startIndex = getIndexOfPosition(documentContent, start)
@@ -1563,7 +1562,7 @@ class App extends Component {
     const joiner = String.fromCharCode(0xbb)
     const text = documentContent.join(joiner)
     const left = text.substr(0, startIndex - 1)
-    const right = text.substr(endIndex, text.length)
+    const right = text.substr(endIndex - 1, text.length)
     const data = pasteData
     // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
     const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
