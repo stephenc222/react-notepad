@@ -138,7 +138,11 @@ class App extends Component {
     this.editUndo = this.editUndo.bind(this)
     this.editRedo = this.editRedo.bind(this)
     this.editDelete = this.editDelete.bind(this)
+
     this.editFind = this.editFind.bind(this)
+    this.findInFileHandleCancel = this.findInFileHandleCancel.bind(this)
+    this.findInFileHandleSubmit = this.findInFileHandleSubmit.bind(this)
+
     this.editReplace = this.editReplace.bind(this)
     this.editGoTo = this.editGoTo.bind(this)
 
@@ -219,6 +223,7 @@ class App extends Component {
       openFileName: '',
       openFileOptions: [],
       findInFile: '',
+      foundInFileArray: [],
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -329,7 +334,9 @@ class App extends Component {
   renderFindBox () {
     const handlers = {
       // handlers go here
-      onChange: this.findInFileHandleChange
+      onChange: this.findInFileHandleChange,
+      onSubmit:this.findInFileHandleSubmit,
+      onCancel: this.findInFileHandleCancel
     }
 
     return (
@@ -1027,8 +1034,55 @@ class App extends Component {
   }
 
   findInFileHandleChange (event) {
-    console.log(event.target.name)
-    this.setState({[event.target.name]: event.target.value})
+    // console.log(event.target.name)
+    // const documentSelection = {...this.state.documentSelection}
+    const documentContent = this.state.documentContent.slice()
+    // const undoStack = this.state.undoStack.slice()
+    // const start = documentSelection.selectionStart
+    // const end = documentSelection.selectionEnd
+    // const editMenu = {...this.state.editMenu}    
+    // const documentCursor = {...this.state.documentCursor}
+
+    const selectFindText = (target, content) => {
+      console.log('target: ', target)
+      // needs to change, temporary
+      return [target]
+    }
+
+    // TODO: result should return an array of objects with exactly matching
+    // text to the string in the find box, with start and end indexs of where
+    // those strings are found in the document - very similar in a way to Cut,
+    // Copy, Delete and Paste
+    const result = selectFindText(event.target.value.toString(), documentContent)
+    // this.setState({[event.target.name]: event.target.value})
+    this.setState({
+      [event.target.name]: event.target.value.toString(),
+      foundInFileArray: result
+    })
+  }
+
+  findInFileHandleCancel (event) {
+    event.preventDefault()
+    const editMenu = {...this.state.editMenu}    
+    const showModal = false
+    this.setState((prevState) => {
+      editMenu.visible = false
+      return {editMenu, showModal}
+    })
+  }
+  
+  findInFileHandleSubmit (event) {
+    // TODO: Submit here should increment index object item inside
+    // findInFiles state Array of objects
+    event.preventDefault()
+    const editMenu = {...this.state.editMenu} 
+    const foundInFileArray = this.state.foundInFileArray.slice()
+    console.log('Find Box Submitted!') 
+    console.log(foundInFileArray)  
+    this.setState((prevState) => {
+      editMenu.visible = false
+      return {editMenu}
+    })
   }
 
   printMenu (menuItem) {
@@ -1717,6 +1771,7 @@ class App extends Component {
     // open up Find dialog, then finds character sequence 
     console.log('editFind clicked here')  
     const editMenu = {...this.state.editMenu}
+    
     this.setState((prevState) => {
       const showModal = true
       const dialogBoxType = "renderFindBox"
@@ -1724,6 +1779,8 @@ class App extends Component {
       return {editMenu, showModal, dialogBoxType}
     })         
   }
+
+
 
   editFindNext () {
     // finds next occurrence of current selection
