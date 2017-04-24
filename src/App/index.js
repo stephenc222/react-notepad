@@ -1282,17 +1282,14 @@ class App extends Component {
   editCut (){
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
-    // FIXME: currently doesn't handle selections going bottom up,
-    // only works currently for top down selections
-    // FIXME: move cursor position correspondingly to
-    // reflect document content change (for also bottom up too)
     const documentSelection = this.state.documentSelection
     const documentContent = this.state.documentContent.slice()
-    //const documentCursor = this.state.documentCursor
     const undoStack = this.state.undoStack.slice()
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
     const editMenu = {...this.state.editMenu}    
+    const documentCursor = {...this.state.documentCursor}
+    
     
     if (start.column === end.column && start.row === end.row) {
       editMenu.visible = false
@@ -1347,8 +1344,19 @@ class App extends Component {
     // }
 
     const cut = (content, { start, end }) => {
-      const startIndex = getIndexOfPosition(content, start)
-      const endIndex = getIndexOfPosition(content, end)
+      let startIndex = getIndexOfPosition(content, start)
+      let endIndex = getIndexOfPosition(content, end)
+
+      if (startIndex > endIndex) {
+        let tempIndex = startIndex
+        startIndex = endIndex
+        endIndex = tempIndex
+        documentCursor.row = end.row
+        documentCursor.column = end.column
+      } else {
+        documentCursor.row = start.row
+        documentCursor.column = start.column        
+      }
       const joiner = String.fromCharCode(0xbb)
       const text = content.join(joiner)
       const left = text.substr(0, startIndex - 1)
@@ -1361,6 +1369,7 @@ class App extends Component {
       const result = {
         original: content,
         start: startIndex,
+        end: endIndex,
         length: data.length,
         data,
         modified
@@ -1389,7 +1398,6 @@ class App extends Component {
     this.setState((prevState) => {
       editMenu.visible = false
       const documentContent = postCutDocument.modified
-      const documentCursor = documentSelection.selectionStart
       documentSelection.result = postCutDocument
       documentSelection.selectionStart = {
         row: 0,
@@ -1453,8 +1461,13 @@ class App extends Component {
     }
 
     const cut = (content, { start, end }) => {
-      const startIndex = getIndexOfPosition(content, start)
-      const endIndex = getIndexOfPosition(content, end)
+      let startIndex = getIndexOfPosition(content, start)
+      let endIndex = getIndexOfPosition(content, end)
+      if (startIndex > endIndex) {
+        let tempIndex = startIndex
+        startIndex = endIndex
+        endIndex = tempIndex
+      }
       const joiner = String.fromCharCode(0xbb)
       const text = content.join(joiner)
       const left = text.substr(0, startIndex - 1)
@@ -1467,6 +1480,7 @@ class App extends Component {
       const result = {
         original: content,
         start: startIndex,
+        end: endIndex,
         length: data.length,
         data,
         modified
