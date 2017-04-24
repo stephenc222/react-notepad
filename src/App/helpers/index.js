@@ -1,4 +1,5 @@
 import Api from './Api'
 import typeAhead from './typeAhead'
+import getIndexOfPosition from './getIndexOfPosition'
 
-export {Api, typeAhead}
+export {Api, typeAhead, getIndexOfPosition}

@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import 'whatwg-fetch'
 // also import PropTypes
-// import {getGists, saveAsGist, saveGist} from './helpers/Api'
-import {Api, typeAhead} from './helpers'
-// import typeAhead from './helpers/typeAhead'
+import {Api, typeAhead, getIndexOfPosition} from './helpers'
 import MainMenu from './MainMenu'
 import fileMenu from './ui-data/fileMenu'
 import editMenu from './ui-data/editMenu'
@@ -437,7 +435,7 @@ class App extends Component {
     event.stopPropagation()
     // console.warn(menuItem)
     const callback = this[menuItem.onClick]
-    callback && callback(menuItem)
+    callback && callback()
   }
 
   onNotepadMouseDown (event, column, row) {
@@ -1282,7 +1280,7 @@ class App extends Component {
   editCut (){
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
-    const documentSelection = this.state.documentSelection
+    const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice()
     const start = documentSelection.selectionStart
@@ -1301,30 +1299,30 @@ class App extends Component {
     // if (!documentSelection.isSelected) {
     //   return false
     // }
-    const getIndexOfPosition = (content, { column, row }) => {
-      let index = 0
-      let currentRow = 0
+    // const getIndexOfPosition = (content, { column, row }) => {
+    //   let index = 0
+    //   let currentRow = 0
 
-      const charactersToCount = (currentRow, rowData) => {
-        if (currentRow === row) {
-          return 1 + rowData.length + (-1 * (rowData.length - column))
-        } else {
-          return rowData.length + 1
-        }
-      }
+    //   const charactersToCount = (currentRow, rowData) => {
+    //     if (currentRow === row) {
+    //       return 1 + rowData.length + (-1 * (rowData.length - column))
+    //     } else {
+    //       return rowData.length + 1
+    //     }
+    //   }
       
-      while (currentRow <= row) {
-        const rowData = content[currentRow]
+    //   while (currentRow <= row) {
+    //     const rowData = content[currentRow]
 
-        if (rowData.length) {
-          index += charactersToCount(currentRow, rowData)
-        }
+    //     if (rowData.length) {
+    //       index += charactersToCount(currentRow, rowData)
+    //     }
 
-        currentRow += 1
-      }
+    //     currentRow += 1
+    //   }
 
-      return index
-    }
+    //   return index
+    // }
 
     // const isSelected = (content, { row, column }, { start, end }) => {
     //   const startIndex = getIndexOfPosition(content, start)
@@ -1361,7 +1359,8 @@ class App extends Component {
       const text = content.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
+      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
       const modified = `${left}${right}`.split(joiner)
 
 
@@ -1383,11 +1382,11 @@ class App extends Component {
       undoStack.push(nextStackItem)
 
       // console.log('original', JSON.stringify(content, null, 2))
-      console.log('original', JSON.stringify(result.content, null, 2))
-      console.log('left', JSON.stringify(left, null, 2))
-      console.log('right', JSON.stringify(right, null, 2))
-      console.log('data', JSON.stringify(data, null, 2))
-      console.log('modified', JSON.stringify(result.modified, null, 2))
+      // console.log('original', JSON.stringify(result.content, null, 2))
+      // console.log('left', JSON.stringify(left, null, 2))
+      // console.log('right', JSON.stringify(right, null, 2))
+      // console.log('data', JSON.stringify(data, null, 2))
+      // console.log('modified', JSON.stringify(result.modified, null, 2))
 
       return result
     }
@@ -1423,7 +1422,7 @@ class App extends Component {
     // virtual clipboard copy 
     // ditto
     console.log('editCopy clicked here')   
-    const documentSelection = this.state.documentSelection
+    const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
@@ -1435,32 +1434,32 @@ class App extends Component {
       return 
     }
 
-    const getIndexOfPosition = (content, { column, row }) => {
-      let index = 0
-      let currentRow = 0
+    // const getIndexOfPosition = (content, { column, row }) => {
+    //   let index = 0
+    //   let currentRow = 0
 
-      const charactersToCount = (currentRow, rowData) => {
-        if (currentRow === row) {
-          return 1 + rowData.length + (-1 * (rowData.length - column))
-        } else {
-          return rowData.length + 1
-        }
-      }
+    //   const charactersToCount = (currentRow, rowData) => {
+    //     if (currentRow === row) {
+    //       return 1 + rowData.length + (-1 * (rowData.length - column))
+    //     } else {
+    //       return rowData.length + 1
+    //     }
+    //   }
       
-      while (currentRow <= row) {
-        const rowData = content[currentRow]
+    //   while (currentRow <= row) {
+    //     const rowData = content[currentRow]
 
-        if (rowData.length) {
-          index += charactersToCount(currentRow, rowData)
-        }
+    //     if (rowData.length) {
+    //       index += charactersToCount(currentRow, rowData)
+    //     }
 
-        currentRow += 1
-      }
+    //     currentRow += 1
+    //   }
 
-      return index
-    }
+    //   return index
+    // }
 
-    const cut = (content, { start, end }) => {
+    const copy = (content, { start, end }) => {
       let startIndex = getIndexOfPosition(content, start)
       let endIndex = getIndexOfPosition(content, end)
       if (startIndex > endIndex) {
@@ -1472,7 +1471,8 @@ class App extends Component {
       const text = content.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
+      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
       const modified = `${left}${right}`.split(joiner)
 
 
@@ -1487,11 +1487,11 @@ class App extends Component {
       }
 
       // console.log('original', JSON.stringify(content, null, 2))
-      console.log('original', JSON.stringify(result.content, null, 2))
-      console.log('left', JSON.stringify(left, null, 2))
-      console.log('right', JSON.stringify(right, null, 2))
-      console.log('data', JSON.stringify(data, null, 2))
-      console.log('modified', JSON.stringify(result.modified, null, 2))
+      // console.log('original', JSON.stringify(result.content, null, 2))
+      // console.log('left', JSON.stringify(left, null, 2))
+      // console.log('right', JSON.stringify(right, null, 2))
+      // console.log('data', JSON.stringify(data, null, 2))
+      // console.log('modified', JSON.stringify(result.modified, null, 2))
 
       return result
     }
@@ -1499,7 +1499,7 @@ class App extends Component {
     // TODO: rename the 'cut' function expression inside 'editCopy'
     // to something more like 'copy', with minor refactoring
     // obviously :)
-    const postCopyDocument = cut(documentContent, {start, end})
+    const postCopyDocument = copy(documentContent, {start, end})
 
     this.setState((prevState) => {
       editMenu.visible = false
@@ -1509,24 +1509,115 @@ class App extends Component {
     })
   }
 
-  editPaste (menuItem){
+  editPaste (){
     // virtual clipboard paste
     // TODO: editPaste needs to be added to the undo and redo stacks    
     console.log('editPaste clicked here')   
-    console.log(menuItem)         
+    const documentCursor = {...this.state.documentCursor}
+    const documentSelection = {...this.state.documentSelection}
+    const documentContent = this.state.documentContent.slice()
+    const undoStack = this.state.undoStack.slice()
+    let start = documentSelection.selectionStart    
+    let end = documentSelection.selectionEnd 
+    let startIndex // = getIndexOfPosition(documentContent, start)
+    let endIndex // = getIndexOfPosition(documentContent, end)
+    if (start.row === end.row && start.column === end.column) {
+      console.log('yes')
+      startIndex = getIndexOfPosition(documentContent, documentCursor)
+      endIndex = getIndexOfPosition(documentContent, documentCursor)
+    } else {
+      console.log('no')
+      startIndex = getIndexOfPosition(documentContent, start)
+      endIndex = getIndexOfPosition(documentContent, end)
+    }
+    
+    
+
+    // this.setState({editMenu})
+
+    // if (startIndex > endIndex) {
+    //   let tempIndex = startIndex
+    //   startIndex = endIndex
+    //   endIndex = tempIndex
+    //   documentCursor.row = start.row
+    //   documentCursor.column = start.column
+    // } else {
+    //   documentCursor.row = end.row
+    //   documentCursor.column = end.column        
+    // }
+
+    // the document data before the paste op
+    console.log("startIndex")
+    console.log(startIndex)
+    console.log("endIndex")
+    console.log(endIndex)
+    const prePasteDoc = documentSelection.result.modified
+    const pasteData = documentSelection.result.data
+    const joiner = String.fromCharCode(0xbb)
+    const text = documentContent.join(joiner)
+    const left = text.substr(0, startIndex - 1)
+    const right = text.substr(endIndex, text.length)
+    const data = pasteData
+    // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+    const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
+    console.log(prePasteDoc)
+    console.log(documentCursor)
+    console.log(pasteData)
+
+    console.log('prePasteDoc', JSON.stringify(prePasteDoc, null, 2))
+    console.log('left', JSON.stringify(left, null, 2))
+    console.log('right', JSON.stringify(right, null, 2))
+    console.log('pasteData', JSON.stringify(data, null, 2))
+    console.log('pasteModifiedDoc', JSON.stringify(pasteModifiedDoc, null, 2))
+
+
+    const nextStackItem = {
+      prePasteDoc,
+      pasteModifiedDoc,
+      startIndex,
+      endIndex,
+      pasteData,
+      event: 'editPaste'
+    }
+
+    undoStack.push(nextStackItem)
+
+    console.log('cursor before setState:')
+    console.log({documentCursor})
+
+    this.setState((prevState) => {
+      const documentContent = pasteModifiedDoc
+      editMenu.visible = false      
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      return {
+        editMenu, 
+        undoStack, 
+        documentContent, 
+        documentSelection,
+        documentCursor
+      }
+    })
+
   }
 
-  editDelete  (menuItem) {
+  editDelete () {
     // delete selection
     // TODO: editDelete needs to be added to the undo and redo stacks    
     console.log('editDelete clicked here')   
-    console.log(menuItem)         
   }
 
-  editFind (menuItem) {
+  editFind () {
     // open up Find dialog, then finds character sequence 
     console.log('editFind clicked here')  
-    console.log(menuItem) 
     const editMenu = {...this.state.editMenu}
     this.setState((prevState) => {
       const showModal = true
@@ -1536,17 +1627,15 @@ class App extends Component {
     })         
   }
 
-  editFindNext (menuItem) {
+  editFindNext () {
     // finds next occurrence of current selection
     console.log('editFindNext clicked here')  
-    console.log(menuItem)          
   }
 
-  editReplace (menuItem) {
+  editReplace () {
     // open up find and replace dialog
     // TODO: eitReplace needs to be added to the undo and redo stacks    
     console.log('editReplace clicked here')  
-    console.log(menuItem)
     const editMenu = {...this.state.editMenu}
     this.setState((prevState) => {
       const showModal = true
@@ -1556,10 +1645,9 @@ class App extends Component {
     })          
   }
 
-  editGoTo (menuItem) {
+  editGoTo () {
     // goes to specific line number if word wrap NOT selected
     console.log('editGoTo clicked here')     
-    console.log(menuItem)  
     const editMenu = {...this.state.editMenu}        
     this.setState((prevState) => {
       const showModal = true
@@ -1569,29 +1657,25 @@ class App extends Component {
     })        
   }
 
-  editSelectAll (menuItem) {
+  editSelectAll () {
     // select all text
     console.log('editSelectAll clicked here')  
-    console.log(menuItem)          
   }
 
-  editTimeDate (menuItem) {
+  editTimeDate () {
     // inputs current time stamp at current cursor position
     console.log('editTimeDate clicked here')  
-    console.log(menuItem)        
   }
 
-  formatWordWrap (menuItem) {
+  formatWordWrap () {
     // wraps text to fit inside current viewable area
     console.log('formatWordWrap clicked here')  
-    console.log(menuItem)          
   }
 
-  formatFont  (menuItem) {
+  formatFont  () {
     // change font of entire text including font type, font style type, and font size 
     // also includes "Script Type:", which includes "Western", "Greek", "Turkish", etc.,
     console.log('formatFont clicked here') 
-    console.log(menuItem)
     const formatMenu = {...this.state.formatMenu}
     this.setState((prevState) => {
       const showModal = true
@@ -1601,18 +1685,16 @@ class App extends Component {
     })          
   }
 
-  viewStatusBar (menuItem) {
+  viewStatusBar () {
     // if word Wrap NOT checked, then creates a bottom display of 
     // where the cursor is, e.g., "Ln 11, Col 17"
     // displays checked box also
     console.log('viewStatusBar clicked here')  
-    console.log(menuItem)          
   }
 
-  viewHelpBox (menuItem) {
+  viewHelpBox () {
     // opens up new searchable help tab 
     console.log('viewHelpBox clicked here')   
-    console.log(menuItem)   
     const helpMenu = {...this.state.helpMenu}
     this.setState((prevState) => {
       const showModal = true
@@ -1622,10 +1704,9 @@ class App extends Component {
     })     
   }
 
-  helpAboutNotepad (menuItem) {
+  helpAboutNotepad () {
     // basic about this application stuff
     console.log('helpAboutNotepad clicked here')
-    console.log(menuItem)    
     const helpMenu = {...this.state.helpMenu}        
     this.setState((prevState) => {
       const showModal = true
