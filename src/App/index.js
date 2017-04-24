@@ -137,6 +137,7 @@ class App extends Component {
     this.editPaste = this.editPaste.bind(this)
     this.editUndo = this.editUndo.bind(this)
     this.editRedo = this.editRedo.bind(this)
+    this.editDelete = this.editDelete.bind(this)
     this.editFind = this.editFind.bind(this)
     this.editReplace = this.editReplace.bind(this)
     this.editGoTo = this.editGoTo.bind(this)
@@ -1513,8 +1514,15 @@ class App extends Component {
     // virtual clipboard paste
     // TODO: editPaste needs to be added to the undo and redo stacks    
     console.log('editPaste clicked here')   
-    const documentCursor = {...this.state.documentCursor}
     const documentSelection = {...this.state.documentSelection}
+    const prePasteDoc = documentSelection.result.modified
+    const pasteData = documentSelection.result.data
+    // works for exiting early if no copy or paste performed
+    if (!pasteData) {
+      return
+    }
+    
+    const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice()
     let start = documentSelection.selectionStart    
@@ -1551,8 +1559,7 @@ class App extends Component {
     console.log(startIndex)
     console.log("endIndex")
     console.log(endIndex)
-    const prePasteDoc = documentSelection.result.modified
-    const pasteData = documentSelection.result.data
+
     const joiner = String.fromCharCode(0xbb)
     const text = documentContent.join(joiner)
     const left = text.substr(0, startIndex - 1)
@@ -1613,6 +1620,95 @@ class App extends Component {
     // delete selection
     // TODO: editDelete needs to be added to the undo and redo stacks    
     console.log('editDelete clicked here')   
+    const documentSelection = {...this.state.documentSelection}
+    const documentContent = this.state.documentContent.slice()
+    const undoStack = this.state.undoStack.slice()
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
+    const editMenu = {...this.state.editMenu}    
+    const documentCursor = {...this.state.documentCursor}
+    
+    
+    if (start.column === end.column && start.row === end.row) {
+      editMenu.visible = false
+      this.setState({editMenu})
+      return 
+    }
+    const cut = (content, { start, end }) => {
+      let startIndex = getIndexOfPosition(content, start)
+      let endIndex = getIndexOfPosition(content, end)
+
+      if (startIndex > endIndex) {
+        let tempIndex = startIndex
+        startIndex = endIndex
+        endIndex = tempIndex
+        documentCursor.row = end.row
+        documentCursor.column = end.column
+      } else {
+        documentCursor.row = start.row
+        documentCursor.column = start.column        
+      }
+      const joiner = String.fromCharCode(0xbb)
+      const text = content.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex, text.length)
+      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
+      const modified = `${left}${right}`.split(joiner)
+
+
+
+      const result = {
+        original: content,
+        start: startIndex,
+        end: endIndex,
+        length: data.length,
+        data,
+        modified
+      }
+
+      const nextStackItem = {
+        result: {...result},
+        event: 'editCut'
+      }
+
+      undoStack.push(nextStackItem)
+
+      // console.log('original', JSON.stringify(content, null, 2))
+      // console.log('original', JSON.stringify(result.content, null, 2))
+      // console.log('left', JSON.stringify(left, null, 2))
+      // console.log('right', JSON.stringify(right, null, 2))
+      // console.log('data', JSON.stringify(data, null, 2))
+      // console.log('modified', JSON.stringify(result.modified, null, 2))
+
+      return result
+    }
+
+    const postCutDocument = cut(documentContent, {start, end})
+    // console.log(undoStack[undoStack.length-1])
+
+    this.setState((prevState) => {
+      editMenu.visible = false
+      const documentContent = postCutDocument.modified
+      // documentSelection.result = ''//postCutDocument
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      return {
+        editMenu, 
+        undoStack, 
+        documentContent, 
+        documentSelection,
+        documentCursor
+      }
+    })
   }
 
   editFind () {
