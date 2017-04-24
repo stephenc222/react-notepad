@@ -84,7 +84,7 @@ class Notepad extends Component {
     return (
       <div className="notepadArea"
         onMouseLeave={() => this.props.onMouseLeave()}
-        onClick={(event) => console.log(event.target)}>
+        onClick={(event) => (event.target)}>
           {content.map(this.renderContentRow)}
       </div>
     )

@@ -31,14 +31,25 @@ import UndoStackView from './UndoStackView'
 import myInfo from './mySecretStuff.js'
 import './index.css'
 
+// const startData = [
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+//   '',
+// ]
 const startData = [
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
+  'this is a', 'tesT OF THE CUT', 'OPERATION ON A string of', 
+  'text across multiple', 'lines in an', 'array',
+    '',
   '',
   '',
   '',
@@ -184,6 +195,7 @@ class App extends Component {
       documentCursor: CURSOR_HOME,
       documentContent: startData,
       documentSelection: {
+        result: {},
         isSelected: false,
         // TODO: figure out if this second flag, "isSelectedChanging", is actually necessary
         isSelectedChanging: false,
@@ -197,8 +209,6 @@ class App extends Component {
           column: 0
         }
       },
-      copiedDocumentContent: [],
-      cutDocumentContent: [],
       statusBarIsHidden: false,
       undoStack: [],
       redoStack: [],
@@ -526,18 +536,20 @@ class App extends Component {
       let index = 0
       let currentRow = 0
 
+      const charactersToCount = (currentRow, rowData) => {
+        if (currentRow === row) {
+          return 1 + rowData.length + (-1 * (rowData.length - column))
+        } else {
+          return rowData.length + 1
+        }
+      }
+
       while (currentRow <= row) {
         const rowData = content[currentRow]
 
         if (rowData.length) {
-          for (let i = 0; i < rowData.length; i += 1) {
-            index += 1
+            index += charactersToCount(currentRow, rowData)
           }
-
-          if (currentRow === row) {
-            index -= (rowData.length - column)
-          }
-        }
 
         currentRow += 1
       }
@@ -1267,113 +1279,220 @@ class App extends Component {
 
   }
 
-  editCut  (){
+  editCut (){
     // virtual clipboard cut (this application specific)
     // BONUS: native operating system clipboard
-    // TODO: editCut needs to be added to the undo and redo stacks
+    // FIXME: currently doesn't handle selections going bottom up,
+    // only works currently for top down selections
+    // FIXME: move cursor position correspondingly to
+    // reflect document content change (for also bottom up too)
     const documentSelection = this.state.documentSelection
     const documentContent = this.state.documentContent.slice()
     //const documentCursor = this.state.documentCursor
-    // const undoStack = this.state.undoStack.slice()
+    const undoStack = this.state.undoStack.slice()
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
-
     const editMenu = {...this.state.editMenu}    
-    // const mergedContent = []
+    
+    if (start.column === end.column && start.row === end.row) {
+      editMenu.visible = false
+      this.setState({editMenu})
+      return 
+    }
 
     //const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
-    if (!documentSelection.isSelected) {
-      return false
-    }
-    function indexOfPosition (content, column, row) {
+    // if (!documentSelection.isSelected) {
+    //   return false
+    // }
+    const getIndexOfPosition = (content, { column, row }) => {
       let index = 0
       let currentRow = 0
 
+      const charactersToCount = (currentRow, rowData) => {
+        if (currentRow === row) {
+          return 1 + rowData.length + (-1 * (rowData.length - column))
+        } else {
+          return rowData.length + 1
+        }
+      }
+      
       while (currentRow <= row) {
         const rowData = content[currentRow]
 
         if (rowData.length) {
-          for (let i = 0; i < rowData.length; i += 1) {
-            index += 1
-          }
-
-          if (currentRow === row) {
-            index -= (rowData.length - column)
-          }
+          index += charactersToCount(currentRow, rowData)
         }
 
         currentRow += 1
       }
+
       return index
     }
 
-    const startIndex = indexOfPosition(documentContent,start.column, start.row)
-    // const currentIndex = indexOfPosition(documentContent, documentCursor.column, documentCursor.row)
-    const endIndex = indexOfPosition(documentContent,end.column, end.row)
-    const documentContentLengths = []
-    const flattenedContent = documentContent.reduce(function(acc, val) {
-      documentContentLengths.push({lineLength: val.length, indexValue: acc.length})
-      return acc + val
-    }, '')
+    // const isSelected = (content, { row, column }, { start, end }) => {
+    //   const startIndex = getIndexOfPosition(content, start)
+    //   const endIndex = getIndexOfPosition(content, end)
+    //   const currentIndex = getIndexOfPosition(content, { row, column })
 
-    console.log('flattenedContent')
-    console.log(flattenedContent.split(''))
-    // console.log (documentContentLengths)
+    //   if (startIndex < endIndex) {
+    //     // left to right / top to bottom selection
+    //     return currentIndex >= startIndex && currentIndex <= endIndex
+    //   } else if (startIndex > endIndex) {
+    //     // right to left / bottom to top selection
+    //     return currentIndex >= endIndex && currentIndex <= startIndex
+    //   } else if (startIndex === endIndex) {
+    //     // no selection
+    //     return false
+    //   }
+    // }
 
-    // console.log('cut content:')
-    // const cutContent = flattenedContent.slice(startIndex, endIndex + 2)
-    // console.log(cutContent)
-    // console.log('post cut documentContent')
-    // console.log(flattenedContent.split(''))
-    // console.log(documentContent)
-    console.log(documentContentLengths)
-    const postCutContent = flattenedContent.split('')
-    // console.log('cut content:')
-    // console.log('start index: ' + startIndex)
-    // console.log('end index ' + endIndex)
-    const cutContent = {
-      index: startIndex < endIndex ? startIndex : endIndex,
-      content: postCutContent.splice(startIndex < endIndex ? startIndex : endIndex,
-        Math.abs(startIndex - endIndex)+1)
-    }
+    const cut = (content, { start, end }) => {
+      const startIndex = getIndexOfPosition(content, start)
+      const endIndex = getIndexOfPosition(content, end)
+      const joiner = String.fromCharCode(0xbb)
+      const text = content.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex, text.length)
+      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
+      const modified = `${left}${right}`.split(joiner)
 
-    for (let index in documentContentLengths) {
-      if ( documentContentLengths[index--].indexValue > startIndex
-        && documentContentLengths[index].indexValue < endIndex) {
-        console.log('line is here')
-        console.log(startIndex)
-        console.log(documentContentLengths[index])
+
+
+      const result = {
+        original: content,
+        start: startIndex,
+        length: data.length,
+        data,
+        modified
       }
+
+      const nextStackItem = {
+        result: {...result},
+        event: 'editCut'
+      }
+
+      undoStack.push(nextStackItem)
+
+      // console.log('original', JSON.stringify(content, null, 2))
+      console.log('original', JSON.stringify(result.content, null, 2))
+      console.log('left', JSON.stringify(left, null, 2))
+      console.log('right', JSON.stringify(right, null, 2))
+      console.log('data', JSON.stringify(data, null, 2))
+      console.log('modified', JSON.stringify(result.modified, null, 2))
+
+      return result
     }
 
-    console.log(cutContent)
-    console.log("postCutContent")
-    console.log(postCutContent)
-
-    const nextStackItem = {}
-    nextStackItem.value = cutContent
+    const postCutDocument = cut(documentContent, {start, end})
+    // console.log(undoStack[undoStack.length-1])
 
     this.setState((prevState) => {
       editMenu.visible = false
-      return {editMenu}
+      const documentContent = postCutDocument.modified
+      const documentCursor = documentSelection.selectionStart
+      documentSelection.result = postCutDocument
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      return {
+        editMenu, 
+        undoStack, 
+        documentContent, 
+        documentSelection,
+        documentCursor
+      }
     })
-
-      // return documentSelection.isSelected && !startEndAreSame(start,end) && (
-      //   (currentIndex >= startIndex && currentIndex <= endIndex) || (
-      //     (startIndex > endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
-      //   )
-      // )
-
-    
-    //console.log(cutDocumentContent)
-    
   }
 
-  editCopy (menuItem){
+  editCopy (){
     // virtual clipboard copy 
     // ditto
     console.log('editCopy clicked here')   
-    console.log(menuItem)         
+    const documentSelection = this.state.documentSelection
+    const documentContent = this.state.documentContent.slice()
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
+    const editMenu = {...this.state.editMenu} 
+    
+    if (start.column === end.column && start.row === end.row) {
+      editMenu.visible = false
+      this.setState({editMenu})
+      return 
+    }
+
+    const getIndexOfPosition = (content, { column, row }) => {
+      let index = 0
+      let currentRow = 0
+
+      const charactersToCount = (currentRow, rowData) => {
+        if (currentRow === row) {
+          return 1 + rowData.length + (-1 * (rowData.length - column))
+        } else {
+          return rowData.length + 1
+        }
+      }
+      
+      while (currentRow <= row) {
+        const rowData = content[currentRow]
+
+        if (rowData.length) {
+          index += charactersToCount(currentRow, rowData)
+        }
+
+        currentRow += 1
+      }
+
+      return index
+    }
+
+    const cut = (content, { start, end }) => {
+      const startIndex = getIndexOfPosition(content, start)
+      const endIndex = getIndexOfPosition(content, end)
+      const joiner = String.fromCharCode(0xbb)
+      const text = content.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex, text.length)
+      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
+      const modified = `${left}${right}`.split(joiner)
+
+
+
+      const result = {
+        original: content,
+        start: startIndex,
+        length: data.length,
+        data,
+        modified
+      }
+
+      // console.log('original', JSON.stringify(content, null, 2))
+      console.log('original', JSON.stringify(result.content, null, 2))
+      console.log('left', JSON.stringify(left, null, 2))
+      console.log('right', JSON.stringify(right, null, 2))
+      console.log('data', JSON.stringify(data, null, 2))
+      console.log('modified', JSON.stringify(result.modified, null, 2))
+
+      return result
+    }
+
+    // TODO: rename the 'cut' function expression inside 'editCopy'
+    // to something more like 'copy', with minor refactoring
+    // obviously :)
+    const postCopyDocument = cut(documentContent, {start, end})
+
+    this.setState((prevState) => {
+      editMenu.visible = false
+      documentSelection.result = postCopyDocument
+      documentSelection.data = postCopyDocument.data
+      return {editMenu, documentSelection}
+    })
   }
 
   editPaste (menuItem){
