@@ -99,6 +99,7 @@ class App extends Component {
     this.renderNotSavedWarningBox = this.renderNotSavedWarningBox.bind(this)
 
     this.renderSaveAsBox = this.renderSaveAsBox.bind(this)
+
     this.renderFindBox = this.renderFindBox.bind(this)
     this.renderReplaceBox = this.renderReplaceBox.bind(this)
     this.renderGoToBox = this.renderGoToBox.bind(this)
@@ -117,6 +118,7 @@ class App extends Component {
 
     this.openFileHandleChange = this.openFileHandleChange.bind(this)
     this.findInFileHandleChange = this.findInFileHandleChange.bind(this)
+    this.onCheckBoxChange = this.onCheckBoxChange.bind(this)
 
     this.openFileHandleSubmit = this.openFileHandleSubmit.bind(this)
     this.openFileHandleCancel = this.openFileHandleCancel.bind(this)
@@ -223,6 +225,7 @@ class App extends Component {
       openFileName: '',
       openFileOptions: [],
       findInFile: '',
+      matchCase: false,
       foundInFileArray: [],
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
@@ -335,6 +338,7 @@ class App extends Component {
     const handlers = {
       // handlers go here
       onChange: this.findInFileHandleChange,
+      onCheckBoxChange: this.onCheckBoxChange,
       onSubmit:this.findInFileHandleSubmit,
       onCancel: this.findInFileHandleCancel
     }
@@ -343,6 +347,7 @@ class App extends Component {
       <div className="dialog-box__container">
         <FindBox
           findInFile={this.state.findInFile}
+          matchCase={this.state.matchCase}
           handlers={handlers}
         />
       </div>
@@ -1037,28 +1042,51 @@ class App extends Component {
     // console.log(event.target.name)
     // const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
+    const findInFile = this.state.findInFile
+    const matchCase = this.state.matchCase
+    console.log(`matchCase: ${matchCase}`)
     // const undoStack = this.state.undoStack.slice()
     // const start = documentSelection.selectionStart
     // const end = documentSelection.selectionEnd
     // const editMenu = {...this.state.editMenu}    
     // const documentCursor = {...this.state.documentCursor}
 
-    const selectFindText = (target, content) => {
+    const selectFindText = ({target, content, matchCase}) => {
       console.log('target: ', target)
       // needs to change, temporary
-      return [target]
+      const foundInFileArray = []      
+      // const findRe = new RegExp(`${target}`)
+      for (let row in content) {
+        if (content[row].indexOf(`${target}`) > -1) {
+          console.log(content[row])
+        }
+      }
+      return foundInFileArray
+    }
+
+    const params = {
+      target: findInFile,
+      content: documentContent,
+      matchCase: matchCase
     }
 
     // TODO: result should return an array of objects with exactly matching
     // text to the string in the find box, with start and end indexs of where
     // those strings are found in the document - very similar in a way to Cut,
     // Copy, Delete and Paste
-    const result = selectFindText(event.target.value.toString(), documentContent)
+    const foundInFileArray = selectFindText({...params})
     // this.setState({[event.target.name]: event.target.value})
     this.setState({
-      [event.target.name]: event.target.value.toString(),
-      foundInFileArray: result
+      // findInFile: event.target.value,
+      // matchCase: event.target.value,
+      [event.target.name]: event.target.value,
+      // foundInFileArray: result
+      foundInFileArray
     })
+  }
+
+  onCheckBoxChange (event) {
+    this.setState({matchCase: event.target.checked})
   }
 
   findInFileHandleCancel (event) {

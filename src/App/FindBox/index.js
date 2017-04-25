@@ -20,8 +20,18 @@ class FindBox extends Component {
               value={this.props.findInFile} 
               onChange={this.props.handlers.onChange}/>
           </label>
-          <input type="submit" value="Find Next" />
-          <input type="button" value="Cancel" onClick={this.props.handlers.onCancel}/>
+          <div>
+            <label>
+              <input 
+                type="checkbox" 
+                name="matchCase" 
+                checked={this.props.matchCase}
+                onChange={this.props.handlers.onCheckBoxChange}/>
+              Match Case              
+            </label>
+            <input type="submit" value="Find Next" />
+            <input type="button" value="Cancel" onClick={this.props.handlers.onCancel}/>
+          </div>
         </form> 
       </div>
     )
