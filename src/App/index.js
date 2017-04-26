@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import 'whatwg-fetch'
 // also import PropTypes
-import {Api, typeAhead, getIndexOfPosition} from './helpers'
+import {
+  Api, 
+  typeAhead, 
+  getIndexOfPosition,
+  selectFindText
+} from './helpers'
 import MainMenu from './MainMenu'
 import fileMenu from './ui-data/fileMenu'
 import editMenu from './ui-data/editMenu'
@@ -144,6 +149,8 @@ class App extends Component {
     this.editFind = this.editFind.bind(this)
     this.findInFileHandleCancel = this.findInFileHandleCancel.bind(this)
     this.findInFileHandleSubmit = this.findInFileHandleSubmit.bind(this)
+
+    this.editFindNext = this.editFindNext.bind(this)
 
     this.editReplace = this.editReplace.bind(this)
     this.editGoTo = this.editGoTo.bind(this)
@@ -1048,72 +1055,67 @@ class App extends Component {
     console.log(`matchCase: ${matchCase}`)
 
     // TODO: abstract this helper function out to the helper files
-    const selectFindText = (findInFile,documentContent,matchCase) => {
-      // console.log('target: ', findInFile)
-      // needs to change, temporary
-      const foundInFileArray = []      
-      const findRe = new RegExp(`${findInFile}`, 'g')
-      const content = documentContent
+    // const selectFindText = (findInFile,documentContent,matchCase) => {
+    //   // console.log('target: ', findInFile)
+    //   // needs to change, temporary
+    //   const foundInFileArray = []      
+    //   const findRe = new RegExp(`${findInFile}`, 'g')
+    //   const content = documentContent
 
-      // const test = 'the cast sucks like the crappy actors that they known the way by the way of the cat'
-      // const find = 'the'
-      // let count = 0; const indexArr = []
-      // const testArr = test.split(find)
-      // for (let findPos in testArr) {
-      //   count += testArr[findPos].length
-      //   indexArr.push(count)
-      //   count += find.length
-      // }
-      // 86
-      // testArr
-      // ["", " cast sucks like ", " crappy actors that ", "y known ", " way by ", " way of ", " cat"]
-      // indexArr // chuck last index
-      // [0, 20, 43, 54, 65, 76, 83]
-      // test.length
-      // 83
+    //   // const test = 'the cast sucks like the crappy actors that they known the way by the way of the cat'
+    //   // const find = 'the'
+    //   // let count = 0; const indexArr = []
+    //   // const testArr = test.split(find)
+    //   // for (let findPos in testArr) {
+    //   //   count += testArr[findPos].length
+    //   //   indexArr.push(count)
+    //   //   count += find.length
+    //   // }
+    //   // 86
+    //   // testArr
+    //   // ["", " cast sucks like ", " crappy actors that ", "y known ", " way by ", " way of ", " cat"]
+    //   // indexArr // chuck last index
+    //   // [0, 20, 43, 54, 65, 76, 83]
+    //   // test.length
+    //   // 83
 
-      // NOTE: so columns would be equal to startColumn = indexArr[x] and endColumn = indexArr[x] + find.length
+    //   // NOTE: so columns would be equal to startColumn = indexArr[x] and endColumn = indexArr[x] + find.length
 
-      for (let row in content) {
-        let rowString = content[row]
-        let findInFileRow = findInFile
-        if (!matchCase) {
-          rowString = rowString.toLowerCase()
-          findInFileRow = findInFileRow.toLowerCase()
-        }
-        if (rowString.match(findRe) && findInFileRow !== '') {
-          let count = 0
-          const indexArr = []
-          const foundStrings = rowString.split(findInFileRow)
+    //   for (let row in content) {
+    //     let rowString = content[row]
+    //     let findInFileRow = findInFile
+    //     if (!matchCase) {
+    //       rowString = rowString.toLowerCase()
+    //       findInFileRow = findInFileRow.toLowerCase()
+    //     }
+    //     if (rowString.match(findRe) && findInFileRow !== '') {
+    //       let count = 0
+    //       const indexArr = []
+    //       const foundStrings = rowString.split(findInFileRow)
 
-          for (let indexPos in foundStrings) {
-            if (indexPos < foundStrings.length - 1) {
-              count += foundStrings[indexPos].length
-              indexArr.push(count)
+    //       for (let indexPos in foundStrings) {
+    //         if (indexPos < foundStrings.length - 1) {
+    //           count += foundStrings[indexPos].length
+    //           indexArr.push(count)
 
-              const found = {
-                row: parseInt(row, 10),
-                startColumn: count,
-                endColumn: count + findInFileRow.length - 1,
-                data: rowString.substring(count, count + findInFileRow.length)
-              }                                
+    //           const found = {
+    //             row: parseInt(row, 10),
+    //             startColumn: count,
+    //             endColumn: count + findInFileRow.length - 1,
+    //             data: rowString.substring(count, count + findInFileRow.length)
+    //           }                                
 
-              foundInFileArray.push(found)
-              count += findInFileRow.length
-            }
-          }
-        }
-      }
-      console.log(foundInFileArray)
-      return foundInFileArray
-    }
+    //           foundInFileArray.push(found)
+    //           count += findInFileRow.length
+    //         }
+    //       }
+    //     }
+    //   }
+    //   console.log(foundInFileArray)
+    //   return foundInFileArray
+    // }
 
     const foundInFileArray = selectFindText(findInFile,documentContent,matchCase)
-
-    // TODO: result should return an array of objects with exactly matching
-    // text to the string in the find box, with start and end indexs of where
-    // those strings are found in the document - very similar in a way to Cut,
-    // Copy, Delete and Paste
     this.setState({
       // findInFile: event.target.value,
       // matchCase: event.target.value,
@@ -1908,6 +1910,101 @@ class App extends Component {
   editFindNext () {
     // finds next occurrence of current selection
     console.log('editFindNext clicked here')  
+    const documentContent = this.state.documentContent.slice()
+    // const joiner = String.fromCharCode(0xbb)
+    // const text = documentContent.join(joiner)
+    const documentSelection = {...this.state.documentSelection}
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
+    let startIndex = getIndexOfPosition(documentContent,start)
+    let endIndex = getIndexOfPosition(documentContent,end) 
+    const matchCase = false
+    if (startIndex > endIndex) {
+      let tempIndex = startIndex
+      startIndex = endIndex
+      endIndex = tempIndex
+    }
+
+    const findThis = 'operation'
+    // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+    // console.log('string to find: ', data)
+    // const findInFile = event.target.value.toString()
+    //const matchCase = this.state.matchCase
+    const foundInFileArray = selectFindText(findThis,documentContent,matchCase)
+    console.log(foundInFileArray)
+    
+    // const editMenu = {...this.state.editMenu} 
+    // let findNextCounter = this.state.findNextCounter
+    // const documentSelection = {...this.state.documentSelection}
+    // // const foundInFileArray = this.state.foundInFileArray.slice()
+
+    // console.log('Find Box Submitted!') 
+
+    // if(!foundInFileArray.length) {
+    //   documentSelection.selectionStart = {
+    //     row: 0,
+    //     column: 0
+    //   }
+    //   documentSelection.selectionEnd = {
+    //     row: 0,
+    //     column: 0
+    //   }
+    //   documentSelection.isSelected = false
+    //   documentSelection.isSelectedChanging = false
+    //   this.setState({documentSelection})
+    //   return
+    // }
+
+    // if(!foundInFileArray[findNextCounter]) {
+    //   (findNextCounter = 0) 
+    //   // console.log('findNextCounter: ', findNextCounter)      
+    //   // console.log('reset findNextCounter!')
+    //   const found = foundInFileArray[findNextCounter]
+
+    //   documentSelection.selectionStart = {
+    //     column: found.startColumn,
+    //     row: found.row
+    //   }
+
+    //   documentSelection.selectionEnd = {
+    //     column: found.endColumn,
+    //     row: found.row
+    //   }
+
+    //   documentSelection.isSelected = true
+    //   documentSelection.isSelectedChanging = true
+    //   findNextCounter++
+    // } else {
+    //   // console.log('findNextCounter: ', findNextCounter)      
+    //   // console.log(foundInFileArray[findNextCounter])
+    //   const found = foundInFileArray[findNextCounter]
+
+    //   documentSelection.selectionStart = {
+    //     column: found.startColumn,
+    //     row: found.row
+    //   }
+
+    //   documentSelection.selectionEnd = {
+    //     column: found.endColumn,
+    //     row: found.row
+    //   }
+
+    //   documentSelection.isSelected = true
+    //   documentSelection.isSelectedChanging = true
+    //   findNextCounter++
+    // }
+    // this.setState((prevState) => {
+    //   editMenu.visible = false
+    //   return {editMenu, findNextCounter, documentSelection}
+    // })
+    
+    // this.setState({
+    //   // findInFile: event.target.value,
+    //   // matchCase: event.target.value,
+    //   // [event.target.name]: event.target.value,
+    //   // foundInFileArray: result
+    //   foundInFileArray
+    // })
   }
 
   editReplace () {
