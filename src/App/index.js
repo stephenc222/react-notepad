@@ -1078,8 +1078,8 @@ class App extends Component {
         let rowString = content[row]
         let findInFileRow = findInFile
         if (!matchCase) {
-          rowString.toLowerCase()
-          findInFileRow.toLowerCase()
+          rowString = rowString.toLowerCase()
+          findInFileRow = findInFileRow.toLowerCase()
         }
         if (rowString.match(findRe) && findInFileRow !== '') {
           let count = 0
