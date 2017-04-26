@@ -1042,40 +1042,69 @@ class App extends Component {
     // console.log(event.target.name)
     // const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
-    const findInFile = this.state.findInFile
+    const findInFile = event.target.value.toString()
     const matchCase = this.state.matchCase
     console.log(`matchCase: ${matchCase}`)
-    // const undoStack = this.state.undoStack.slice()
-    // const start = documentSelection.selectionStart
-    // const end = documentSelection.selectionEnd
-    // const editMenu = {...this.state.editMenu}    
-    // const documentCursor = {...this.state.documentCursor}
 
-    const selectFindText = ({target, content, matchCase}) => {
-      console.log('target: ', target)
+    const selectFindText = (findInFile,documentContent,matchCase) => {
+      // console.log('target: ', findInFile)
       // needs to change, temporary
       const foundInFileArray = []      
-      // const findRe = new RegExp(`${target}`)
+      const findRe = new RegExp(`${findInFile}`, 'g')
+      const content = documentContent
+
+      // const test = 'the cast sucks like the crappy actors that they known the way by the way of the cat'
+      // const find = 'the'
+      // let count = 0; const indexArr = []
+      // const testArr = test.split(find)
+      // for (let findPos in testArr) {
+      //   count += testArr[findPos].length
+      //   indexArr.push(count)
+      //   count += find.length
+      // }
+      // 86
+      // testArr
+      // ["", " cast sucks like ", " crappy actors that ", "y known ", " way by ", " way of ", " cat"]
+      // indexArr // chuck last index
+      // [0, 20, 43, 54, 65, 76, 83]
+      // test.length
+      // 83
+
+      // NOTE: so columns would be equal to startColumn = indexArr[x] and endColumn = indexArr[x] + find.length
+
       for (let row in content) {
-        if (content[row].indexOf(`${target}`) > -1) {
-          console.log(content[row])
-        }
+          if (content[row].match(findRe) && findInFile !== '') {
+            let count = 0
+            const indexArr = []
+            const foundStrings = content[row].split(findInFile)
+            for (let indexPos in foundStrings) {
+              count += foundStrings[indexPos].length
+              indexArr.push(count)
+              count += findInFile.length
+            }
+            // last element of indexArr is not useful
+            // const found = {
+            //   row: row,
+            //   startColumn: indexArr[x],
+            //   endColumn: (indexArr[x] + findInFile.length) // correct indexing for substring string method calls
+            //   data: content[row]
+            // }
+            indexArr.pop()
+            console.log(content[row])
+            console.log(indexArr)
+            
+          }
       }
+      // console.log(foundInFileArray)
       return foundInFileArray
     }
 
-    const params = {
-      target: findInFile,
-      content: documentContent,
-      matchCase: matchCase
-    }
+    const foundInFileArray = selectFindText(findInFile,documentContent,matchCase)
 
     // TODO: result should return an array of objects with exactly matching
     // text to the string in the find box, with start and end indexs of where
     // those strings are found in the document - very similar in a way to Cut,
     // Copy, Delete and Paste
-    const foundInFileArray = selectFindText({...params})
-    // this.setState({[event.target.name]: event.target.value})
     this.setState({
       // findInFile: event.target.value,
       // matchCase: event.target.value,
