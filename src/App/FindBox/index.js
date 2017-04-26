@@ -18,7 +18,9 @@ class FindBox extends Component {
               name="findInFile"
               ref={(input) => { this.findInput = input }}
               value={this.props.findInFile} 
-              onChange={this.props.handlers.onChange}/>
+              onChange={this.props.handlers.onChange}
+              autoComplete="off"
+            />
           </label>
           <div>
             <label>

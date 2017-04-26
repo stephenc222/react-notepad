@@ -227,6 +227,7 @@ class App extends Component {
       findInFile: '',
       matchCase: false,
       foundInFileArray: [],
+      findNextCounter: 0,
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -1046,6 +1047,7 @@ class App extends Component {
     const matchCase = this.state.matchCase
     console.log(`matchCase: ${matchCase}`)
 
+    // TODO: abstract this helper function out to the helper files
     const selectFindText = (findInFile,documentContent,matchCase) => {
       // console.log('target: ', findInFile)
       // needs to change, temporary
@@ -1073,29 +1075,36 @@ class App extends Component {
       // NOTE: so columns would be equal to startColumn = indexArr[x] and endColumn = indexArr[x] + find.length
 
       for (let row in content) {
-          if (content[row].match(findRe) && findInFile !== '') {
-            let count = 0
-            const indexArr = []
-            const foundStrings = content[row].split(findInFile)
-            for (let indexPos in foundStrings) {
+        let rowString = content[row]
+        let findInFileRow = findInFile
+        if (!matchCase) {
+          rowString.toLowerCase()
+          findInFileRow.toLowerCase()
+        }
+        if (rowString.match(findRe) && findInFileRow !== '') {
+          let count = 0
+          const indexArr = []
+          const foundStrings = rowString.split(findInFileRow)
+
+          for (let indexPos in foundStrings) {
+            if (indexPos < foundStrings.length - 1) {
               count += foundStrings[indexPos].length
               indexArr.push(count)
-              count += findInFile.length
+
+              const found = {
+                row: parseInt(row, 10),
+                startColumn: count,
+                endColumn: count + findInFileRow.length - 1,
+                data: rowString.substring(count, count + findInFileRow.length)
+              }                                
+
+              foundInFileArray.push(found)
+              count += findInFileRow.length
             }
-            // last element of indexArr is not useful
-            // const found = {
-            //   row: row,
-            //   startColumn: indexArr[x],
-            //   endColumn: (indexArr[x] + findInFile.length) // correct indexing for substring string method calls
-            //   data: content[row]
-            // }
-            indexArr.pop()
-            console.log(content[row])
-            console.log(indexArr)
-            
           }
+        }
       }
-      // console.log(foundInFileArray)
+      console.log(foundInFileArray)
       return foundInFileArray
     }
 
@@ -1115,6 +1124,7 @@ class App extends Component {
   }
 
   onCheckBoxChange (event) {
+    // TODO: call selectFindText here for selection updates to occur upon checkbox state change
     this.setState({matchCase: event.target.checked})
   }
 
@@ -1133,12 +1143,68 @@ class App extends Component {
     // findInFiles state Array of objects
     event.preventDefault()
     const editMenu = {...this.state.editMenu} 
+    let findNextCounter = this.state.findNextCounter
+    const documentSelection = {...this.state.documentSelection}
     const foundInFileArray = this.state.foundInFileArray.slice()
+
     console.log('Find Box Submitted!') 
-    console.log(foundInFileArray)  
+
+    if(!foundInFileArray.length) {
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      this.setState({documentSelection})
+      return
+    }
+
+    if(!foundInFileArray[findNextCounter]) {
+      (findNextCounter = 0) 
+      // console.log('findNextCounter: ', findNextCounter)      
+      // console.log('reset findNextCounter!')
+      const found = foundInFileArray[findNextCounter]
+
+      documentSelection.selectionStart = {
+        column: found.startColumn,
+        row: found.row
+      }
+
+      documentSelection.selectionEnd = {
+        column: found.endColumn,
+        row: found.row
+      }
+
+      documentSelection.isSelected = true
+      documentSelection.isSelectedChanging = true
+      findNextCounter++
+    } else {
+      // console.log('findNextCounter: ', findNextCounter)      
+      // console.log(foundInFileArray[findNextCounter])
+      const found = foundInFileArray[findNextCounter]
+
+      documentSelection.selectionStart = {
+        column: found.startColumn,
+        row: found.row
+      }
+
+      documentSelection.selectionEnd = {
+        column: found.endColumn,
+        row: found.row
+      }
+
+      documentSelection.isSelected = true
+      documentSelection.isSelectedChanging = true
+      findNextCounter++
+    }
     this.setState((prevState) => {
       editMenu.visible = false
-      return {editMenu}
+      return {editMenu, findNextCounter, documentSelection}
     })
   }
 

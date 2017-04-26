@@ -8,9 +8,14 @@ import FindBox from '.';
 
 describe('FindBox Component', () => {
   const props = {
-    // findBox: mainMenuData.topLevel.items[1].subLevel.items[6],
-    // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
-    // onGistClick: sinon.spy()
+    handlers: {
+      onChange: sinon.spy(),
+      onCheckBoxChange: sinon.spy(),
+      onSubmit: sinon.spy(),
+      onCancel: sinon.spy()
+    },
+    findInFile: 'found!',
+    matchCase: false,
   }
   it('renders with props passed to it', function () {
     expect(shallow(<FindBox {...props}/>).find('.findBox').length).to.equal(1)
