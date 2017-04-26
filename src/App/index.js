@@ -434,6 +434,7 @@ class App extends Component {
 
 
   onClickCloseMenuItem (event) {
+    // event.stopPropagation()
     const fileMenu = {...this.state.fileMenu}
     const editMenu = {...this.state.editMenu}
     const formatMenu = {...this.state.formatMenu}
@@ -1908,11 +1909,11 @@ class App extends Component {
 
 
   editFindNext () {
-    // finds next occurrence of current selection
+    // finds next occurrence of current 
     console.log('editFindNext clicked here')  
     const documentContent = this.state.documentContent.slice()
-    // const joiner = String.fromCharCode(0xbb)
-    // const text = documentContent.join(joiner)
+    const joiner = String.fromCharCode(0xbb)
+    const text = documentContent.join(joiner)
     const documentSelection = {...this.state.documentSelection}
     const start = documentSelection.selectionStart
     const end = documentSelection.selectionEnd
@@ -1925,86 +1926,86 @@ class App extends Component {
       endIndex = tempIndex
     }
 
-    const findThis = 'operation'
-    // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
-    // console.log('string to find: ', data)
+    // const findThis = 'operation'
+    const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+    console.log('string to find: ', data)
     // const findInFile = event.target.value.toString()
     //const matchCase = this.state.matchCase
-    const foundInFileArray = selectFindText(findThis,documentContent,matchCase)
+    const foundInFileArray = selectFindText(data,documentContent,matchCase)
     console.log(foundInFileArray)
     
     // const editMenu = {...this.state.editMenu} 
-    // let findNextCounter = this.state.findNextCounter
+    let findNextCounter = this.state.findNextCounter
     // const documentSelection = {...this.state.documentSelection}
     // // const foundInFileArray = this.state.foundInFileArray.slice()
 
     // console.log('Find Box Submitted!') 
 
-    // if(!foundInFileArray.length) {
-    //   documentSelection.selectionStart = {
-    //     row: 0,
-    //     column: 0
-    //   }
-    //   documentSelection.selectionEnd = {
-    //     row: 0,
-    //     column: 0
-    //   }
-    //   documentSelection.isSelected = false
-    //   documentSelection.isSelectedChanging = false
-    //   this.setState({documentSelection})
-    //   return
-    // }
+    if(!foundInFileArray.length) {
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      this.setState({documentSelection})
+      return
+    }
 
-    // if(!foundInFileArray[findNextCounter]) {
-    //   (findNextCounter = 0) 
-    //   // console.log('findNextCounter: ', findNextCounter)      
-    //   // console.log('reset findNextCounter!')
-    //   const found = foundInFileArray[findNextCounter]
+    if(!foundInFileArray[findNextCounter]) {
+      (findNextCounter = 0) 
+      // console.log('findNextCounter: ', findNextCounter)      
+      // console.log('reset findNextCounter!')
+      const found = foundInFileArray[findNextCounter]
 
-    //   documentSelection.selectionStart = {
-    //     column: found.startColumn,
-    //     row: found.row
-    //   }
+      documentSelection.selectionStart = {
+        column: found.startColumn,
+        row: found.row
+      }
 
-    //   documentSelection.selectionEnd = {
-    //     column: found.endColumn,
-    //     row: found.row
-    //   }
+      documentSelection.selectionEnd = {
+        column: found.endColumn,
+        row: found.row
+      }
 
-    //   documentSelection.isSelected = true
-    //   documentSelection.isSelectedChanging = true
-    //   findNextCounter++
-    // } else {
-    //   // console.log('findNextCounter: ', findNextCounter)      
-    //   // console.log(foundInFileArray[findNextCounter])
-    //   const found = foundInFileArray[findNextCounter]
+      documentSelection.isSelected = true
+      documentSelection.isSelectedChanging = false
+      findNextCounter++
+    } else {
+      // console.log('findNextCounter: ', findNextCounter)      
+      // console.log(foundInFileArray[findNextCounter])
+      const found = foundInFileArray[findNextCounter]
 
-    //   documentSelection.selectionStart = {
-    //     column: found.startColumn,
-    //     row: found.row
-    //   }
+      documentSelection.selectionStart = {
+        column: found.startColumn,
+        row: found.row
+      }
 
-    //   documentSelection.selectionEnd = {
-    //     column: found.endColumn,
-    //     row: found.row
-    //   }
+      documentSelection.selectionEnd = {
+        column: found.endColumn,
+        row: found.row
+      }
 
-    //   documentSelection.isSelected = true
-    //   documentSelection.isSelectedChanging = true
-    //   findNextCounter++
-    // }
-    // this.setState((prevState) => {
-    //   editMenu.visible = false
-    //   return {editMenu, findNextCounter, documentSelection}
-    // })
+      documentSelection.isSelected = true
+      documentSelection.isSelectedChanging = true
+      findNextCounter++
+    }
+    this.setState((prevState) => {
+      editMenu.visible = true
+      return {editMenu, findNextCounter, documentSelection}
+    })
     
-    // this.setState({
-    //   // findInFile: event.target.value,
-    //   // matchCase: event.target.value,
-    //   // [event.target.name]: event.target.value,
-    //   // foundInFileArray: result
-    //   foundInFileArray
-    // })
+    this.setState({
+      // findInFile: event.target.value,
+      // matchCase: event.target.value,
+      // [event.target.name]: event.target.value,
+      // foundInFileArray: result
+      foundInFileArray
+    })
   }
 
   editReplace () {
