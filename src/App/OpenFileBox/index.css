@@ -17,7 +17,7 @@
   /*overflow: auto;  */
 }
 
-.openFile-title {
+.dialog-title {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -26,20 +26,22 @@
   align-items: center;
 }
 
-.openFile-title--item {
+.dialog-title--item {
   padding: 5px;
 }
 
-.openFile-title--item-X {
+.dialog-title--item-X {
   padding: 5px;
   color: black;
 }
 
-.openFile-title--item-X:hover {
+.dialog-title--item-X:hover {
   background-color: red;
   color: white;
   
 }
+
+
 
 .file-container {
   display:flex;

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 
 
 class SaveAsBox extends Component {
@@ -9,7 +10,7 @@ class SaveAsBox extends Component {
       <div className="saveAsBox">
         <div className="saveAs-title">
           <div className="saveAs-title--item">Save As...</div>
-          <div className="saveAs-title--item-X" onClick={this.props.saveAsHandleCancel}>X</div>
+          <div className="saveAs-title--item-X" onClick={this.props.handleCancel}>X</div>
         </div>
         <div className="file-container">
           <div>{`Posting to your gists`}</div>
@@ -55,13 +56,21 @@ class SaveAsBox extends Component {
             </div>
             <div className="saveAs-buttons">
               <input type="submit" value="Save" />
-              <input type="button" value="Cancel" onClick={this.props.saveAsHandleCancel}/>         
+              <input type="button" value="Cancel" onClick={this.props.handleCancel}/>         
             </div>
           </form> 
         </div>
       </div>
     )
   }
+}
+
+SaveAsBox.propTypes = {
+  saveAsHandleSubmit: PropTypes.func.isRequired,
+  handleCancel: PropTypes.func.isRequired,
+  saveAsHandleChange: PropTypes.func.isRequired,
+  saveAsFormFileName: PropTypes.string.isRequired,
+  saveAsFormFileDescription: PropTypes.string.isRequired
 }
 
 export default SaveAsBox

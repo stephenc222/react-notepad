@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 
 
 class NotSavedWarningBox extends Component {
@@ -16,6 +17,12 @@ class NotSavedWarningBox extends Component {
       </div>
     )
   }
+}
+
+NotSavedWarningBox.propTypes = {
+  onClickSaveYes: PropTypes.func.isRequired,
+  onClickSaveNo: PropTypes.func.isRequired,
+  onClickSaveCancel: PropTypes.func.isRequired
 }
 
 export default NotSavedWarningBox

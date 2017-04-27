@@ -1,6 +1,4 @@
 export default function selectFindText (findInFile,documentContent,matchCase) {
-  // console.log('target: ', findInFile)
-  // needs to change, temporary
   const foundInFileArray = []      
   const content = documentContent
   let findRe = new RegExp(`${findInFile}`, 'g')
@@ -11,7 +9,6 @@ export default function selectFindText (findInFile,documentContent,matchCase) {
       rowString = rowString.toLowerCase()
       findInFileRow = findInFileRow.toLowerCase()
       findRe = new RegExp(`${findInFileRow}`, 'g')      
-      console.log('findInFileRow: ', findInFileRow)
     }
     if (rowString.match(findRe) && findInFileRow !== '') {
       let count = 0
@@ -36,6 +33,5 @@ export default function selectFindText (findInFile,documentContent,matchCase) {
       }
     }
   }
-  // console.log(foundInFileArray)
   return foundInFileArray
 }

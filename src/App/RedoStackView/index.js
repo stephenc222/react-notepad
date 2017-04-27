@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 class RedoStackView extends Component {
   constructor() {
     super()
@@ -13,15 +14,19 @@ class RedoStackView extends Component {
   render () {
     return (
       <div className="redoStackView">
-      <div className="redoStack-Title">
-        Redo Stack
-      </div>
-      <div className="redoStack-container">
-        {this.props.redoStackObject.map(this.renderStackItem)}      
-      </div>
+        <div className="redoStack-Title">
+          Redo Stack
+        </div>
+        <div className="redoStack-container">
+          {this.props.redoStackObject.map(this.renderStackItem)}      
+        </div>
       </div>
     )
   }
+}
+
+RedoStackView.propTypes = {
+  redoStackObject: PropTypes.array.isRequired
 }
 
 export default RedoStackView

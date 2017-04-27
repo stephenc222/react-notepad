@@ -14,7 +14,7 @@ describe('FindBox Component', () => {
       onSubmit: sinon.spy(),
       onCancel: sinon.spy()
     },
-    findInFile: 'found!',
+    findInFile: '',
     matchCase: false,
   }
   it('renders with props passed to it', function () {

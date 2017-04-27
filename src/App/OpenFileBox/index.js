@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 
 class OpenFileBox extends Component {
   constructor (props) {
@@ -25,9 +26,9 @@ class OpenFileBox extends Component {
   render () {
     return (
       <div className="openFileBox">
-        <div className="openFile-title">
-          <div className="openFile-title--item">Open Gists</div>
-          <div className="openFile-title--item-X" onClick={this.props.handlers.onCancel}>X</div>
+        <div className="dialog-title">
+          <div className="dialog-title--item">Open Gists</div>
+          <div className="dialog-title--item-X" onClick={this.props.handlers.onCancel}>X</div>
         </div>
         <div className="file-container">
           <div>{this.props.userGists.map(this.renderGists)}</div>
@@ -56,6 +57,15 @@ class OpenFileBox extends Component {
       </div>
     )
   }
+}
+
+OpenFileBox.propTypes = {
+  handlers: PropTypes.object.isRequired,
+  openFileName: PropTypes.string.isRequired,
+  userGists: PropTypes.array.isRequired,
+  openFileOptions: PropTypes.array.isRequired,
+  handleCancel: PropTypes.func.isRequired,
+  onGistClick: PropTypes.func.isRequired
 }
 
 export default OpenFileBox

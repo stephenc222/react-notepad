@@ -37,6 +37,7 @@
   flex-direction: column;
 }
 
+
 .app__document-container {
   display: flex;
   flex-shrink: 1;

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 
 class StatusBar extends Component {
   render () {
@@ -16,6 +17,10 @@ class StatusBar extends Component {
       </div>
     )
   }
+}
+
+StatusBar.propTypes = {
+  cursor: PropTypes.object.isRequired
 }
 
 export default StatusBar

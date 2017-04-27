@@ -8,9 +8,10 @@ import GoToBox from '.';
 
 describe('GoToBox Component', () => {
   const props = {
-    // goToBox: mainMenuData.topLevel.items[1].subLevel.items[9],
-    // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
-    // onGistClick: sinon.spy()
+    handlers: {
+      onSubmit: sinon.spy()
+    },
+    goToRowNumber: 0
   }
   it('renders with props passed to it', function () {
     expect(shallow(<GoToBox {...props}/>).find('.goToBox').length).to.equal(1)

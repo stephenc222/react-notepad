@@ -8,9 +8,11 @@ import SaveAsBox from '.';
 
 describe('SaveAsBox Component', () => {
   const props = {
-    // saveAsBox: mainMenuData.topLevel.items[0].subLevel.items[1],
-    // files: mainMenuData.topLevel.items[0].subLevel.items[1].gists.files,
-    // onGistClick: sinon.spy()
+    saveAsHandleChange: sinon.spy(),
+    handleCancel: sinon.spy(),
+    saveAsHandleSubmit: sinon.spy(),
+    saveAsFormFileName: '',
+    saveAsFormFileDescription: ''
   }
   it('renders with props passed to it', function () {
     expect(shallow(<SaveAsBox {...props}/>)

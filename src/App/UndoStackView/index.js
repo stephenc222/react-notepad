@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 class UndoStackView extends Component {
   constructor() {
     super()
@@ -22,6 +23,10 @@ class UndoStackView extends Component {
       </div>
     )
   }
+}
+
+UndoStackView.propTypes = {
+  undoStackObject: PropTypes.array.isRequired
 }
 
 export default UndoStackView

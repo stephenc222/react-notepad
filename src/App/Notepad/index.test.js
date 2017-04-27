@@ -16,7 +16,15 @@ import Notepad from '.';
 // onMouseUp={this.onNotepadMouseUp}
 
 describe('Notepad Component', () => {
+  const props = {
+    content: [],
+    onMouseLeave: sinon.spy(),
+    onMouseDown: sinon.spy(),
+    onMouseEnter: sinon.spy(),
+    onMouseUp: sinon.spy(),
+    isSelected: sinon.spy()
+  }
   it('renders with props passed to it', function () {
-    expect(shallow(<Notepad content={[]}/>).find('.notepadArea').length).to.equal(1)
+    expect(shallow(<Notepad {...props}/>).find('.notepadArea').length).to.equal(1)
   })
 })

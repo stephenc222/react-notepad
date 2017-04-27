@@ -126,14 +126,13 @@ class App extends Component {
     this.onCheckBoxChange = this.onCheckBoxChange.bind(this)
 
     this.openFileHandleSubmit = this.openFileHandleSubmit.bind(this)
-    this.openFileHandleCancel = this.openFileHandleCancel.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
 
     this.fileSaveMenu = this.fileSaveMenu.bind(this)
 
     this.fileSaveAsMenu = this.fileSaveAsMenu.bind(this)
     this.saveAsHandleChange = this.saveAsHandleChange.bind(this)
     this.saveAsHandleSubmit = this.saveAsHandleSubmit.bind(this)
-    this.saveAsHandleCancel = this.saveAsHandleCancel.bind(this)
 
     this.printMenu = this.printMenu.bind(this)
     this.exitNotepad = this.exitNotepad.bind(this)
@@ -147,7 +146,6 @@ class App extends Component {
     this.editDelete = this.editDelete.bind(this)
 
     this.editFind = this.editFind.bind(this)
-    this.findInFileHandleCancel = this.findInFileHandleCancel.bind(this)
     this.findInFileHandleSubmit = this.findInFileHandleSubmit.bind(this)
 
     this.editFindNext = this.editFindNext.bind(this)
@@ -232,6 +230,8 @@ class App extends Component {
       openFileName: '',
       openFileOptions: [],
       findInFile: '',
+      replaceInFile: '',
+      goToRowNumber: 0,
       matchCase: false,
       foundInFileArray: [],
       findNextCounter: 0,
@@ -292,7 +292,7 @@ class App extends Component {
             onGistClick={this.onGistClick}
             openFileHandleSubmit={this.openFileHandleSubmit}
             openFileHandleChange={this.openFileHandleChange}
-            openFileHandleCancel={this.openFileHandleCancel}
+            handleCancel={this.handleCancel}
             openFileName={this.state.openFileName}
             openFileOptions={this.state.openFileOptions}
             userGists={this.state.userGists}
@@ -302,6 +302,7 @@ class App extends Component {
   }
 
   renderNotSavedWarningBox () {
+    // TODO: change this component to use this handlers object
     const handlers = {
       onSaveYes: this.onClickSaveYes,
       onSaveNo: this.onClickSaveNo,
@@ -324,7 +325,7 @@ class App extends Component {
     const handlers = {
       onChange: this.saveAsHandleChange,
       onSubmit: this.saveAsHandleSubmit,
-      onCancel: this.saveAsHandleCancel
+      onCancel: this.handleCancel
     }
 
     return (
@@ -336,7 +337,7 @@ class App extends Component {
           saveAsFormFileDescription={this.state.saveAsFormFileDescription}
           saveAsHandleChange={this.saveAsHandleChange}
           saveAsHandleSubmit={this.saveAsHandleSubmit}
-          saveAsHandleCancel={this.saveAsHandleCancel}
+          handleCancel={this.handleCancel}
         />
       </div>
     )
@@ -348,7 +349,7 @@ class App extends Component {
       onChange: this.findInFileHandleChange,
       onCheckBoxChange: this.onCheckBoxChange,
       onSubmit:this.findInFileHandleSubmit,
-      onCancel: this.findInFileHandleCancel
+      onCancel: this.handleCancel
     }
 
     return (
@@ -364,12 +365,18 @@ class App extends Component {
 
   renderReplaceBox () {
     const handlers = {
-      // handlers go here
+      onChange: this.findInFileHandleChange,
+      onReplaceInputChange: this.replaceHandleChange,
+      onSubmit: this.replaceHandleSubmit,
+      onCancel: this.handleCancel,
     }
 
     return (
       <div className="dialog-box__container">
         <ReplaceBox
+          findInFile={this.state.findInFile}
+          replaceInFile={this.state.replaceInFile}
+          matchCase={this.state.matchCase}
           handlers={handlers}
         />
       </div>
@@ -378,13 +385,17 @@ class App extends Component {
   
   renderGoToBox () {
     const handlers = {
-      // handlers go here
+      onSubmit: () => {},
+      onChange: () => {},
+      onCancel: () => {}
+
     }
 
     return (
       <div className="dialog-box__container">
         <GoToBox
           handlers={handlers}
+          goToRowNumber={this.state.goToRowNumber}
         />
       </div>
     )
@@ -897,16 +908,6 @@ class App extends Component {
     
   }
 
-  openFileHandleCancel (event) {
-    const fileMenu = {...this.state.fileMenu}    
-    event.preventDefault()
-    const showModal = false
-    this.setState((prevState) => {
-      fileMenu.visible = false
-      return {fileMenu, showModal}
-    })
-  }
-
   fileSaveMenu (menuItem) {
     // save to your gists
     const fileMenu = {...this.state.fileMenu}
@@ -1037,14 +1038,10 @@ class App extends Component {
     
   }
 
-  saveAsHandleCancel (event) {
-    const fileMenu = {...this.state.fileMenu}    
+  handleCancel (event) {
     event.preventDefault()
     const showModal = false
-    this.setState((prevState) => {
-      fileMenu.visible = false
-      return {fileMenu, showModal}
-    })
+    this.setState({showModal})
   }
 
   findInFileHandleChange (event) {
@@ -1054,68 +1051,6 @@ class App extends Component {
     const findInFile = event.target.value.toString()
     const matchCase = this.state.matchCase
     console.log(`matchCase: ${matchCase}`)
-
-    // TODO: abstract this helper function out to the helper files
-    // const selectFindText = (findInFile,documentContent,matchCase) => {
-    //   // console.log('target: ', findInFile)
-    //   // needs to change, temporary
-    //   const foundInFileArray = []      
-    //   const findRe = new RegExp(`${findInFile}`, 'g')
-    //   const content = documentContent
-
-    //   // const test = 'the cast sucks like the crappy actors that they known the way by the way of the cat'
-    //   // const find = 'the'
-    //   // let count = 0; const indexArr = []
-    //   // const testArr = test.split(find)
-    //   // for (let findPos in testArr) {
-    //   //   count += testArr[findPos].length
-    //   //   indexArr.push(count)
-    //   //   count += find.length
-    //   // }
-    //   // 86
-    //   // testArr
-    //   // ["", " cast sucks like ", " crappy actors that ", "y known ", " way by ", " way of ", " cat"]
-    //   // indexArr // chuck last index
-    //   // [0, 20, 43, 54, 65, 76, 83]
-    //   // test.length
-    //   // 83
-
-    //   // NOTE: so columns would be equal to startColumn = indexArr[x] and endColumn = indexArr[x] + find.length
-
-    //   for (let row in content) {
-    //     let rowString = content[row]
-    //     let findInFileRow = findInFile
-    //     if (!matchCase) {
-    //       rowString = rowString.toLowerCase()
-    //       findInFileRow = findInFileRow.toLowerCase()
-    //     }
-    //     if (rowString.match(findRe) && findInFileRow !== '') {
-    //       let count = 0
-    //       const indexArr = []
-    //       const foundStrings = rowString.split(findInFileRow)
-
-    //       for (let indexPos in foundStrings) {
-    //         if (indexPos < foundStrings.length - 1) {
-    //           count += foundStrings[indexPos].length
-    //           indexArr.push(count)
-
-    //           const found = {
-    //             row: parseInt(row, 10),
-    //             startColumn: count,
-    //             endColumn: count + findInFileRow.length - 1,
-    //             data: rowString.substring(count, count + findInFileRow.length)
-    //           }                                
-
-    //           foundInFileArray.push(found)
-    //           count += findInFileRow.length
-    //         }
-    //       }
-    //     }
-    //   }
-    //   console.log(foundInFileArray)
-    //   return foundInFileArray
-    // }
-
     const foundInFileArray = selectFindText(findInFile,documentContent,matchCase)
     this.setState({
       // findInFile: event.target.value,
@@ -1131,19 +1066,7 @@ class App extends Component {
     this.setState({matchCase: event.target.checked})
   }
 
-  findInFileHandleCancel (event) {
-    event.preventDefault()
-    const editMenu = {...this.state.editMenu}    
-    const showModal = false
-    this.setState((prevState) => {
-      editMenu.visible = false
-      return {editMenu, showModal}
-    })
-  }
-  
   findInFileHandleSubmit (event) {
-    // TODO: Submit here should increment index object item inside
-    // findInFiles state Array of objects
     event.preventDefault()
     const editMenu = {...this.state.editMenu} 
     let findNextCounter = this.state.findNextCounter
@@ -1475,52 +1398,6 @@ class App extends Component {
       this.setState({editMenu})
       return 
     }
-
-    //const startEndAreSame = (start, end) => start.column === end.column && start.row === end.row
-    // if (!documentSelection.isSelected) {
-    //   return false
-    // }
-    // const getIndexOfPosition = (content, { column, row }) => {
-    //   let index = 0
-    //   let currentRow = 0
-
-    //   const charactersToCount = (currentRow, rowData) => {
-    //     if (currentRow === row) {
-    //       return 1 + rowData.length + (-1 * (rowData.length - column))
-    //     } else {
-    //       return rowData.length + 1
-    //     }
-    //   }
-      
-    //   while (currentRow <= row) {
-    //     const rowData = content[currentRow]
-
-    //     if (rowData.length) {
-    //       index += charactersToCount(currentRow, rowData)
-    //     }
-
-    //     currentRow += 1
-    //   }
-
-    //   return index
-    // }
-
-    // const isSelected = (content, { row, column }, { start, end }) => {
-    //   const startIndex = getIndexOfPosition(content, start)
-    //   const endIndex = getIndexOfPosition(content, end)
-    //   const currentIndex = getIndexOfPosition(content, { row, column })
-
-    //   if (startIndex < endIndex) {
-    //     // left to right / top to bottom selection
-    //     return currentIndex >= startIndex && currentIndex <= endIndex
-    //   } else if (startIndex > endIndex) {
-    //     // right to left / bottom to top selection
-    //     return currentIndex >= endIndex && currentIndex <= startIndex
-    //   } else if (startIndex === endIndex) {
-    //     // no selection
-    //     return false
-    //   }
-    // }
 
     const cut = (content, { start, end }) => {
       let startIndex = getIndexOfPosition(content, start)

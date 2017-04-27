@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.css'
+import PropTypes from 'prop-types'
 
 class Notepad extends Component {
   constructor (props) {
@@ -89,6 +90,15 @@ class Notepad extends Component {
       </div>
     )
   }
+}
+
+Notepad.propTypes = {
+  content: PropTypes.array.isRequired,
+  onMouseLeave: PropTypes.func.isRequired,
+  onMouseDown: PropTypes.func.isRequired,
+  onMouseEnter: PropTypes.func.isRequired,
+  onMouseUp: PropTypes.func.isRequired,
+  isSelected: PropTypes.func.isRequired
 }
 
 export default Notepad

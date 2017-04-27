@@ -1,16 +1,8 @@
 import React, { Component } from 'react'
-// import NotSavedWarningBox from './NotSavedWarningBox'
-// import OpenFileBox from './OpenFileBox'
-// import SaveAsBox from './SaveAsBox'
-// import FindBox from './FindBox'
-// import ReplaceBox from './ReplaceBox'
-// import GoToBox from './GoToBox'
-// import FontBox from './FontBox'
-// import HelpBox from './HelpBox'
-// import AboutBox from './AboutBox'
 import './index.css'
+import PropTypes from 'prop-types'
 
-export default class MainMenu extends Component {
+class MainMenu extends Component {
   constructor(props) {
     super(props)
     this.topLevelMenu = this.topLevelMenu.bind(this)
@@ -47,3 +39,11 @@ export default class MainMenu extends Component {
     )
   }
 }
+
+MainMenu.propTypes = {
+  mainMenu: PropTypes.array.isRequired,
+  onMouseUp: PropTypes.func.isRequired,
+  onMainMenuClick: PropTypes.func.isRequired
+}
+
+export default MainMenu
