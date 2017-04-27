@@ -52,6 +52,7 @@ class ReplaceBox extends Component {
                 Match Case              
               </label>
               <input type="submit" value="Replace" />
+              <input type="button" value="Replace All" onClick={this.props.handlers.replaceAll}/>
               <input type="button" value="Cancel" onClick={this.props.handlers.onCancel}/>
             </div>
           </form> 

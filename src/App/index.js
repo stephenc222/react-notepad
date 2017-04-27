@@ -110,6 +110,7 @@ class App extends Component {
     this.renderReplaceBox = this.renderReplaceBox.bind(this)
     this.replaceHandleChange = this.replaceHandleChange.bind(this)
     this.replaceHandleSubmit = this.replaceHandleSubmit.bind(this)
+    this.replaceAll = this.replaceAll.bind(this)
 
     this.renderGoToBox = this.renderGoToBox.bind(this)
     this.renderFontBox = this.renderFontBox.bind(this)
@@ -239,6 +240,7 @@ class App extends Component {
       matchCase: false,
       foundInFileArray: [],
       findNextCounter: 0,
+      replaceCounter: 0,
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       newSavedGistID: '',
@@ -373,6 +375,7 @@ class App extends Component {
       replaceHandleChange: this.replaceHandleChange,
       onSubmit: this.replaceHandleSubmit,
       onCancel: this.handleCancel,
+      replaceAll: this.replaceAll
     }
 
     return (
@@ -1141,11 +1144,83 @@ class App extends Component {
     })
   }
 
+  replaceAll (event) {
+    event.preventDefault()
+    const foundInFileArray = this.state.foundInFileArray.slice()
+    const replaceInFile = this.state.replaceInFile
+    console.log('ReplaceAll clicked!')
+    console.log(replaceInFile)
+    console.log(foundInFileArray)
+  }
+  
   replaceHandleSubmit (event) {
     event.preventDefault()
     console.log('ReplaceBox Submit!')
+    event.preventDefault()
+    const editMenu = {...this.state.editMenu} 
+    let replaceCounter = this.state.replaceCounter
+    const documentSelection = {...this.state.documentSelection}
     const foundInFileArray = this.state.foundInFileArray.slice()
-    console.log(foundInFileArray)
+
+    console.log('Find Box Submitted!') 
+
+    if(!foundInFileArray.length) {
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      this.setState({documentSelection})
+      return
+    }
+
+    if(!foundInFileArray[replaceCounter]) {
+      (replaceCounter = 0) 
+      // console.log('replaceCounter: ', replaceCounter)      
+      // console.log('reset replaceCounter!')
+      const found = foundInFileArray[replaceCounter]
+
+      documentSelection.selectionStart = {
+        column: found.startColumn,
+        row: found.row
+      }
+
+      documentSelection.selectionEnd = {
+        column: found.endColumn,
+        row: found.row
+      }
+
+      documentSelection.isSelected = true
+      documentSelection.isSelectedChanging = true
+      replaceCounter++
+    } else {
+      // console.log('replaceCounter: ', replaceCounter)      
+      // console.log(foundInFileArray[replaceCounter])
+      const found = foundInFileArray[replaceCounter]
+
+      documentSelection.selectionStart = {
+        column: found.startColumn,
+        row: found.row
+      }
+
+      documentSelection.selectionEnd = {
+        column: found.endColumn,
+        row: found.row
+      }
+
+      documentSelection.isSelected = true
+      documentSelection.isSelectedChanging = true
+      replaceCounter++
+    }
+    this.setState((prevState) => {
+      editMenu.visible = false
+      return {editMenu, replaceCounter, documentSelection}
+    })
   }
 
   printMenu (menuItem) {
@@ -1887,16 +1962,16 @@ class App extends Component {
     }
     this.setState((prevState) => {
       editMenu.visible = true
-      return {editMenu, findNextCounter, documentSelection}
+      return {editMenu, findNextCounter, documentSelection, foundInFileArray}
     })
     
-    this.setState({
-      // findInFile: event.target.value,
-      // matchCase: event.target.value,
-      // [event.target.name]: event.target.value,
-      // foundInFileArray: result
-      foundInFileArray
-    })
+    // this.setState({
+    //   // findInFile: event.target.value,
+    //   // matchCase: event.target.value,
+    //   // [event.target.name]: event.target.value,
+    //   // foundInFileArray: result
+    //   foundInFileArray
+    // })
   }
 
   editReplace () {

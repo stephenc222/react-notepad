@@ -10,6 +10,7 @@ describe('ReplaceBox Component', () => {
   const props = {
     handlers: {
       onChange: sinon.spy(),
+      replaceAll: sinon.spy(),
       onCheckBoxChange: sinon.spy(),
       replaceHandleChange: sinon.spy(),
       onCancel: sinon.spy(),
