@@ -37,7 +37,7 @@ class ReplaceBox extends Component {
                   name="replaceInFile"
                   // ref={(input) => { this.findInput = input }}
                   value={this.props.replaceInFile} 
-                  onChange={this.props.handlers.onReplaceInputChange}
+                  onChange={this.props.handlers.replaceHandleChange}
                   autoComplete="off"
                 />
               </label>

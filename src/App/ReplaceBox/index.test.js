@@ -11,7 +11,7 @@ describe('ReplaceBox Component', () => {
     handlers: {
       onChange: sinon.spy(),
       onCheckBoxChange: sinon.spy(),
-      onReplaceInputChange: sinon.spy(),
+      replaceHandleChange: sinon.spy(),
       onCancel: sinon.spy(),
       onSubmit: sinon.spy()
     },

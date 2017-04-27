@@ -1,17 +1,51 @@
 .replaceBox {
   visibility: visible;
-  border: red solid 2px;
+  border: red solid 1px;
   border-radius: 20px;
   background-color: #e6fff7;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   position: absolute;
-  height: 500px;
-  width: 600px;
-  top: 50%;
+  flex-grow:1;
+  /*height: 65px;
+  width: 250px;*/
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
-  cursor: default;  
+  cursor: default;   
+}
+
+.ReplaceBox-container {
+  display: flex;
+  flex-grow:1;
+}
+
+.ReplaceBox-container input:hover[type='submit'] {
+  background-color: lavender;
+}
+
+.ReplaceBox-container input:hover[type='button'] {
+  background-color: lavender;
+}
+
+.ReplaceBox-input--text {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.dialog-title--item {
+  padding: 5px;
+}
+
+.dialog-title--item-X {
+  padding: 5px;
+  color: black;
+}
+
+.dialog-title--item-X:hover {
+  background-color: red;
+  color: white;
+  
 }

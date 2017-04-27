@@ -106,7 +106,11 @@ class App extends Component {
     this.renderSaveAsBox = this.renderSaveAsBox.bind(this)
 
     this.renderFindBox = this.renderFindBox.bind(this)
+    
     this.renderReplaceBox = this.renderReplaceBox.bind(this)
+    this.replaceHandleChange = this.replaceHandleChange.bind(this)
+    this.replaceHandleSubmit = this.replaceHandleSubmit.bind(this)
+
     this.renderGoToBox = this.renderGoToBox.bind(this)
     this.renderFontBox = this.renderFontBox.bind(this)
     this.renderHelpBox = this.renderHelpBox.bind(this)
@@ -366,7 +370,7 @@ class App extends Component {
   renderReplaceBox () {
     const handlers = {
       onChange: this.findInFileHandleChange,
-      onReplaceInputChange: this.replaceHandleChange,
+      replaceHandleChange: this.replaceHandleChange,
       onSubmit: this.replaceHandleSubmit,
       onCancel: this.handleCancel,
     }
@@ -1053,11 +1057,14 @@ class App extends Component {
     console.log(`matchCase: ${matchCase}`)
     const foundInFileArray = selectFindText(findInFile,documentContent,matchCase)
     this.setState({
-      // findInFile: event.target.value,
-      // matchCase: event.target.value,
       [event.target.name]: event.target.value,
-      // foundInFileArray: result
       foundInFileArray
+    })
+  }
+
+  replaceHandleChange (event) {
+    this.setState({
+      [event.target.name]: event.target.value,
     })
   }
 
@@ -1132,6 +1139,13 @@ class App extends Component {
       editMenu.visible = false
       return {editMenu, findNextCounter, documentSelection}
     })
+  }
+
+  replaceHandleSubmit (event) {
+    event.preventDefault()
+    console.log('ReplaceBox Submit!')
+    const foundInFileArray = this.state.foundInFileArray.slice()
+    console.log(foundInFileArray)
   }
 
   printMenu (menuItem) {
