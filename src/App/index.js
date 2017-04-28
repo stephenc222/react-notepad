@@ -1202,9 +1202,9 @@ class App extends Component {
     }
 
     const paste = (documentContent, startIndex,endIndex, pasteData) => {
-      console.log(documentContent)
-      console.log(startIndex)
-      console.log(endIndex)
+      // console.log(documentContent)
+      // console.log(startIndex)
+      // console.log(endIndex)
       const joiner = String.fromCharCode(0xbb)
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
@@ -1223,38 +1223,66 @@ class App extends Component {
 
     this.setState({undoStack})
 
+    function replaceOp (foundItem) {
+      cut(documentContent, {
+        start: {
+          column: foundItem.startColumn,
+          row: foundItem.row
+        }, 
+        end: {
+          column: foundItem.endColumn,
+          row: foundItem.row
+        }
+      })
+      paste(documentContent, 
+          getIndexOfPosition(documentContent,{
+            column: foundItem.startColumn,
+            row: foundItem.row
+          }),
+          getIndexOfPosition(documentContent,{ 
+            column: foundItem.endColumn,
+            row: foundItem.row
+          }),
+          'wowNOW'
+        )
+
+      return
+    }
+
     console.log('ReplaceAll clicked!')
     console.log(replaceInFile)
     console.table(foundInFileArray)
-    console.log('------------------------------before for replaceAll-----------------------')
+    console.log('------------------------------before for replaceAll-----------------------')   
     for (let foundItem in foundInFileArray) {
-      // TODO: assumes the found item is on one row, make more robust
-      console.log(foundInFileArray[foundItem])
-      console.log('-----------cut-------------')      
-      cut(documentContent, {
-        start: {
-          column: foundInFileArray[foundItem].startColumn,
-          row: foundInFileArray[foundItem].row
-        }, 
-        end: {
-          column: foundInFileArray[foundItem].endColumn,
-          row: foundInFileArray[foundItem].row
-        }
-      })
-      console.log('-----------paste-------------')    
-      console.log(foundInFileArray[foundItem])  
-      paste(documentContent, 
-        getIndexOfPosition(documentContent,{
-          column: foundInFileArray[foundItem].startColumn,
-          row: foundInFileArray[foundItem].row
-        }),
-        getIndexOfPosition(documentContent,{ 
-          column: foundInFileArray[foundItem].endColumn,
-          row: foundInFileArray[foundItem].row
-        }),
-        'wowNOW'
-      )
+      let postReplaceDoc = replaceOp(foundInFileArray[foundItem])
+      console.log(postReplaceDoc)      
+
+      // console.log('-----------cut-------------')      
+      // cut(documentContent, {
+      //   start: {
+      //     column: foundInFileArray[foundItem].startColumn,
+      //     row: foundInFileArray[foundItem].row
+      //   }, 
+      //   end: {
+      //     column: foundInFileArray[foundItem].endColumn,
+      //     row: foundInFileArray[foundItem].row
+      //   }
+      // })
+      // console.log('-----------paste-------------')    
+      // // console.log(foundInFileArray[foundItem])  
+      // paste(documentContent, 
+      //   getIndexOfPosition(documentContent,{
+      //     column: foundInFileArray[foundItem].startColumn,
+      //     row: foundInFileArray[foundItem].row
+      //   }),
+      //   getIndexOfPosition(documentContent,{ 
+      //     column: foundInFileArray[foundItem].endColumn,
+      //     row: foundInFileArray[foundItem].row
+      //   }),
+      //   'wowNOW'
+      // )
     }
+
   }
   
   replaceHandleSubmit (event) {
