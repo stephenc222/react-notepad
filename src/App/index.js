@@ -1146,6 +1146,17 @@ class App extends Component {
 
   replaceAll (event) {
     event.preventDefault()
+    // TODO: adjust index calculations to account for the length difference
+    // between the 'findInFile' state string length and the 'replaceInFile' state string length
+    // 1. calculate the difference between the length of what is to be replaced, with the length of what replaces it
+    // 2. find all matches
+    // 3. use the difference calculated to adjust the index offset values after each match is replaced
+    // 4. update the document 
+    // so if you have "sam" and need to replace with "joe" the difference is 0
+    // but if you have "sam" and need to replace with "jane" the difference is 1
+    // and if you have "frank" and need to replace with "joe" the difference is -2
+    // you then add the difference to the start and end of each successive match 
+    // to get the right alignment of the change
     const documentContent = this.state.documentContent.slice()
     const foundInFileArray = this.state.foundInFileArray.slice()
     const replaceInFile = this.state.replaceInFile
@@ -1223,7 +1234,8 @@ class App extends Component {
 
     this.setState({undoStack})
 
-    function replaceOp (foundItem) {
+    function replaceOp (documentContent,foundItem) {
+      console.log(foundItem)
       cut(documentContent, {
         start: {
           column: foundItem.startColumn,
@@ -1234,7 +1246,7 @@ class App extends Component {
           row: foundItem.row
         }
       })
-      paste(documentContent, 
+      const afterPaste = paste(documentContent, 
           getIndexOfPosition(documentContent,{
             column: foundItem.startColumn,
             row: foundItem.row
@@ -1243,18 +1255,19 @@ class App extends Component {
             column: foundItem.endColumn,
             row: foundItem.row
           }),
-          'wowNOW'
+          'SUCCESS SOON'
         )
 
-      return
+      return afterPaste
     }
 
     console.log('ReplaceAll clicked!')
     console.log(replaceInFile)
     console.table(foundInFileArray)
     console.log('------------------------------before for replaceAll-----------------------')   
+    let postReplaceDoc = documentContent
     for (let foundItem in foundInFileArray) {
-      let postReplaceDoc = replaceOp(foundInFileArray[foundItem])
+      postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[foundItem])
       console.log(postReplaceDoc)      
 
       // console.log('-----------cut-------------')      
