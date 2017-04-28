@@ -1,3 +1,5 @@
+import getIndexOfPosition from './getIndexOfPosition'
+
 export default function selectFindText (findInFile,documentContent,matchCase) {
   const foundInFileArray = []      
   const content = documentContent
@@ -24,7 +26,21 @@ export default function selectFindText (findInFile,documentContent,matchCase) {
             row: parseInt(row, 10),
             startColumn: count,
             endColumn: count + findInFileRow.length - 1,
-            data: rowString.substring(count, count + findInFileRow.length)
+            data: rowString.substring(count, count + findInFileRow.length),
+            startIndex: getIndexOfPosition(
+              documentContent,
+              {
+                column: count, 
+                row:parseInt(row, 10)
+              }
+            ),
+            endIndex: getIndexOfPosition(
+              documentContent,
+              {
+                column: count + findInFileRow.length - 1,
+                row:parseInt(row, 10)
+              }
+            )
           }                                
 
           foundInFileArray.push(found)

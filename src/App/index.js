@@ -81,7 +81,7 @@ const CURSOR_KEYS = [
   KEY.LEFT,
   KEY.RIGHT
 ]
-
+window.getIndexOfPosition = getIndexOfPosition
 class App extends Component {
   constructor (props) {
     super(props)
@@ -1146,11 +1146,115 @@ class App extends Component {
 
   replaceAll (event) {
     event.preventDefault()
+    const documentContent = this.state.documentContent.slice()
     const foundInFileArray = this.state.foundInFileArray.slice()
     const replaceInFile = this.state.replaceInFile
+    const undoStack = this.state.undoStack.slice()
+
+    const cut = (content, { start, end }) => {
+      let startIndex = getIndexOfPosition(content, start)
+      let endIndex = getIndexOfPosition(content, end)
+
+      if (startIndex > endIndex) {
+        let tempIndex = startIndex
+        startIndex = endIndex
+        endIndex = tempIndex
+      }
+      const joiner = String.fromCharCode(0xbb)
+      const text = content.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex, text.length)
+      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
+      const modified = `${left}${right}`.split(joiner)
+
+
+
+      const result = {
+        original: content,
+        start: startIndex,
+        end: endIndex,
+        length: data.length,
+        data,
+        modified
+      }
+
+      // undoStack.push(nextStackItem)
+
+      // console.log('Cut:')
+      // console.log('-'.repeat(50))
+      // console.log('original', JSON.stringify(content, null, 2))
+      // console.log('original', JSON.stringify(result.content, null, 2))
+      // console.log('left', JSON.stringify(left, null, 2))
+      // console.log('right', JSON.stringify(right, null, 2))
+      // console.log('data', JSON.stringify(data, null, 2))
+      // console.log('modified', JSON.stringify(result.modified, null, 2))
+      // console.log('-'.repeat(50))
+
+      // console.log('original', JSON.stringify(content, null, 2))
+      console.log('original', JSON.stringify(result.content, null, 2))
+      // console.log('left', JSON.stringify(left, null, 2))
+      // console.log('right', JSON.stringify(right, null, 2))
+      // console.log('data', JSON.stringify(data, null, 2))
+      console.log('modified', JSON.stringify(result.modified, null, 2))
+
+      return result
+    }
+
+    const paste = (documentContent, startIndex,endIndex, pasteData) => {
+      console.log(documentContent)
+      console.log(startIndex)
+      console.log(endIndex)
+      const joiner = String.fromCharCode(0xbb)
+      const text = documentContent.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex - 1, text.length)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
+      console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
+      return pasteModifiedDoc
+    }
+
+    const nextStackItem = {}
+    nextStackItem.event = 'replaceAll'
+    nextStackItem.priorDocument = documentContent
+
+    undoStack.push(nextStackItem)
+
+    this.setState({undoStack})
+
     console.log('ReplaceAll clicked!')
     console.log(replaceInFile)
-    console.log(foundInFileArray)
+    console.table(foundInFileArray)
+    console.log('------------------------------before for replaceAll-----------------------')
+    for (let foundItem in foundInFileArray) {
+      // TODO: assumes the found item is on one row, make more robust
+      console.log(foundInFileArray[foundItem])
+      console.log('-----------cut-------------')      
+      cut(documentContent, {
+        start: {
+          column: foundInFileArray[foundItem].startColumn,
+          row: foundInFileArray[foundItem].row
+        }, 
+        end: {
+          column: foundInFileArray[foundItem].endColumn,
+          row: foundInFileArray[foundItem].row
+        }
+      })
+      console.log('-----------paste-------------')    
+      console.log(foundInFileArray[foundItem])  
+      paste(documentContent, 
+        getIndexOfPosition(documentContent,{
+          column: foundInFileArray[foundItem].startColumn,
+          row: foundInFileArray[foundItem].row
+        }),
+        getIndexOfPosition(documentContent,{ 
+          column: foundInFileArray[foundItem].endColumn,
+          row: foundInFileArray[foundItem].row
+        }),
+        'wowNOW'
+      )
+    }
   }
   
   replaceHandleSubmit (event) {
@@ -1224,7 +1328,6 @@ class App extends Component {
   }
 
   goToLineHandleChange (event) {
-    // TODO: prevent input if not integer
     if (!parseInt(event.target.value, 10)) {
       this.setState({[event.target.name]: ''})
       return
@@ -1663,8 +1766,6 @@ class App extends Component {
       // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
       const modified = `${left}${right}`.split(joiner)
 
-
-
       const result = {
         original: content,
         start: startIndex,
@@ -1745,13 +1846,22 @@ class App extends Component {
     console.log(startIndex)
     console.log("endIndex")
     console.log(endIndex)
-
-    const joiner = String.fromCharCode(0xbb)
-    const text = documentContent.join(joiner)
-    const left = text.substr(0, startIndex - 1)
-    const right = text.substr(endIndex - 1, text.length)
-    // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
-    const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
+    const paste = (documentContent, startIndex,endIndex, pasteData) => {
+      const joiner = String.fromCharCode(0xbb)
+      const text = documentContent.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex - 1, text.length)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
+      return pasteModifiedDoc
+    }
+    // const joiner = String.fromCharCode(0xbb)
+    // const text = documentContent.join(joiner)
+    // const left = text.substr(0, startIndex - 1)
+    // const right = text.substr(endIndex - 1, text.length)
+    // // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+    const pasteModifiedDoc = paste(documentContent,startIndex,endIndex,pasteData)
+    // const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
     // console.log(prePasteDoc)
     // console.log(documentCursor)
     // console.log(pasteData)
@@ -1869,7 +1979,6 @@ class App extends Component {
     this.setState((prevState) => {
       editMenu.visible = false
       const documentContent = postCutDocument.modified
-      // documentSelection.result = ''//postCutDocument
       documentSelection.selectionStart = {
         row: 0,
         column: 0
