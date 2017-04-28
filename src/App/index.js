@@ -157,6 +157,8 @@ class App extends Component {
 
     this.editReplace = this.editReplace.bind(this)
     this.editGoTo = this.editGoTo.bind(this)
+    this.goToLineHandleChange = this.goToLineHandleChange.bind(this)
+    this.goToLineOnSubmit = this.goToLineOnSubmit.bind(this)
 
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
     this.formatFont = this.formatFont.bind(this)
@@ -236,7 +238,7 @@ class App extends Component {
       openFileOptions: [],
       findInFile: '',
       replaceInFile: '',
-      goToRowNumber: 0,
+      goToRowNumber: '',
       matchCase: false,
       foundInFileArray: [],
       findNextCounter: 0,
@@ -392,10 +394,8 @@ class App extends Component {
   
   renderGoToBox () {
     const handlers = {
-      onSubmit: () => {},
-      onChange: () => {},
-      onCancel: () => {}
-
+      onSubmit: this.goToLineOnSubmit,
+      onChange: this.goToLineHandleChange
     }
 
     return (
@@ -1223,6 +1223,37 @@ class App extends Component {
     })
   }
 
+  goToLineHandleChange (event) {
+    // TODO: prevent input if not integer
+    if (!parseInt(event.target.value, 10)) {
+      this.setState({[event.target.name]: ''})
+      return
+    } else {
+      console.log('rowNum: ', event.target.value)
+      this.setState({[event.target.name]: parseInt(event.target.value,10)})
+    }
+  }
+
+
+  goToLineOnSubmit (event) {
+    event.preventDefault()
+    let goToRowNumber = this.state.goToRowNumber
+    const documentContent = this.state.documentContent.slice()
+    const documentCursor = {...this.state.documentCursor}
+    if (goToRowNumber > documentContent.length - 1) {
+      goToRowNumber = documentContent.length - 1
+    }
+    if (!goToRowNumber) {
+      goToRowNumber = documentCursor.row
+    }
+    console.log('onSubmit go to line: ', goToRowNumber)
+    this.setState((prevState) => {
+      const showModal = false
+      documentCursor.row = goToRowNumber
+      documentCursor.column = 0
+      return {goToRowNumber, showModal, documentCursor}
+    })
+  }
   printMenu (menuItem) {
     console.log(`printMenu is clicked here`)
     const fileMenu = {...this.state.fileMenu}    

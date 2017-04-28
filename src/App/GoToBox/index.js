@@ -4,6 +4,10 @@ import PropTypes from 'prop-types'
 
 
 class GoToBox extends Component {
+
+  componentDidMount () {
+    this.findInput.focus()
+  }
   render () {
     return (
       <div className='goToBox'>
@@ -12,11 +16,11 @@ class GoToBox extends Component {
         <input 
           type="text" 
           name='goToRowNumber'
+          ref={(input) => { this.findInput = input }}
           value={this.props.goToRowNumber}
           onChange={this.props.handlers.onChange}
           autoComplete="off"
         />
-          <div className="dialog-title--item-X" onClick={this.props.handlers.onCancel}>X</div>
         </form>
       </div>
     )
@@ -24,7 +28,7 @@ class GoToBox extends Component {
 }
 
 GoToBox.propTypes = {
-  goToRowNumber: PropTypes.number.isRequired
+  goToRowNumber: PropTypes.any.isRequired
 }
 
 export default GoToBox
