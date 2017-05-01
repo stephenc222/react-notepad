@@ -157,6 +157,8 @@ class App extends Component {
 
     this.editReplace = this.editReplace.bind(this)
     this.editGoTo = this.editGoTo.bind(this)
+    this.editSelectAll = this.editSelectAll.bind(this)
+    this.editTimeDate = this.editTimeDate.bind(this)
     this.goToLineHandleChange = this.goToLineHandleChange.bind(this)
     this.goToLineOnSubmit = this.goToLineOnSubmit.bind(this)
 
@@ -1145,77 +1147,20 @@ class App extends Component {
   }
 
   replaceAll (event) {
+    //FIXME: replaceAll fails when user already clicked replace
+    // fix this
     event.preventDefault()
-    // TODO: adjust index calculations to account for the length difference
-    // between the 'findInFile' state string length and the 'replaceInFile' state string length
-    // 1. calculate the difference between the length of what is to be replaced, with the length of what replaces it
-    // 2. find all matches
-    // 3. use the difference calculated to adjust the index offset values after each match is replaced
-    // 4. update the document 
-    // so if you have "sam" and need to replace with "joe" the difference is 0
-    // but if you have "sam" and need to replace with "jane" the difference is 1
-    // and if you have "frank" and need to replace with "joe" the difference is -2
-    // you then add the difference to the start and end of each successive match 
-    // to get the right alignment of the change
     const documentContent = this.state.documentContent.slice()
     const foundInFileArray = this.state.foundInFileArray.slice()
     const replaceInFile = this.state.replaceInFile
     const undoStack = this.state.undoStack.slice()
-
-    const cut = (content, { start, end }) => {
-      let startIndex = getIndexOfPosition(content, start)
-      let endIndex = getIndexOfPosition(content, end)
-
-      if (startIndex > endIndex) {
-        let tempIndex = startIndex
-        startIndex = endIndex
-        endIndex = tempIndex
-      }
-      const joiner = String.fromCharCode(0xbb)
-      const text = content.join(joiner)
-      const left = text.substr(0, startIndex - 1)
-      const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
-      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
-      const modified = `${left}${right}`.split(joiner)
-
-
-
-      const result = {
-        original: content,
-        start: startIndex,
-        end: endIndex,
-        length: data.length,
-        data,
-        modified
-      }
-
-      // undoStack.push(nextStackItem)
-
-      // console.log('Cut:')
-      // console.log('-'.repeat(50))
-      // console.log('original', JSON.stringify(content, null, 2))
-      // console.log('original', JSON.stringify(result.content, null, 2))
-      console.log('CUT: left', JSON.stringify(left, null, 2))
-      console.log('CUT: right', JSON.stringify(right, null, 2))
-      // console.log('data', JSON.stringify(data, null, 2))
-      // console.log('modified', JSON.stringify(result.modified, null, 2))
-      // console.log('-'.repeat(50))
-
-      // console.log('original', JSON.stringify(content, null, 2))
-      // console.log('original', JSON.stringify(result.content, null, 2))
-      // console.log('left', JSON.stringify(left, null, 2))
-      // console.log('right', JSON.stringify(right, null, 2))
-      // console.log('data', JSON.stringify(data, null, 2))
-      // console.log('modified', JSON.stringify(result.modified, null, 2))
-
-      return result
-    }
+    const editMenu = this.state.editMenu
+    editMenu.visible = false
 
     const replace = (documentContent, startIndex,endIndex, pasteData, offset) => {
       // console.log(documentContent)
-      console.log('startIndex',startIndex)
-      console.log('endIndex', endIndex)
+      // console.log('startIndex',startIndex)
+      // console.log('endIndex', endIndex)
       const joiner = String.fromCharCode(0xbb)
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
@@ -1241,8 +1186,8 @@ class App extends Component {
     function replaceOp (documentContent,foundItem) {
       // console.table(foundItem)
       const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
-      console.log("TEMPfoundInFileArray")
-      console.log(TEMPfoundInFileArray[0])
+      // console.log("TEMPfoundInFileArray")
+      // console.log(TEMPfoundInFileArray[0])
       const afterReplace = replace(documentContent, 
           getIndexOfPosition(documentContent,{
             column: TEMPfoundInFileArray[0].startColumn,
@@ -1256,7 +1201,8 @@ class App extends Component {
             row: TEMPfoundInFileArray[0].row
             // row: foundItem.row
           }),
-          'JACK ATTACK',
+          // 'JACK ATTACK',
+          replaceInFile.toString(),
           0
         )
       return afterReplace
@@ -1269,105 +1215,93 @@ class App extends Component {
     let postReplaceDoc = documentContent
     for (let foundItem in foundInFileArray) {
       postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[foundItem])
-      console.log(postReplaceDoc)      
-      // const TEMPfoundInFileArray = selectFindText('in',postReplaceDoc,false)
-      // console.log("TEMPfoundInFileArray")
-      // console.table(TEMPfoundInFileArray)
-      // console.log('-----------cut-------------')      
-      // cut(documentContent, {
-      //   start: {
-      //     column: foundInFileArray[foundItem].startColumn,
-      //     row: foundInFileArray[foundItem].row
-      //   }, 
-      //   end: {
-      //     column: foundInFileArray[foundItem].endColumn,
-      //     row: foundInFileArray[foundItem].row
-      //   }
-      // })
-      // console.log('-----------paste-------------')    
-      // // console.log(foundInFileArray[foundItem])  
-      // paste(documentContent, 
-      //   getIndexOfPosition(documentContent,{
-      //     column: foundInFileArray[foundItem].startColumn,
-      //     row: foundInFileArray[foundItem].row
-      //   }),
-      //   getIndexOfPosition(documentContent,{ 
-      //     column: foundInFileArray[foundItem].endColumn,
-      //     row: foundInFileArray[foundItem].row
-      //   }),
-      //   'wowNOW'
-      // )
     }
+
+    console.log("postReplaceDoc")      
+    console.log(postReplaceDoc)     
+    this.setState({documentContent: postReplaceDoc, editMenu})
 
   }
   
   replaceHandleSubmit (event) {
+    // TODO: clean up, prevent errors from being logged to the console
+    // and correspondingly prevent when neccessary undoStack pushes
     event.preventDefault()
     console.log('ReplaceBox Submit!')
-    const editMenu = {...this.state.editMenu} 
+    // const editMenu = {...this.state.editMenu} 
     let replaceCounter = this.state.replaceCounter
-    const documentSelection = {...this.state.documentSelection}
+    const documentContent = this.state.documentContent.slice()
+    const replaceInFile = this.state.replaceInFile
     const foundInFileArray = this.state.foundInFileArray.slice()
+    const undoStack = this.state.undoStack.slice()
+    const replace = (documentContent, startIndex,endIndex, pasteData, offset) => {
+      // console.log(documentContent)
+      // console.log('startIndex',startIndex)
+      // console.log('endIndex', endIndex)
+      const joiner = String.fromCharCode(0xbb)
+      const text = documentContent.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex, text.length)
+      const data = text.substr(startIndex - 1,pasteData.length)
+      const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
+      console.log('REPLACE: left', JSON.stringify(left, null, 2))
+      console.log('data: ', data)
+      console.log('REPLACE: right', JSON.stringify(right, null, 2))
+      
+      console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
+      return pasteModifiedDoc
+    }
 
     console.log('Find Box Submitted!') 
 
-    if(!foundInFileArray.length) {
-      documentSelection.selectionStart = {
-        row: 0,
-        column: 0
-      }
-      documentSelection.selectionEnd = {
-        row: 0,
-        column: 0
-      }
-      documentSelection.isSelected = false
-      documentSelection.isSelectedChanging = false
-      this.setState({documentSelection})
-      return
+        const nextStackItem = {}
+    nextStackItem.event = 'replaceNext'
+    nextStackItem.priorDocument = documentContent
+
+    undoStack.push(nextStackItem)
+
+    this.setState({undoStack})
+
+    function replaceOp (documentContent,foundItem) {
+      // console.table(foundItem)
+      const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
+      // console.log("TEMPfoundInFileArray")
+      // console.log(TEMPfoundInFileArray[0])
+      const afterReplace = replace(documentContent, 
+          getIndexOfPosition(documentContent,{
+            column: TEMPfoundInFileArray[0].startColumn,
+            // column: foundItem.startColumn,
+            row: TEMPfoundInFileArray[0].row
+            // row: foundItem.row
+          }),
+          getIndexOfPosition(documentContent,{ 
+            column: TEMPfoundInFileArray[0].endColumn,
+            // column: foundItem.endColumn,
+            row: TEMPfoundInFileArray[0].row
+            // row: foundItem.row
+          }),
+          // 'JACK ATTACK',
+          replaceInFile.toString(),
+          0
+        )
+      return afterReplace
     }
 
-    if(!foundInFileArray[replaceCounter]) {
-      (replaceCounter = 0) 
-      // console.log('replaceCounter: ', replaceCounter)      
-      // console.log('reset replaceCounter!')
-      const found = foundInFileArray[replaceCounter]
+    console.log('ReplaceAll clicked!')
+    console.log(replaceInFile)
+    console.table(foundInFileArray)
+    console.log('------------------------------before for replaceAll-----------------------')   
+    let postReplaceDoc = documentContent
+    // for (let foundItem in foundInFileArray) {
+      postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[replaceCounter])
+    // }
 
-      documentSelection.selectionStart = {
-        column: found.startColumn,
-        row: found.row
-      }
+    replaceCounter++
 
-      documentSelection.selectionEnd = {
-        column: found.endColumn,
-        row: found.row
-      }
-
-      documentSelection.isSelected = true
-      documentSelection.isSelectedChanging = true
-      replaceCounter++
-    } else {
-      // console.log('replaceCounter: ', replaceCounter)      
-      // console.log(foundInFileArray[replaceCounter])
-      const found = foundInFileArray[replaceCounter]
-
-      documentSelection.selectionStart = {
-        column: found.startColumn,
-        row: found.row
-      }
-
-      documentSelection.selectionEnd = {
-        column: found.endColumn,
-        row: found.row
-      }
-
-      documentSelection.isSelected = true
-      documentSelection.isSelectedChanging = true
-      replaceCounter++
-    }
-    this.setState((prevState) => {
-      editMenu.visible = false
-      return {editMenu, replaceCounter, documentSelection}
-    })
+    console.log("postReplaceDoc")      
+    console.log(postReplaceDoc)     
+    this.setState({documentContent: postReplaceDoc, replaceCounter})
+    
   }
 
   goToLineHandleChange (event) {
@@ -2185,11 +2119,122 @@ class App extends Component {
   editSelectAll () {
     // select all text
     console.log('editSelectAll clicked here')  
+    const documentSelection = {...this.state.documentSelection}
+    const documentContent = this.state.documentContent.slice()
+    const editMenu = {...this.state.editMenu}
+
+    editMenu.visible = false
+
+    documentSelection.isSelected = true
+
+    documentSelection.selectionStart = {
+      column: 0,
+      row: 0
+    }
+
+    documentSelection.selectionEnd = {
+      row: documentContent.length - 1,
+      column: documentContent[documentContent.length - 1].length
+    }
+
+    console.log(documentSelection)
+    this.setState({documentSelection, editMenu})
   }
 
   editTimeDate () {
     // inputs current time stamp at current cursor position
+    // TODO: put cursor at end of insertion of time date string
     console.log('editTimeDate clicked here')  
+    // const documentCursor = {...this.state.documentCursor}
+    const date = new Date()
+
+    const documentSelection = {...this.state.documentSelection}
+    
+    const documentCursor = {...this.state.documentCursor}
+    const documentContent = this.state.documentContent.slice()
+    const undoStack = this.state.undoStack.slice()
+    let start = documentSelection.selectionStart    
+    let end = documentSelection.selectionEnd 
+    let startIndex // = getIndexOfPosition(documentContent, start)
+    let endIndex // = getIndexOfPosition(documentContent, end)
+    if (start.row === end.row && start.column === end.column) {
+      console.log('yes')
+      startIndex = endIndex = getIndexOfPosition(documentContent, documentCursor)
+    } else {
+      console.log('no')
+      startIndex = getIndexOfPosition(documentContent, start)
+      endIndex = getIndexOfPosition(documentContent, end)
+    }
+    
+    
+
+    // this.setState({editMenu})
+
+    // if (startIndex > endIndex) {
+    //   let tempIndex = startIndex
+    //   startIndex = endIndex
+    //   endIndex = tempIndex
+    //   documentCursor.row = start.row
+    //   documentCursor.column = start.column
+    // } else {
+    //   documentCursor.row = end.row
+    //   documentCursor.column = end.column        
+    // }
+
+    // the document data before the paste op
+    console.log("startIndex")
+    console.log(startIndex)
+    console.log("endIndex")
+    console.log(endIndex)
+    const insertDate = (documentContent, startIndex,endIndex, dateString) => {
+      const joiner = String.fromCharCode(0xbb)
+      const text = documentContent.join(joiner)
+      const left = text.substr(0, startIndex - 1)
+      const right = text.substr(endIndex - 1, text.length)
+      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      const pasteModifiedDoc = `${left}${dateString}${right}`.split(joiner)
+      return pasteModifiedDoc
+    }
+
+    const insertDateDoc = insertDate(documentContent,startIndex,endIndex,date.toLocaleString())
+
+    const nextStackItem = {
+      documentContent,
+      insertDateDoc,
+      startIndex,
+      endIndex,
+      dateString: date.toLocaleString(),
+      event: 'editTimeDate'
+    }
+
+    undoStack.push(nextStackItem)
+
+    console.log('cursor before setState:')
+    console.log({documentCursor})
+
+    this.setState((prevState) => {
+      const documentContent = insertDateDoc
+      editMenu.visible = false      
+      documentSelection.selectionStart = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.selectionEnd = {
+        row: 0,
+        column: 0
+      }
+      documentSelection.isSelected = false
+      documentSelection.isSelectedChanging = false
+      return {
+        editMenu, 
+        undoStack, 
+        documentContent, 
+        documentSelection,
+        documentCursor
+      }
+    })
+
+
   }
 
   formatWordWrap () {
