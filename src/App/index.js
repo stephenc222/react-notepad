@@ -1219,7 +1219,7 @@ class App extends Component {
       const joiner = String.fromCharCode(0xbb)
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
-      const right = text.substr(endIndex - 1, text.length)
+      const right = text.substr(endIndex, text.length)
       // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
       const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
       console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
@@ -1255,7 +1255,7 @@ class App extends Component {
             column: foundItem.endColumn,
             row: foundItem.row
           }),
-          'SUCCESS SOON'
+          'YA'
         )
 
       return afterPaste
