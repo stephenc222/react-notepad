@@ -1196,32 +1196,36 @@ class App extends Component {
       // console.log('-'.repeat(50))
       // console.log('original', JSON.stringify(content, null, 2))
       // console.log('original', JSON.stringify(result.content, null, 2))
-      // console.log('left', JSON.stringify(left, null, 2))
-      // console.log('right', JSON.stringify(right, null, 2))
+      console.log('CUT: left', JSON.stringify(left, null, 2))
+      console.log('CUT: right', JSON.stringify(right, null, 2))
       // console.log('data', JSON.stringify(data, null, 2))
       // console.log('modified', JSON.stringify(result.modified, null, 2))
       // console.log('-'.repeat(50))
 
       // console.log('original', JSON.stringify(content, null, 2))
-      console.log('original', JSON.stringify(result.content, null, 2))
+      // console.log('original', JSON.stringify(result.content, null, 2))
       // console.log('left', JSON.stringify(left, null, 2))
       // console.log('right', JSON.stringify(right, null, 2))
       // console.log('data', JSON.stringify(data, null, 2))
-      console.log('modified', JSON.stringify(result.modified, null, 2))
+      // console.log('modified', JSON.stringify(result.modified, null, 2))
 
       return result
     }
 
-    const paste = (documentContent, startIndex,endIndex, pasteData) => {
+    const replace = (documentContent, startIndex,endIndex, pasteData, offset) => {
       // console.log(documentContent)
-      // console.log(startIndex)
-      // console.log(endIndex)
+      console.log('startIndex',startIndex)
+      console.log('endIndex', endIndex)
       const joiner = String.fromCharCode(0xbb)
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      const data = text.substr(startIndex - 1,pasteData.length)
       const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
+      console.log('REPLACE: left', JSON.stringify(left, null, 2))
+      console.log('data: ', data)
+      console.log('REPLACE: right', JSON.stringify(right, null, 2))
+      
       console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
       return pasteModifiedDoc
     }
@@ -1235,30 +1239,27 @@ class App extends Component {
     this.setState({undoStack})
 
     function replaceOp (documentContent,foundItem) {
-      console.log(foundItem)
-      cut(documentContent, {
-        start: {
-          column: foundItem.startColumn,
-          row: foundItem.row
-        }, 
-        end: {
-          column: foundItem.endColumn,
-          row: foundItem.row
-        }
-      })
-      const afterPaste = paste(documentContent, 
+      // console.table(foundItem)
+      const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
+      console.log("TEMPfoundInFileArray")
+      console.log(TEMPfoundInFileArray[0])
+      const afterReplace = replace(documentContent, 
           getIndexOfPosition(documentContent,{
-            column: foundItem.startColumn,
-            row: foundItem.row
+            column: TEMPfoundInFileArray[0].startColumn,
+            // column: foundItem.startColumn,
+            row: TEMPfoundInFileArray[0].row
+            // row: foundItem.row
           }),
           getIndexOfPosition(documentContent,{ 
-            column: foundItem.endColumn,
-            row: foundItem.row
+            column: TEMPfoundInFileArray[0].endColumn,
+            // column: foundItem.endColumn,
+            row: TEMPfoundInFileArray[0].row
+            // row: foundItem.row
           }),
-          'YA'
+          'JACK ATTACK',
+          0
         )
-
-      return afterPaste
+      return afterReplace
     }
 
     console.log('ReplaceAll clicked!')
@@ -1269,7 +1270,9 @@ class App extends Component {
     for (let foundItem in foundInFileArray) {
       postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[foundItem])
       console.log(postReplaceDoc)      
-
+      // const TEMPfoundInFileArray = selectFindText('in',postReplaceDoc,false)
+      // console.log("TEMPfoundInFileArray")
+      // console.table(TEMPfoundInFileArray)
       // console.log('-----------cut-------------')      
       // cut(documentContent, {
       //   start: {
@@ -1301,7 +1304,6 @@ class App extends Component {
   replaceHandleSubmit (event) {
     event.preventDefault()
     console.log('ReplaceBox Submit!')
-    event.preventDefault()
     const editMenu = {...this.state.editMenu} 
     let replaceCounter = this.state.replaceCounter
     const documentSelection = {...this.state.documentSelection}
