@@ -10,7 +10,8 @@ describe('StatusBar Component', () => {
     cursor: {
       row: 0,
       column: 0
-    }
+    },
+    statusBarVisible: true
   }
   it('renders with props passed to it', function () {
     expect(shallow(<StatusBar {...props} />).find('.statusBar').length).to.equal(1)

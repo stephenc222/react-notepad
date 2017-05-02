@@ -20,7 +20,7 @@ import FindBox from './FindBox'
 import ReplaceBox from './ReplaceBox'
 import GoToBox from './GoToBox'
 import FontBox from './FontBox'
-import HelpBox from './HelpBox'
+// import HelpBox from './HelpBox'
 import AboutBox from './AboutBox'
 
 import NotePad from './Notepad'
@@ -114,7 +114,7 @@ class App extends Component {
 
     this.renderGoToBox = this.renderGoToBox.bind(this)
     this.renderFontBox = this.renderFontBox.bind(this)
-    this.renderHelpBox = this.renderHelpBox.bind(this)
+    // this.renderHelpBox = this.renderHelpBox.bind(this)
     this.renderAboutBox = this.renderAboutBox.bind(this)
 
     this.onClickSaveYes = this.onClickSaveYes.bind(this)
@@ -168,7 +168,8 @@ class App extends Component {
     this.toggleViewMenu = this.toggleViewMenu.bind(this)
 
     this.toggleHelpMenu = this.toggleHelpMenu.bind(this)
-    this.viewHelpBox = this.viewHelpBox.bind(this)
+    this.viewStatusBar = this.viewStatusBar.bind(this)
+    this.viewHelp = this.viewHelp.bind(this)
     this.helpAboutNotepad = this.helpAboutNotepad.bind(this)
 
     // key press events here
@@ -235,6 +236,7 @@ class App extends Component {
       saved: false,
       hasSaved: false,
       showModal: false,
+      statusBarVisible: true,
       dialogBoxType: '',
       openFileName: '',
       openFileOptions: [],
@@ -413,6 +415,7 @@ class App extends Component {
   renderFontBox () {
     const handlers = {
       // handlers go here
+      onCancel: this.handleCancel,      
     }
 
     return (
@@ -423,24 +426,11 @@ class App extends Component {
       </div>
     )
   }
-  
-  renderHelpBox () {
-    const handlers = {
-      // handlers go here
-    }
 
-    return (
-      <div className="dialog-box__container">
-        <HelpBox
-          handlers={handlers}          
-        />
-      </div>
-    )
-  }
-  
   renderAboutBox () {
     const handlers = {
       // handlers go here
+      onCancel: this.handleCancel,      
     }
 
     return (
@@ -2260,18 +2250,22 @@ class App extends Component {
     // where the cursor is, e.g., "Ln 11, Col 17"
     // displays checked box also
     console.log('viewStatusBar clicked here')  
+    this.setState((prevState) => {
+      const statusBarVisible = !prevState.statusBarVisible
+      return {statusBarVisible}
+    })
   }
 
-  viewHelpBox () {
+  viewHelp () {
     // opens up new searchable help tab 
-    console.log('viewHelpBox clicked here')   
+    console.log('viewHelp clicked here')   
     const helpMenu = {...this.state.helpMenu}
     this.setState((prevState) => {
-      const showModal = true
-      const dialogBoxType = "renderHelpBox"
       helpMenu.visible = false
-      return {helpMenu, showModal, dialogBoxType}
+      return {helpMenu}
     })     
+    window.open('https://github.com/stephenc222/react-notepad', '_blank')
+    return
   }
 
   helpAboutNotepad () {
@@ -2670,6 +2664,7 @@ class App extends Component {
           <div className="app__status-container">
             <StatusBar 
               cursor={this.state.documentCursor}
+              statusBarVisible={this.state.statusBarVisible}
             />
           </div>
           <div className="dev__stack-view-container">

@@ -15,3 +15,27 @@
   z-index: 1;
   cursor: default;  
 }
+
+.dialog-title {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 5px;
+  align-items: center;
+}
+
+.dialog-title--item {
+  padding: 5px;
+}
+
+.dialog-title--item-X {
+  padding: 5px;
+  color: black;
+}
+
+.dialog-title--item-X:hover {
+  background-color: red;
+  color: white;
+  
+}

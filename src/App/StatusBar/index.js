@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 class StatusBar extends Component {
   render () {
     return (
-      <div className="statusBar">
+      <div className={`statusBar${this.props.statusBarVisible ? '':'Hidden'}`}>
         StatusBar
         <div className="app__status-bar-cursor-data">
           <div className="cursor-line">

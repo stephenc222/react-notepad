@@ -6,7 +6,7 @@ const HelpMenu = {
   items: [
     {
       label: 'View Help',
-      onClick: 'viewHelpBox',
+      onClick: 'viewHelp',
     },
     {
       label: 'About React Notepad',
