@@ -35,12 +35,11 @@ class FontBox extends Component {
                 <select 
                   size="4" 
                   value={this.props.fontStyle} 
-                  name="fontStyle"
                   onChange={this.props.handlers.handleStyleChange}>
-                  <option value="Regular" >Regular</option>
-                  <option value="Italic" >Italic</option>
-                  <option value="Bold" >Bold</option>
-                  <option value="BoldItalic" >Bold Italic</option>
+                  <option value="normal" >Normal</option>
+                  <option value="italic" >Italic</option>
+                  <option value="bold" >Bold</option>
+                  <option value="boldItalic" >Bold Italic</option>
                 </select>
               </div>
               <div id="fontSize-container">
@@ -50,13 +49,12 @@ class FontBox extends Component {
                 <select 
                   size="4" 
                   // value={this.props.fontSize} 
-                  name="fontSize"
                   value={this.props.fontSize}
                   onChange={this.props.handlers.handleSizeChange}>
-                  <option value={20} >20</option>
-                  <option value={24} >24</option>
-                  <option value={28} >28</option>
-                  <option value={32} >32</option>
+                  <option value={"16"} >16</option>
+                  <option value={"18"} >18</option>
+                  <option value={"20"} >20</option>
+                  <option value={"22"} >22</option>
                 </select>
               </div>
             </div>

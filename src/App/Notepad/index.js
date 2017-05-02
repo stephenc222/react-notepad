@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 class Notepad extends Component {
   constructor (props) {
     super(props)
-
     this.renderContentRow = this.renderContentRow.bind(this)
     this.renderContentColumn = this.renderContentColumn.bind(this)
   }
@@ -57,8 +56,12 @@ class Notepad extends Component {
         <div 
           key={column} 
           className={
-            `notepadArea__column${isSelected(column, row) ? '--selected' : ''} 
-            notepadArea__cursor${this.props.showModal ? '-hidden': ''}`}
+            `notepadArea__column${isSelected(column, row) ? '--selected ' : ' '} 
+            notepadArea__cursor${this.props.showModal ? '-hidden ': ' '} 
+            fontStyle-${this.props.fontStyle}
+            fontType-${this.props.fontType}
+            fontSize-${this.props.fontSize}
+          `}
           onMouseDown={(event) => this.props.onMouseDown(event, column, row)}
           onMouseEnter={(event) => this.props.onMouseEnter(event, column, row)}
           onMouseUp={(event) => this.props.onMouseUp(event)}>
@@ -69,7 +72,12 @@ class Notepad extends Component {
       return (
         <div 
           key={column} 
-          className={`notepadArea__column${isSelected(column, row) ? '--selected' : ''}`}
+          className={
+            `notepadArea__column${isSelected(column, row) ? '--selected ' : ' '}
+            fontStyle-${this.props.fontStyle}
+            fontType-${this.props.fontType}
+            fontSize-${this.props.fontSize}
+          `}
           onMouseDown={(event) => this.props.onMouseDown(event, column, row)}
           onMouseEnter={(event) => this.props.onMouseEnter(event, column, row)}
           onMouseUp={(event) => this.props.onMouseUp(event)}>

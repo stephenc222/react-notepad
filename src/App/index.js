@@ -168,7 +168,7 @@ class App extends Component {
     this.handleFontStyleChange = this.handleFontStyleChange.bind(this)
     this.handleFontTypeChange = this.handleFontTypeChange.bind(this)
     this.handleFontSizeChange = this.handleFontSizeChange.bind(this)
-    this.fontBoxSubmit = this.fontBoxSubmit.bind(this)
+    this.fontBoxOnSubmit = this.fontBoxOnSubmit.bind(this)
 
     this.toggleViewMenu = this.toggleViewMenu.bind(this)
 
@@ -255,8 +255,11 @@ class App extends Component {
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
       fontType: 'monospace',
-      fontStyle: 'Regular',
-      fontSize: 24,
+      fontStyle: 'normal',
+      fontSize: '18',      
+      prevFontType: 'monospace',
+      prevFontStyle: 'normal',
+      prevFontSize: '18',
       newSavedGistID: '',
       gistType: 'secret',
       openFileGistID: '',
@@ -427,7 +430,7 @@ class App extends Component {
       handleStyleChange: this.handleFontStyleChange,
       handleTypeChange: this.handleFontTypeChange,
       handleSizeChange: this.handleFontSizeChange,
-      onSubmit: this.fontBoxSubmit      
+      onSubmit: this.fontBoxOnSubmit      
     }
 
     return (
@@ -1055,7 +1058,15 @@ class App extends Component {
   handleCancel (event) {
     event.preventDefault()
     const showModal = false
-    this.setState({showModal})
+    const fontType = this.state.prevFontType
+    const fontStyle= this.state.prevFontStyle
+    const fontSize= this.state.prevFontSize
+    this.setState({
+      showModal,
+      fontType,
+      fontStyle,
+      fontSize
+    })
   }
 
   findInFileHandleChange (event) {
@@ -1340,13 +1351,22 @@ class App extends Component {
     })
   }
 
-  fontBoxSubmit (event) {
+  fontBoxOnSubmit (event) {
     event.preventDefault()
 
     const documentContent = this.state.documentContent.slice()
     const showModal = false
+    const prevFontType = this.state.fontType
+    const prevFontStyle = this.state.fontStyle
+    const prevFontSize = this.state.fontSize
 
-    this.setState({documentContent, showModal})
+    this.setState({
+      documentContent, 
+      showModal,
+      prevFontType,
+      prevFontStyle,
+      prevFontSize
+    })
     // this.setState({[event.target.name]: parseInt(event.target.value,10)})
     
   }
@@ -2292,9 +2312,11 @@ class App extends Component {
     // where the cursor is, e.g., "Ln 11, Col 17"
     // displays checked box also
     console.log('viewStatusBar clicked here')  
+    const viewMenu = {...this.state.viewMenu}
     this.setState((prevState) => {
       const statusBarVisible = !prevState.statusBarVisible
-      return {statusBarVisible}
+      viewMenu.visible = false
+      return {viewMenu, statusBarVisible}
     })
   }
 
@@ -2692,6 +2714,9 @@ class App extends Component {
           </div>
           <div className="app__document-container">
             <NotePad
+              fontStyle={this.state.fontStyle}
+              fontType={this.state.fontType}
+              fontSize={this.state.fontSize}
               cursor={this.state.documentCursor}
               content={this.state.documentContent}
               selection={this.state.documentSelection}

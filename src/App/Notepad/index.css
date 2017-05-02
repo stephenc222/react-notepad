@@ -1,13 +1,59 @@
+
+
 .notepadArea {
   box-shadow: inset 10px 10px 30px -12px rgba(0,0,0,0.4);
   font-family: monospace;
   /* this needs to be dynamically overriden possibly in-line in the Notepad Component */
-  font-size: 18px; 
+  font-size: 18px;
+  font-weight: normal; 
   background: ghostwhite;
   cursor: text;
   user-select: none;
   border: 2px solid black;
   /*overflow: scroll;*/
+}
+
+.fontStyle-normal {
+  font-weight: normal;
+}
+
+.fontStyle-bold {
+  font-weight: 800;
+}
+
+.fontStyle-italic {
+  font-style: italic;
+}
+
+.fontStyle-boldItalic {
+  font-style: italic;
+  font-weight: 800;
+}
+
+.fontType-monospace {
+  font-family: monospace;
+}
+.fontType-TNR { 
+  font-family: 'Times New Roman', Times, serif;
+}
+.fontType-Arial {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.fontType-Calibri {
+  font-family: Calibri,'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif
+}
+
+.fontSize-16 {
+  font-size: 16px
+}
+.fontSize-18 {
+  font-size: 18px
+}
+.fontSize-20 {
+  font-size: 20px
+}
+.fontSize-22 {
+  font-size: 22px
 }
 
 /*.notepadArea::-webkit-scrollbar {

@@ -7,6 +7,9 @@ import Notepad from '.';
 
 describe('Notepad Component', () => {
   const props = {
+    fontStyle: '',
+    fontType: '',
+    fontSize: '',
     content: [],
     onMouseLeave: sinon.spy(),
     onMouseDown: sinon.spy(),
