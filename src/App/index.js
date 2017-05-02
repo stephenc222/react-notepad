@@ -163,7 +163,12 @@ class App extends Component {
     this.goToLineOnSubmit = this.goToLineOnSubmit.bind(this)
 
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
+
     this.formatFont = this.formatFont.bind(this)
+    this.handleFontStyleChange = this.handleFontStyleChange.bind(this)
+    this.handleFontTypeChange = this.handleFontTypeChange.bind(this)
+    this.handleFontSizeChange = this.handleFontSizeChange.bind(this)
+    this.fontBoxSubmit = this.fontBoxSubmit.bind(this)
 
     this.toggleViewMenu = this.toggleViewMenu.bind(this)
 
@@ -249,6 +254,9 @@ class App extends Component {
       replaceCounter: 0,
       saveAsFormFileName: '',
       saveAsFormFileDescription: '',
+      fontType: 'monospace',
+      fontStyle: 'Regular',
+      fontSize: 24,
       newSavedGistID: '',
       gistType: 'secret',
       openFileGistID: '',
@@ -415,12 +423,19 @@ class App extends Component {
   renderFontBox () {
     const handlers = {
       // handlers go here
-      onCancel: this.handleCancel,      
+      onCancel: this.handleCancel,
+      handleStyleChange: this.handleFontStyleChange,
+      handleTypeChange: this.handleFontTypeChange,
+      handleSizeChange: this.handleFontSizeChange,
+      onSubmit: this.fontBoxSubmit      
     }
 
     return (
       <div className="dialog-box__container">
         <FontBox
+          fontType={this.state.fontType}
+          fontStyle={this.state.fontStyle}
+          fontSize={this.state.fontSize}
           handlers={handlers}          
         />
       </div>
@@ -1323,6 +1338,33 @@ class App extends Component {
       documentCursor.column = 0
       return {goToRowNumber, showModal, documentCursor}
     })
+  }
+
+  fontBoxSubmit (event) {
+    event.preventDefault()
+
+    const documentContent = this.state.documentContent.slice()
+    const showModal = false
+
+    this.setState({documentContent, showModal})
+    // this.setState({[event.target.name]: parseInt(event.target.value,10)})
+    
+  }
+
+  handleFontTypeChange (event) {
+    console.log('fontType')    
+    this.setState({fontType: event.target.value})
+  }
+  
+  handleFontStyleChange (event) {
+    // console.log(event.target.value)
+    console.log('fontStyle')
+    this.setState({fontStyle: event.target.value})
+  }
+    
+  handleFontSizeChange (event) {
+    console.log('fontSize')    
+    this.setState({fontSize: parseInt(event.target.value,10)})    
   }
   printMenu (menuItem) {
     console.log(`printMenu is clicked here`)
