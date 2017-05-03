@@ -1438,80 +1438,84 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
-
+      const joiner = String.fromCharCode(0xbb)  
+      const text = documentContent.join(joiner)          
+      
       if (undoStack.length) {
         console.log("Undo - stackOps:")        
         if(stackLayer[0].event === 'insertCharacter') {
-          console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
-          console.log('Undo test: insertCharacter')
-          const deleteBackCharArray = documentContent[stackLayer[0].position.row]
-            .split('')
-            .slice()
 
-          const removeChar = deleteBackCharArray
-            .splice(stackLayer[0].position.column - 1, 1)
-          console.log('deleteBackCharArray: ')
-          console.log(deleteBackCharArray)
-          console.log('removeChar: ')
-          console.log(removeChar)
+          const itemIndex = stackLayer[0].index
 
-          documentCursor.column -= 1
-          documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
+          const left = text.substr(0, itemIndex - 1)
+          const right = text.substr(itemIndex, text.length)
+          // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
+          const afterUndoDoc = `${left}${right}`.split(joiner)
+          // documentCursor.column -= 1
+          redoStack.push(undoStack.pop())  
 
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())          
+          return afterUndoDoc      
 
         } else if (stackLayer[0].event === 'insertBackspace') {
 
-          console.log(`UNDO - inside insertBackspace if block: 
-            ${JSON.stringify(stackLayer[0])}`)
+          // console.log(`UNDO - inside insertBackspace if block: 
+          //   ${JSON.stringify(stackLayer[0])}`)
+          const item = stackLayer[0]
+          const itemIndex = stackLayer[0].index
+          console.log('itemIndex:', itemIndex)
+          const left = text.substr(0, itemIndex)
+          const right = text.substr(itemIndex, text.length)
+          console.log('undoBackspace:', item.value)
+          // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
+          const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
+          // documentCursor.column -= 1
+          redoStack.push(undoStack.pop())
 
-          const addBackChar = documentContent[stackLayer[0].position.row].split('')
-          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0].value)
-          console.log('after splice: ')
-          console.log(addBackChar)
+          return afterUndoDoc
+            
 
-          documentCursor.column += 1
-          documentContent[stackLayer[0].position.row] = addBackChar.join('')
+          // documentCursor.column += 1 // might change this
 
-          console.log ('new docContent:')
-          console.log(documentContent)
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+          // console.log ('new docContent:')
+          // console.log(documentContent)
+          // // redoStack.push(undoStack.pop())
     
         } else if (stackLayer[0].event === 'insertDelete') {
-          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
-
-          const addBackChar = documentContent[stackLayer[0].position.row].split('')
           
-          addBackChar.splice(stackLayer[0].position.column, 0, stackLayer[0].value)
-          console.log('after splice: ')
-          console.log(addBackChar)
-          documentContent[stackLayer[0].position.row] = addBackChar.join('')
+          const item = stackLayer[0]
+          const itemIndex = stackLayer[0].index
+          console.log('itemIndex:', itemIndex)
+          const left = text.substr(0, itemIndex - 1)
+          const right = text.substr(itemIndex - 1, text.length)
+          console.log('undoBackspace:', item.value)
+          // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
+          const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
+          // documentCursor.column -= 1
+          redoStack.push(undoStack.pop())
 
-
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())
+          return afterUndoDoc
 
         } else if (stackLayer[0].event === 'editCut') {
 
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())
           
         } else if (stackLayer[0].event === 'editPaste') {
-
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
-          undoStack.length !== 0 && redoStack.push(undoStack.pop())
           
         }
+        undoStack.length !== 0 && redoStack.push(undoStack.pop())
+        return documentContent
       } 
     }
 
-    stackOps(topLayer)
+    const afterUndoDoc = stackOps(topLayer)
     
     let updateCursor = true
     let updateDocument = true
 
     const nextState = {}
     if (updateDocument) {
-      nextState.documentContent = documentContent
+      nextState.documentContent = afterUndoDoc
       nextState.undoStack = undoStack
       nextState.redoStack = redoStack
     }
@@ -1542,14 +1546,14 @@ class App extends Component {
         if(stackLayer[0].event === 'insertCharacter') {
           console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
 
-          const addBackChar = documentContent[stackLayer[0].position.row].split('')
+          const addBackChar = documentContent[stackLayer[0].index.row].split('')
           
-          addBackChar.splice(stackLayer[0].position.column - 1, 0, stackLayer[0].value)
+          addBackChar.splice(stackLayer[0].index.column - 1, 0, stackLayer[0].value)
           console.log('after splice: ')
           console.log(addBackChar)
 
           documentCursor.column += 1
-          documentContent[stackLayer[0].position.row] = addBackChar.join('')
+          documentContent[stackLayer[0].index.row] = addBackChar.join('')
 
           console.log ('new docContent:')
           console.log(documentContent)
@@ -1564,17 +1568,17 @@ class App extends Component {
           console.log(JSON.stringify(documentContent))
           console.log(JSON.stringify(documentCursor))
 
-          const deleteBackCharArray = documentContent[stackLayer[0].position.row]
+          const deleteBackCharArray = documentContent[stackLayer[0].index.row]
             .split('')
             .slice()
 
-          const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
+          const removeChar = deleteBackCharArray.splice(stackLayer[0].index.column, 1)
           console.log('deleteBackCharArray: ')
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
           console.log(removeChar)
           
-          documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
+          documentContent[stackLayer[0].index.row] = deleteBackCharArray.join('')
 
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
@@ -1582,17 +1586,17 @@ class App extends Component {
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
-          const deleteBackCharArray = documentContent[stackLayer[0].position.row]
+          const deleteBackCharArray = documentContent[stackLayer[0].index.row]
             .split('')
             .slice()
 
-          const removeChar = deleteBackCharArray.splice(stackLayer[0].position.column, 1)
+          const removeChar = deleteBackCharArray.splice(stackLayer[0].index.column, 1)
           console.log('deleteBackCharArray: ')
           console.log(deleteBackCharArray)
           console.log('removeChar: ')
           console.log(removeChar)
 
-          documentContent[stackLayer[0].position.row] = deleteBackCharArray.join('')
+          documentContent[stackLayer[0].index.row] = deleteBackCharArray.join('')
                     
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
@@ -1668,9 +1672,8 @@ class App extends Component {
 
       const result = {
         original: content,
-        start: startIndex,
-        end: endIndex,
-        length: data.length,
+        startIndex,
+        endIndex,
         data,
         modified
       }
@@ -2571,7 +2574,11 @@ class App extends Component {
       event.preventDefault()
       nextStackItem.value = documentContent[documentCursor.row][documentCursor.column - 1]      
       this.insertBackspace(documentCursor, documentContent)
-      nextStackItem.position = documentCursor            
+      const row = documentCursor.row
+      const column = documentCursor.column - 1
+      nextStackItem.index = getIndexOfPosition(
+        documentContent,
+        {column, row})            
       nextStackItem.event = 'insertBackspace' 
       if (nextStackItem.value) {
         undoStack.push(nextStackItem)
@@ -2584,7 +2591,7 @@ class App extends Component {
       this.insertDelete(documentCursor, documentContent)
       updateCursor = true
       updateDocument = true
-      nextStackItem.position = documentCursor    
+      nextStackItem.index = getIndexOfPosition(documentContent,{...this.state.documentCursor})    
       nextStackItem.event = 'insertDelete'                   
       if (nextStackItem.value) {
         undoStack.push(nextStackItem)
@@ -2685,7 +2692,7 @@ class App extends Component {
         documentCursor, documentContent)
       const nextStackItem = {}
       nextStackItem.value = character
-      nextStackItem.position = documentCursor 
+      nextStackItem.index = getIndexOfPosition(documentContent,{...this.state.documentCursor}) 
       nextStackItem.event = 'insertCharacter'  
       undoStack.push(nextStackItem)         
       documentCursor.column += 1            
@@ -2743,6 +2750,12 @@ class App extends Component {
             <StatusBar 
               cursor={this.state.documentCursor}
               statusBarVisible={this.state.statusBarVisible}
+              cursorIndex={
+                getIndexOfPosition(
+                  this.state.documentContent,
+                  {...this.state.documentCursor}
+                )
+              }
             />
           </div>
           <div className="dev__stack-view-container">

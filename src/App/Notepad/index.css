@@ -89,10 +89,15 @@
 .notepadArea__row {
   display: flex;
   line-height: 1.5;
-  flex-wrap: wrap;
+  /*TODO: making this 'nowrap' will let the overflow-x go beyond*/
+  flex-wrap: wrap; 
   flex-grow: 1;  
   /*border: 1px solid red;*/
 
+}
+
+.notepadArea__row--noWordWrap {
+  /*TODO: maybe make a css rule for wrapping? Or maybe not*/
 }
 
 .notepadArea__row--highlight {

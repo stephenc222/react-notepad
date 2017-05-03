@@ -15,7 +15,7 @@ export default function getIndexOfPosition (content, {column, row}) {
 
     if (rowData.length) {
         index += charactersToCount(currentRow, rowData)
-      }
+    }
 
     currentRow += 1
   }
