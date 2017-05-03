@@ -50,8 +50,11 @@ import './index.css'
 //   '',
 // ]
 const startData = [
-  'this is a', 'tesT OF THE CUT', 'OPERATION ON A string of', 
-  'text across multiple', 'lines in an', 'array',
+  'this is a', 
+  'tesT OF THE CUT - and there are now way much more than 50 characters here', 
+  'OPERATION ON A string of', 
+  'text across multiple -- and there are now way more than 50 characters here', 
+  'lines in an', 'array',
     '',
   '',
   '',
@@ -61,7 +64,7 @@ const startData = [
   '',
 ]
 
-const CURSOR_HOME = { row: 0, column: 0}
+const CURSOR_HOME = { row: 0, column: 0 }
 
 const KEY = {
   END: 35,
@@ -85,7 +88,7 @@ window.getIndexOfPosition = getIndexOfPosition
 class App extends Component {
   constructor (props) {
     super(props)
-    // menu items here 
+    
     this.onClickCloseMenuItem = this.onClickCloseMenuItem.bind(this)
     this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
@@ -114,7 +117,6 @@ class App extends Component {
 
     this.renderGoToBox = this.renderGoToBox.bind(this)
     this.renderFontBox = this.renderFontBox.bind(this)
-    // this.renderHelpBox = this.renderHelpBox.bind(this)
     this.renderAboutBox = this.renderAboutBox.bind(this)
 
     this.onClickSaveYes = this.onClickSaveYes.bind(this)
@@ -163,6 +165,7 @@ class App extends Component {
     this.goToLineOnSubmit = this.goToLineOnSubmit.bind(this)
 
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
+    this.formatWordWrap = this.formatWordWrap.bind(this)
 
     this.formatFont = this.formatFont.bind(this)
     this.handleFontStyleChange = this.handleFontStyleChange.bind(this)
@@ -241,6 +244,8 @@ class App extends Component {
       saved: false,
       hasSaved: false,
       showModal: false,
+      docIsWrapped: false,
+      previousDocLengths: [],
       statusBarVisible: true,
       dialogBoxType: '',
       openFileName: '',
@@ -460,7 +465,6 @@ class App extends Component {
     )
   }
 
-
   onClickCloseMenuItem (event) {
     // event.stopPropagation()
     const fileMenu = {...this.state.fileMenu}
@@ -612,12 +616,12 @@ class App extends Component {
     // console.log('curentIndex: ' + currentIndex)
     // console.log('endIndex: ' + endIndex)
 
-      return documentSelection.isSelected && !startEndAreSame(start,end) && (
-        (currentIndex >= startIndex && currentIndex <= endIndex) || (
-          (startIndex >= endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
-        )
+    return documentSelection.isSelected && !startEndAreSame(start,end) && (
+      (currentIndex >= startIndex && currentIndex <= endIndex) || (
+        (startIndex >= endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
       )
-    }
+    )
+  }
 
   toggleFileMenu () {
     const fileMenu = {...this.state.fileMenu}
@@ -739,25 +743,25 @@ class App extends Component {
 
     fileOpenControl.then((priorMenuItem) => {
 
-        switch (priorMenuItem) {
-          case 'fileOpenMenu':
-            this.setState((prevState) => {
-              fileMenu.visible = false
-              const dialogBoxType = 'renderOpenFileDialog' 
-              const showModal = true             
-              return {fileMenu, saved, dialogBoxType, showModal}
-            })
-            break
-          case 'fileNewMenu':
-            this.fileNewMenu()
-            break
-          case 'exitNotepad':
-            this.setState({saved:true}, this.exitNotepad)
-            // this.exitNotepad()
-            break
-          default:
-            throw new Error('unknown menu item clicked')
-        }
+      switch (priorMenuItem) {
+        case 'fileOpenMenu':
+          this.setState((prevState) => {
+            fileMenu.visible = false
+            const dialogBoxType = 'renderOpenFileDialog' 
+            const showModal = true             
+            return {fileMenu, saved, dialogBoxType, showModal}
+          })
+          break
+        case 'fileNewMenu':
+          this.fileNewMenu()
+          break
+        case 'exitNotepad':
+          this.setState({saved:true}, this.exitNotepad)
+          // this.exitNotepad()
+          break
+        default:
+          throw new Error('unknown menu item clicked')
+      }
     })
   } 
   
@@ -820,7 +824,6 @@ class App extends Component {
     // possibly also invoke local file system
     const documentContent = this.state.documentContent.slice()
     const fileMenu = {...this.state.fileMenu}
-    
     const saved = this.state.saved
     const showModal = true
 
@@ -835,13 +838,12 @@ class App extends Component {
           return {fileMenu, showModal, dialogBoxType}
         })
     } else if (!saved) {
-        this.setState((prevState) => {
-          const warningFromMenuItem = 'fileOpenMenu'          
-          fileMenu.visible = false
-          const dialogBoxType = 'renderNotSavedWarningBox'          
-          return {fileMenu, showModal, dialogBoxType, warningFromMenuItem}
-        })
-      
+      this.setState((prevState) => {
+        const warningFromMenuItem = 'fileOpenMenu'          
+        fileMenu.visible = false
+        const dialogBoxType = 'renderNotSavedWarningBox'          
+        return {fileMenu, showModal, dialogBoxType, warningFromMenuItem}
+      })
     }
     
   }
@@ -906,8 +908,6 @@ class App extends Component {
 
       documentCursor.row = 0
       documentCursor.column = 0
-      console.log('inside open:')
-      console.log(gist)
       nextState.documentCursor = documentCursor
       nextState.documentFileName = gist[0].name
       nextState.documentContent = newDocumentContent
@@ -928,7 +928,6 @@ class App extends Component {
   fileSaveMenu (menuItem) {
     // save to your gists
     const fileMenu = {...this.state.fileMenu}
-    
     const hasSaved = this.state.hasSaved
     const saved = true
     const showModal = true 
@@ -992,6 +991,7 @@ class App extends Component {
   saveAsHandleChange (event) {
     this.setState({[event.target.name]: event.target.value})
   }
+
   saveAsHandleSubmit (event) {
     event.preventDefault()  
     const gistType = this.state.gistType  
@@ -1075,7 +1075,7 @@ class App extends Component {
     const documentContent = this.state.documentContent.slice()
     const findInFile = event.target.value.toString()
     const matchCase = this.state.matchCase
-    console.log(`matchCase: ${matchCase}`)
+    // console.log(`matchCase: ${matchCase}`)
     const foundInFileArray = selectFindText(findInFile,documentContent,matchCase)
     this.setState({
       [event.target.name]: event.target.value,
@@ -1270,7 +1270,7 @@ class App extends Component {
 
     console.log('Find Box Submitted!') 
 
-        const nextStackItem = {}
+    const nextStackItem = {}
     nextStackItem.event = 'replaceNext'
     nextStackItem.priorDocument = documentContent
 
@@ -1329,7 +1329,6 @@ class App extends Component {
       this.setState({[event.target.name]: parseInt(event.target.value,10)})
     }
   }
-
 
   goToLineOnSubmit (event) {
     event.preventDefault()
@@ -1396,6 +1395,7 @@ class App extends Component {
       return {fileMenu}
     })
   }
+
   exitNotepad (menuItem) {
     // navigate to user's homepage or google.com if IE
     const fileMenu = {...this.state.fileMenu}    
@@ -1551,14 +1551,11 @@ class App extends Component {
           documentCursor.column += 1
           documentContent[stackLayer[0].position.row] = addBackChar.join('')
 
-
           console.log ('new docContent:')
           console.log(documentContent)
 
-
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
-
         } else if (stackLayer[0].event === 'insertBackspace') {
 
           console.log(`REDO - inside insertBackspace if block: 
@@ -1599,7 +1596,6 @@ class App extends Component {
                     
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
-          
         } else if (stackLayer[0].event === 'editCut') {
 
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
@@ -1634,8 +1630,6 @@ class App extends Component {
   }
 
   editCut (){
-    // virtual clipboard cut (this application specific)
-    // BONUS: native operating system clipboard
     const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice()
@@ -1643,7 +1637,6 @@ class App extends Component {
     const end = documentSelection.selectionEnd
     const editMenu = {...this.state.editMenu}    
     const documentCursor = {...this.state.documentCursor}
-    
     
     if (start.column === end.column && start.row === end.row) {
       editMenu.visible = false
@@ -1672,8 +1665,6 @@ class App extends Component {
       const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
       // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
       const modified = `${left}${right}`.split(joiner)
-
-
 
       const result = {
         original: content,
@@ -1712,7 +1703,6 @@ class App extends Component {
     }
 
     const postCutDocument = cut(documentContent, {start, end})
-    // console.log(undoStack[undoStack.length-1])
 
     this.setState((prevState) => {
       editMenu.visible = false
@@ -1814,9 +1804,6 @@ class App extends Component {
       return result
     }
 
-    // TODO: rename the 'cut' function expression inside 'editCopy'
-    // to something more like 'copy', with minor refactoring
-    // obviously :)
     const postCopyDocument = copy(documentContent, {start, end})
 
     this.setState((prevState) => {
@@ -1829,7 +1816,6 @@ class App extends Component {
 
   editPaste (){
     // virtual clipboard paste
-    // TODO: editPaste needs to be added to the undo and redo stacks    
     console.log('editPaste clicked here')   
     const documentSelection = {...this.state.documentSelection}
     const prePasteDoc = documentSelection.result.modified
@@ -1960,7 +1946,7 @@ class App extends Component {
       this.setState({editMenu})
       return 
     }
-    const cut = (content, { start, end }) => {
+    const deleteContent = (content, { start, end }) => {
       let startIndex = getIndexOfPosition(content, start)
       let endIndex = getIndexOfPosition(content, end)
       if (startIndex > endIndex) {
@@ -1981,8 +1967,6 @@ class App extends Component {
       // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
       const modified = `${left}${right}`.split(joiner)
 
-
-
       const result = {
         original: content,
         start: startIndex,
@@ -1994,7 +1978,7 @@ class App extends Component {
 
       const nextStackItem = {
         result: {...result},
-        event: 'editCut'
+        event: 'editDelete'
       }
 
       undoStack.push(nextStackItem)
@@ -2002,8 +1986,7 @@ class App extends Component {
       return result
     }
 
-    const postCutDocument = cut(documentContent, {start, end})
-    // console.log(undoStack[undoStack.length-1])
+    const postCutDocument = deleteContent(documentContent, {start, end})
 
     this.setState((prevState) => {
       editMenu.visible = false
@@ -2040,8 +2023,6 @@ class App extends Component {
       return {editMenu, showModal, dialogBoxType}
     })         
   }
-
-
 
   editFindNext () {
     // finds next occurrence of current 
@@ -2133,14 +2114,6 @@ class App extends Component {
       editMenu.visible = true
       return {editMenu, findNextCounter, documentSelection, foundInFileArray}
     })
-    
-    // this.setState({
-    //   // findInFile: event.target.value,
-    //   // matchCase: event.target.value,
-    //   // [event.target.name]: event.target.value,
-    //   // foundInFileArray: result
-    //   foundInFileArray
-    // })
   }
 
   editReplace () {
@@ -2157,7 +2130,8 @@ class App extends Component {
   }
 
   editGoTo () {
-    // goes to specific line number if word wrap NOT selected
+    // goes to specific line number 
+    // TODO: if word wrap NOT selected
     console.log('editGoTo clicked here')     
     const editMenu = {...this.state.editMenu}        
     this.setState((prevState) => {
@@ -2176,9 +2150,7 @@ class App extends Component {
     const editMenu = {...this.state.editMenu}
 
     editMenu.visible = false
-
     documentSelection.isSelected = true
-
     documentSelection.selectionStart = {
       column: 0,
       row: 0
@@ -2189,7 +2161,7 @@ class App extends Component {
       column: documentContent[documentContent.length - 1].length
     }
 
-    console.log(documentSelection)
+    // console.log(documentSelection)
     this.setState({documentSelection, editMenu})
   }
 
@@ -2263,9 +2235,12 @@ class App extends Component {
 
     console.log('cursor before setState:')
     console.log({documentCursor})
+    console.log(documentSelection.selectionEnd)
 
     this.setState((prevState) => {
       const documentContent = insertDateDoc
+      // documentCursor.row = documentSelection.selectionEnd.row
+      documentCursor.column += date.toLocaleString().length
       editMenu.visible = false      
       documentSelection.selectionStart = {
         row: 0,
@@ -2290,8 +2265,36 @@ class App extends Component {
   }
 
   formatWordWrap () {
-    // wraps text to fit inside current viewable area
-    console.log('formatWordWrap clicked here')  
+    // TODO: wraps text to fit inside current viewable area
+    // var str = 'abcdefghijkl';
+    // console.log(str.match(/.{1,3}/g));
+    // > (4) ["abc", "def", "ghi", "jkl"]
+    // instead of '3' try 55
+
+    const documentContent = this.state.documentContent.slice()
+    const docIsWrapped = this.state.docIsWrapped
+
+    if (!docIsWrapped) {
+      const previousDocLengths = this.state.previousDocLengths.slice()      
+      for (let row in documentContent) {
+        // console.log(documentContent[row].length)
+        previousDocLengths.push(documentContent[row].length + 1)
+      }
+      // break the long rows into say 55 character line lengths,
+      // then set the documentContent to that new array of shorter
+      // strings, and set the previousDocLengths to the immediately
+      // prior documentContent's lengths, so the editor remembers where
+      // to put back the strings, from say a concatenated temp documentContent
+      
+      
+      console.log(previousDocLengths)
+      console.log('formatWordWrap clicked here')  
+    } else {
+      // unwrap here, by restoring the the previous documentContent's
+      // line lengths, with the corresponding element of previousDocLengths
+      // and reset the previousDocLengths to an empty array here
+    }
+
   }
 
   formatFont  () {
@@ -2510,12 +2513,11 @@ class App extends Component {
 
   insertCharacter (character, documentCursor, documentContent) {
     const rowContent = documentContent[documentCursor.row]
-    
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     if (documentCursor.column === 0) {
       changeRow(`${character}${rowContent}`)
-    } else if (documentCursor.column === rowContent.length - 1 ) {
+    } else if (documentCursor.column === rowContent.length - 1) {
       changeRow(`${rowContent}${character}`)
     } else {
       const pre = rowContent.slice(0, documentCursor.column)
@@ -2661,12 +2663,21 @@ class App extends Component {
     const undoStack = this.state.undoStack.slice()
     const saved = false
 
+    // const moveDown = () => this.moveDown(documentCursor, documentContent)
+    // const moveToStartOfLine = () => this.moveToStartOfLine(documentCursor, documentContent)
+
     if (charCode === KEY.ENTER) {
       console.warn('KEY: ENTER is pressed here')
       updateDocument = true
       this.insertCarriageReturn(documentCursor, documentContent)
     } else if (charCode && !keyCode) {
       updateDocument = true
+      // TODO: this might be good for dealing with for word wrap
+      // console.log('row length: ', documentContent[documentCursor.row].length)
+      // if (documentContent[documentCursor.row].length > 50) {
+      //   moveDown()    
+      //   moveToStartOfLine()    
+      // }
       const character = String.fromCharCode(charCode)
       this.insertCharacter(shiftKey
         ? character.toUpperCase()
