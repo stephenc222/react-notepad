@@ -9,6 +9,7 @@
     "eslint-plugin-flowtype": "^2.30.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.10.0",
+    "gh-pages": "^1.0.0",
     "react-addons-test-utils": "^15.4.2",
     "react-scripts": "0.9.5",
     "react-test-renderer": "^15.5.4",

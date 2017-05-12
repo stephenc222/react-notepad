@@ -1512,7 +1512,12 @@ class App extends Component {
           console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
           const afterUndoDoc = stackLayer[0].original
           redoStack.push(undoStack.pop())
-          return afterUndoDoc        
+          return afterUndoDoc
+        } else if (stackLayer[0].event === 'editDelete') {
+          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          const afterUndoDoc = stackLayer[0].original
+          redoStack.push(undoStack.pop())
+          return afterUndoDoc
         } else if (stackLayer[0].event === 'replace') {
           const afterUndoDoc = stackLayer[0].original
           redoStack.push(undoStack.pop())
@@ -1552,7 +1557,7 @@ class App extends Component {
 
     console.log('editRedo called here')    
     const documentCursor = {...this.state.documentCursor}
-    const documentContent = this.state.documentContent.slice()
+    let documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
     const topLayer = redoStack.slice(redoStack.length - 1)
@@ -1630,6 +1635,10 @@ class App extends Component {
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           
+        } else if (stackLayer[0].event === 'editDelete') {
+          console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
+          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          documentContent = stackLayer[0].modified
         }
       }
     }
@@ -2001,6 +2010,8 @@ class App extends Component {
       }
 
       const nextStackItem = {
+        original: content,    
+        modified,    
         result: {...result},
         event: 'editDelete'
       }
