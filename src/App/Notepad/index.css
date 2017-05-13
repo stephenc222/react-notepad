@@ -10,6 +10,8 @@
   cursor: text;
   user-select: none;
   border: 2px solid black;
+  display: flex;
+  flex-direction: column;
   /*overflow: scroll;*/
 }
 
@@ -42,7 +44,6 @@
 .fontType-Calibri {
   font-family: Calibri,'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif
 }
-
 .fontSize-16 {
   font-size: 16px
 }
@@ -77,6 +78,11 @@
 
 .notepadArea__line-number {
   width: 30px;
+  height: 28px;
+  min-height: 28px;
+  max-height: 28px;
+  max-width: 30px;
+  min-width: 30px;
   border-right: 2px solid black;
   background: rgba(0,0,0,0.4);
   text-align: right;
@@ -88,16 +94,15 @@
 
 .notepadArea__row {
   display: flex;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
   line-height: 1.5;
   /*TODO: making this 'nowrap' will let the overflow-x go beyond*/
-  flex-wrap: wrap; 
+  flex-wrap: nowrap; 
   flex-grow: 1;  
   /*border: 1px solid red;*/
 
-}
-
-.notepadArea__row--noWordWrap {
-  /*TODO: maybe make a css rule for wrapping? Or maybe not*/
 }
 
 .notepadArea__row--highlight {

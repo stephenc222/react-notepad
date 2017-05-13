@@ -165,7 +165,7 @@ class App extends Component {
     this.goToLineOnSubmit = this.goToLineOnSubmit.bind(this)
 
     this.toggleFormatMenu = this.toggleFormatMenu.bind(this)
-    this.formatWordWrap = this.formatWordWrap.bind(this)
+    // this.formatWordWrap = this.formatWordWrap.bind(this)
 
     this.formatFont = this.formatFont.bind(this)
     this.handleFontStyleChange = this.handleFontStyleChange.bind(this)
@@ -1354,6 +1354,8 @@ class App extends Component {
       documentCursor.column = 0
       return {goToRowNumber, showModal, documentCursor}
     })
+    this.topLevel.focus()
+
   }
 
   fontBoxOnSubmit (event) {
@@ -1478,13 +1480,6 @@ class App extends Component {
           redoStack.push(undoStack.pop())
 
           return afterUndoDoc
-            
-
-          // documentCursor.column += 1 // might change this
-
-          // console.log ('new docContent:')
-          // console.log(documentContent)
-          // // redoStack.push(undoStack.pop())
     
         } else if (stackLayer[0].event === 'insertDelete') {
           
@@ -1493,7 +1488,7 @@ class App extends Component {
           console.log('itemIndex:', itemIndex)
           const left = text.substr(0, itemIndex - 1)
           const right = text.substr(itemIndex - 1, text.length)
-          console.log('undoBackspace:', item.value)
+          console.log('undoDelete:', item.value)
           // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
           const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
           // documentCursor.column -= 1
@@ -1639,6 +1634,14 @@ class App extends Component {
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
           documentContent = stackLayer[0].modified
+        } else if (stackLayer[0].event === 'replace') {
+          documentContent = stackLayer[0].modified
+          redoStack.push(undoStack.pop())
+          // return afterUndoDoc    
+        } else if (stackLayer[0].event === 'replaceAll') {
+          documentContent = stackLayer[0].modified
+          redoStack.push(undoStack.pop())
+          // return afterUndoDoc   
         }
       }
     }
@@ -2298,38 +2301,38 @@ class App extends Component {
 
   }
 
-  formatWordWrap () {
-    // TODO: wraps text to fit inside current viewable area
-    // var str = 'abcdefghijkl';
-    // console.log(str.match(/.{1,3}/g));
-    // > (4) ["abc", "def", "ghi", "jkl"]
-    // instead of '3' try 55
+  // formatWordWrap () {
+  //   // TODO: wraps text to fit inside current viewable area
+  //   // var str = 'abcdefghijkl';
+  //   // console.log(str.match(/.{1,3}/g));
+  //   // > (4) ["abc", "def", "ghi", "jkl"]
+  //   // instead of '3' try 55
 
-    const documentContent = this.state.documentContent.slice()
-    const docIsWrapped = this.state.docIsWrapped
+  //   const documentContent = this.state.documentContent.slice()
+  //   const docIsWrapped = this.state.docIsWrapped
 
-    if (!docIsWrapped) {
-      const previousDocLengths = this.state.previousDocLengths.slice()      
-      for (let row in documentContent) {
-        // console.log(documentContent[row].length)
-        previousDocLengths.push(documentContent[row].length + 1)
-      }
-      // break the long rows into say 55 character line lengths,
-      // then set the documentContent to that new array of shorter
-      // strings, and set the previousDocLengths to the immediately
-      // prior documentContent's lengths, so the editor remembers where
-      // to put back the strings, from say a concatenated temp documentContent
+  //   if (!docIsWrapped) {
+  //     const previousDocLengths = this.state.previousDocLengths.slice()      
+  //     for (let row in documentContent) {
+  //       // console.log(documentContent[row].length)
+  //       previousDocLengths.push(documentContent[row].length + 1)
+  //     }
+  //     // break the long rows into say 55 character line lengths,
+  //     // then set the documentContent to that new array of shorter
+  //     // strings, and set the previousDocLengths to the immediately
+  //     // prior documentContent's lengths, so the editor remembers where
+  //     // to put back the strings, from say a concatenated temp documentContent
       
       
-      console.log(previousDocLengths)
-      console.log('formatWordWrap clicked here')  
-    } else {
-      // unwrap here, by restoring the the previous documentContent's
-      // line lengths, with the corresponding element of previousDocLengths
-      // and reset the previousDocLengths to an empty array here
-    }
+  //     console.log(previousDocLengths)
+  //     console.log('formatWordWrap clicked here')  
+  //   } else {
+  //     // unwrap here, by restoring the the previous documentContent's
+  //     // line lengths, with the corresponding element of previousDocLengths
+  //     // and reset the previousDocLengths to an empty array here
+  //   }
 
-  }
+  // }
 
   formatFont  () {
     // change font of entire text including font type, font style type, and font size 

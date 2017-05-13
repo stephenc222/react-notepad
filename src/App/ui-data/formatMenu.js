@@ -5,10 +5,6 @@ const FormatMenu = {
   visible: false,
   items: [
     {
-      label: 'Word Wrap',
-      onClick: 'formatWordWrap'
-    },
-    {
       label: 'Font...',
       onClick: 'formatFont',
     }
