@@ -1453,12 +1453,13 @@ class App extends Component {
         console.log("Undo - stackOps:")        
         if(stackLayer[0].event === 'insertCharacter') {
 
-          const itemIndex = stackLayer[0].index
+          // const itemIndex = stackLayer[0].index
 
-          const left = text.substr(0, itemIndex - 1)
-          const right = text.substr(itemIndex, text.length)
+          // const left = text.substr(0, itemIndex - 1)
+          // const right = text.substr(itemIndex, text.length)
           // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
-          const afterUndoDoc = `${left}${right}`.split(joiner)
+          // const afterUndoDoc = `${left}${right}`.split(joiner)
+          const afterUndoDoc = stackLayer[0].original
           // documentCursor.column -= 1
           redoStack.push(undoStack.pop())  
 
@@ -1763,6 +1764,8 @@ class App extends Component {
         documentCursor
       }
     })
+    const myObject = {postCutDocument, documentCursor}
+    return Promise.resolve(myObject)
   }
 
   editCopy (){
@@ -2549,6 +2552,8 @@ class App extends Component {
   }
 
   insertCharacter (character, documentCursor, documentContent) {
+    console.log('inside insertCharacter')
+    console.log(documentCursor)
     const rowContent = documentContent[documentCursor.row]
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
@@ -2570,6 +2575,9 @@ class App extends Component {
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice()
+    const documentSelection = {...this.state.documentSelection}
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
 
     let updateCursor = false
     let updateDocument = false
@@ -2606,30 +2614,40 @@ class App extends Component {
 
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
-      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column - 1]      
-      this.insertBackspace(documentCursor, documentContent)
-      const row = documentCursor.row
-      const column = documentCursor.column - 1
-      nextStackItem.index = getIndexOfPosition(
-        documentContent,
-        {column, row})            
-      nextStackItem.event = 'insertBackspace' 
-      if (nextStackItem.value) {
-        undoStack.push(nextStackItem)
-      }          
-      updateCursor = true
-      updateDocument = true
+      if (start.column === end.column && start.row === end.row) {
+        nextStackItem.value = documentContent[documentCursor.row][documentCursor.column - 1]      
+        this.insertBackspace(documentCursor, documentContent)
+        const row = documentCursor.row
+        const column = documentCursor.column - 1
+        nextStackItem.index = getIndexOfPosition(
+          documentContent,
+          {column, row})            
+        nextStackItem.event = 'insertBackspace' 
+        if (nextStackItem.value) {
+          undoStack.push(nextStackItem)
+        }          
+        updateCursor = true
+        updateDocument = true
+      } else {
+        this.editCut()
+      }
+        
     } else if (isKey(KEY.DELETE)) {
       event.preventDefault()
-      nextStackItem.value = documentContent[documentCursor.row][documentCursor.column]      
-      this.insertDelete(documentCursor, documentContent)
-      updateCursor = true
-      updateDocument = true
-      nextStackItem.index = getIndexOfPosition(documentContent,{...this.state.documentCursor})    
-      nextStackItem.event = 'insertDelete'                   
-      if (nextStackItem.value) {
-        undoStack.push(nextStackItem)
+      if (start.column === end.column && start.row === end.row) {
+        nextStackItem.value = documentContent[documentCursor.row][documentCursor.column]      
+        this.insertDelete(documentCursor, documentContent)
+        updateCursor = true
+        updateDocument = true
+        nextStackItem.index = getIndexOfPosition(documentContent,{...this.state.documentCursor})    
+        nextStackItem.event = 'insertDelete'                   
+        if (nextStackItem.value) {
+          undoStack.push(nextStackItem)
+        }
+      } else {
+        this.editCut()
       }
+
     } else if (isKey(KEY.END)) {
       event.preventDefault()
       moveToEndOfLine()
@@ -2698,10 +2716,12 @@ class App extends Component {
     } = event
 
     let updateDocument = false
-
+    const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const undoStack = this.state.undoStack.slice()
+    const start = documentSelection.selectionStart
+    const end = documentSelection.selectionEnd
     const saved = false
 
     // const moveDown = () => this.moveDown(documentCursor, documentContent)
@@ -2711,25 +2731,41 @@ class App extends Component {
       console.warn('KEY: ENTER is pressed here')
       updateDocument = true
       this.insertCarriageReturn(documentCursor, documentContent)
+      this.setState({documentContent,documentCursor, undoStack, saved})      
     } else if (charCode && !keyCode) {
-      updateDocument = true
-      // TODO: this might be good for dealing with for word wrap
-      // console.log('row length: ', documentContent[documentCursor.row].length)
-      // if (documentContent[documentCursor.row].length > 50) {
-      //   moveDown()    
-      //   moveToStartOfLine()    
-      // }
-      const character = String.fromCharCode(charCode)
-      this.insertCharacter(shiftKey
-        ? character.toUpperCase()
-        : character,
-        documentCursor, documentContent)
-      const nextStackItem = {}
-      nextStackItem.value = character
-      nextStackItem.index = getIndexOfPosition(documentContent,{...this.state.documentCursor}) 
-      nextStackItem.event = 'insertCharacter'  
-      undoStack.push(nextStackItem)         
-      documentCursor.column += 1            
+        const insert = (documentContent,documentCursor, original) => {
+          updateDocument = true
+          const character = String.fromCharCode(charCode)
+          this.insertCharacter(shiftKey
+            ? character.toUpperCase()
+            : character,
+            documentCursor, documentContent)
+          const nextStackItem = {}
+          nextStackItem.original = original
+          nextStackItem.index = getIndexOfPosition(documentContent,documentCursor) 
+          nextStackItem.event = 'insertCharacter'  
+          undoStack.push(nextStackItem)         
+          documentCursor.column += 1 
+          this.setState({documentContent,documentCursor, undoStack, saved})
+          
+        }
+      if (start.column === end.column && start.row === end.row) {
+        
+        insert(documentContent,documentCursor, this.state.documentContent)
+        return
+        
+      } else {
+        this.editCut().then((myObject) => {
+          const {postCutDocument, documentCursor} = {...myObject}
+          // console.log('test')
+          // console.log(postCutDocument.modified)
+          // console.log(documentCursor)
+          insert(postCutDocument.modified,documentCursor, postCutDocument.original)
+        })
+        return
+        
+      }
+      
     }
 
     if (updateDocument) {
