@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import 'whatwg-fetch'
+import firebaseApp from './FirebaseConfig'
+import firebase from 'firebase'
 // also import PropTypes
 import {
   Api, 
@@ -88,7 +90,9 @@ window.getIndexOfPosition = getIndexOfPosition
 class App extends Component {
   constructor (props) {
     super(props)
-    
+
+    this.renderLogin = this.renderLogin.bind(this)
+    this.authenticate = this.authenticate.bind(this)
     this.onClickCloseMenuItem = this.onClickCloseMenuItem.bind(this)
     this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
@@ -219,6 +223,8 @@ class App extends Component {
       formatMenu,
       viewMenu,
       helpMenu,
+      uid: null,
+      user: null,
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: startData,
@@ -282,6 +288,51 @@ class App extends Component {
     // })
   }
 
+  renderLogin() {
+    return (
+      <div>
+        <nav className="login">
+        Login Buttons
+        <button className="github" onClick={() => this.authenticate('github')}>Log in with GitHub
+        </button>
+        </nav>
+      </div>
+    )
+  }
+
+  authenticate(provider) {
+    console.log(`Trying to login with ${provider}`)
+    // TODO: WIP and needs cleanup
+    // https://firebase.google.com/docs/auth/web/github-auth
+    // firebaseApp.authWithOAuthPopup(provider,this.authHandler)
+    const MYprovider = new firebase.auth.GithubAuthProvider();
+    MYprovider.addScope('gist')
+    console.log('what is this:')
+    console.log(MYprovider)
+    MYprovider.setCustomParameters({
+      'allow_signup': 'false'
+    });
+    firebaseApp.auth().signInWithPopup(MYprovider).then(function(result) {
+      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+      const token = result.credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // ...
+    }).catch(function(error) {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      const credential = error.credential;
+      // ...
+    });
+  }
+
+  authHandler(err, authData) {
+    console.log(authData)
+  }
   renderModal() {
     const dialogBox = this[this.state.dialogBoxType]
     return (              
@@ -2387,8 +2438,16 @@ class App extends Component {
     })
   }
 
+  componentWillMount () {
+    console.log('will mount')
+    // this.ref = firebaseApp.syncState('gists', {
+    //   context: this,
+    //   state: 'gists'
+    // })
+  }
+
   componentDidMount () {
-    this.topLevel.focus()
+    // this.topLevel.focus()
     const getOptions = {
       method: 'GET',
       headers: {
@@ -2774,6 +2833,12 @@ class App extends Component {
   }
 
   render () {
+    const logOut = <button>Log Out</button>
+    // check if logged in
+    if (!this.state.uid) {
+      return (<div>{this.renderLogin()}</div>)
+    }
+
     return (
       <div 
         className="top-level-window"
@@ -2783,6 +2848,7 @@ class App extends Component {
         onClick={this.onClickCloseMenuItem}
         ref={(element) => {this.topLevel = element}}
         >
+        {logOut}
         <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
         <div className='app__main-container'>
           <div className='app__menu-bar-container'>
