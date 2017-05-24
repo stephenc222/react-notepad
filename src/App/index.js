@@ -225,6 +225,7 @@ class App extends Component {
       helpMenu,
       uid: null,
       user: null,
+      token: '',
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
       documentContent: startData,
@@ -320,11 +321,16 @@ class App extends Component {
       const user = result.user;
       console.log('user:')
       console.log(JSON.stringify(user,null,2))
-      return user
+      return {user, token}
       // ...
     })
-    .then((user) => {
-      this.setState({user})
+    .then(({user,token}) => {
+      console.log('in promise chain')
+      console.log('user')
+      console.log(user)
+      console.log('token')
+      console.log(token)
+      this.setState({user:user,token:token})
     })
     .catch(function(error) {
       // Handle Errors here.
