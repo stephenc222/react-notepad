@@ -316,9 +316,17 @@ class App extends Component {
       // This gives you a GitHub Access Token. You can use it to access the GitHub API.
       const token = result.credential.accessToken;
       // The signed-in user info.
+      console.log(`token: ${token}`)
       const user = result.user;
+      console.log('user:')
+      console.log(JSON.stringify(user,null,2))
+      return user
       // ...
-    }).catch(function(error) {
+    })
+    .then((user) => {
+      this.setState({user})
+    })
+    .catch(function(error) {
       // Handle Errors here.
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -2835,7 +2843,7 @@ class App extends Component {
   render () {
     const logOut = <button>Log Out</button>
     // check if logged in
-    if (!this.state.uid) {
+    if (!this.state.user) {
       return (<div>{this.renderLogin()}</div>)
     }
 
