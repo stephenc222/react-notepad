@@ -27,7 +27,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0 32px;
-  box-sizing: border-box;
+  /*box-sizing: border-box;*/
 }
 
 .app__main-container {
@@ -40,10 +40,10 @@
 
 .app__document-container {
   display: flex;
-  flex-shrink: 1;
-  justify-content: flex-start;
-  flex-direction: column;
-  overflow: scroll;
+  flex-grow: 1;
+  /*justify-content: flex-start;*/
+  flex-direction: row;
+  overflow-x: auto;
 }
 
 .app__document-container::-webkit-scrollbar {

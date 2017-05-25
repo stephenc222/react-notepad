@@ -64,6 +64,11 @@ const startData = [
   '',
   '',
   '',
+  '', // +1
+  '', // +1
+  '', // +1
+  '', // +1
+  '', // +1
 ]
 
 const CURSOR_HOME = { row: 0, column: 0 }
@@ -313,11 +318,24 @@ class App extends Component {
     MYprovider.setCustomParameters({
       'allow_signup': 'false'
     });
+    // firebaseApp.auth().signInWithRedirect(MYprovider).then;    
     firebaseApp.auth().signInWithPopup(MYprovider).then(function(result) {
+    // firebaseApp.auth().getRedirectResult(MYprovider).then(function(result) {
       // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+      console.log("result:")
+      // this is the user's username
+      const username = result.additionalUserInfo.login
+      // console.log(JSON.stringify(result,null,2))
+      console.log('username:')
+      console.log(username)
+
+      const basicProfile = result.user.providerData
+      console.log("basicProfile:")
+      console.log(JSON.stringify(basicProfile,null,2))
+      
       const token = result.credential.accessToken;
       // The signed-in user info.
-      console.log(`token: ${token}`)
+      console.log(`token: ${JSON.stringify(token,null,2)}`)
       const user = result.user;
       console.log('user:')
       console.log(JSON.stringify(user,null,2))
@@ -331,6 +349,10 @@ class App extends Component {
       console.log('token')
       console.log(token)
       this.setState({user:user,token:token})
+
+      // TODO: maybe put the initial GitHub API request here
+      // instead of in componentDidMount?
+      
     })
     .catch(function(error) {
       // Handle Errors here.
@@ -341,7 +363,7 @@ class App extends Component {
       // The firebase.auth.AuthCredential type that was used.
       const credential = error.credential;
       // ...
-    });
+    })
   }
 
   authHandler(err, authData) {
@@ -2847,7 +2869,7 @@ class App extends Component {
   }
 
   render () {
-    const logOut = <button>Log Out</button>
+    // const logOut = <button>Log Out</button>
     // check if logged in
     if (!this.state.user) {
       return (<div>{this.renderLogin()}</div>)
@@ -2862,7 +2884,7 @@ class App extends Component {
         onClick={this.onClickCloseMenuItem}
         ref={(element) => {this.topLevel = element}}
         >
-        {logOut}
+        {/*logOut*/}
         <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
         <div className='app__main-container'>
           <div className='app__menu-bar-container'>
@@ -2908,14 +2930,14 @@ class App extends Component {
               }
             />
           </div>
-          <div className="dev__stack-view-container">
+          {/*<div className="dev__stack-view-container">
               <UndoStackView
                 undoStackObject={this.state.undoStack}
               />
               <RedoStackView
                 redoStackObject={this.state.redoStack}
               />
-            </div>
+            </div>*/}
         </div>
         {this.state.showModal && this.renderModal()}
       </div>

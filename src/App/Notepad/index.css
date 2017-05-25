@@ -5,14 +5,17 @@
   font-family: monospace;
   /* this needs to be dynamically overriden possibly in-line in the Notepad Component */
   font-size: 18px;
+  /*width: 100%;*/
   font-weight: normal; 
   background: ghostwhite;
   cursor: text;
   user-select: none;
   border: 2px solid black;
   display: flex;
+  flex:1;
   flex-direction: column;
-  /*overflow: scroll;*/
+  flex-shrink: 0;
+  /*overflow-x: auto;*/
 }
 
 .fontStyle-normal {
@@ -94,13 +97,17 @@
 
 .notepadArea__row {
   display: flex;
-  height: 35px;
-  min-height: 35px;
-  max-height: 35px;
+  height: 34px;
+  /*width: calc(100vw);*/
+  width: 100%;
+  flex-direction: row;
+  min-height: 34px;
+  max-height: 34px;
   line-height: 1.5;
   /*TODO: making this 'nowrap' will let the overflow-x go beyond*/
   flex-wrap: nowrap; 
-  flex-grow: 1;  
+  flex-shrink: 0;
+  /*overflow-x: hidden;*/
   /*border: 1px solid red;*/
 
 }
@@ -110,7 +117,8 @@
 }
 
 .notepadArea__column {
-  box-sizing: border-box;
+  /*box-sizing: border-box;*/
+  /*width: 100%;*/
   display: flex;
   justify-content: center;
   align-items: center;
