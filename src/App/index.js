@@ -2484,21 +2484,92 @@ class App extends Component {
 
   componentDidMount () {
     // this.topLevel.focus()
-    const getOptions = {
-      method: 'GET',
-      headers: {
-        'Authorization': `token ${myInfo.TestToken}`
-      }
-    }
+    // const getOptions = {
+    //   method: 'GET',
+    //   headers: {
+    //     'Authorization': `token ${myInfo.TestToken}`
+    //   }
+    // }
 
-    const url = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
+    const MYprovider = new firebase.auth.GithubAuthProvider();
+    MYprovider.addScope('gist')
+    // MYprovider.addScope('user')
+    console.log('what is this:')
+    console.log(MYprovider)
+    MYprovider.setCustomParameters({
+      'allow_signup': 'false'
+    });
+    // firebaseApp.auth().signInWithRedirect(MYprovider).then;    
+    firebaseApp.auth().signInWithPopup(MYprovider).then(function(result) {
+    // firebaseApp.auth().getRedirectResult(MYprovider).then(function(result) {
+      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+      console.log("result:")
+      // this is the user's username
+      const username = result.additionalUserInfo.username
+      console.log(JSON.stringify(result,null,2))
+      console.log('username:')
+      console.log(username)
 
-    Api.getGists(url, getOptions, (filesArray) => {
-      this.setState((prevState) => {
-        const userGists = filesArray
-        return {userGists}
-      })
+      const basicProfile = result.user.providerData
+      console.log("basicProfile:")
+      console.log(JSON.stringify(basicProfile,null,2))
+      
+      const token = result.credential.accessToken;
+      // The signed-in user info.
+      console.log(`token: ${JSON.stringify(token,null,2)}`)
+      const user = result.user;
+      console.log('user:')
+      console.log(JSON.stringify(user,null,2))
+      return {username, user, token}
+      // ...
     })
+    .then(({username, user, token}) => {
+      console.log('in promise chain')
+      console.log('user')
+      console.log(user)
+      console.log('token')
+      console.log(token)
+
+      const getOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${token}`
+        }
+      }
+
+      const url = `https://api.github.com/users/${username}/gists?per_page=100`
+      console.log('test url: ', url)
+      Api.getGists(url, getOptions, (filesArray) => {
+        this.setState((prevState) => {
+          const userGists = filesArray
+          return {userGists}
+        })
+      })
+      // this.setState({user:user,token:token})
+
+      // TODO: maybe put the initial GitHub API request here
+      // instead of in componentDidMount?
+      
+    })
+    .catch(function(error) {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      const credential = error.credential;
+      // ...
+    })
+
+    // const url = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
+
+    // Api.getGists(url, getOptions, (filesArray) => {
+    //   this.setState((prevState) => {
+    //     const userGists = filesArray
+    //     return {userGists}
+    //   })
+    // })
   }
 
   moveToStartOfLine (documentCursor, documentContent) {
@@ -2871,9 +2942,6 @@ class App extends Component {
   render () {
     // const logOut = <button>Log Out</button>
     // check if logged in
-    if (!this.state.user) {
-      return (<div>{this.renderLogin()}</div>)
-    }
 
     return (
       <div 
