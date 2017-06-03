@@ -33,7 +33,7 @@ import RedoStackView from './RedoStackView'
 import UndoStackView from './UndoStackView'
 
 // For testing GitHub API requests for user-level permission
-import myInfo from './mySecretStuff.js'
+// import myInfo from './mySecretStuff.js'
 import './index.css'
 
 // const startData = [
@@ -52,23 +52,23 @@ import './index.css'
 //   '',
 // ]
 const startData = [
-  'this is a', 
-  'tesT OF THE CUT - and there are now way much more than 50 characters here', 
-  'OPERATION ON A string of', 
-  'text across multiple -- and there are now way more than 50 characters here', 
-  'lines in an', 'array',
-    '',
+  '',//this is a', 
+  '',//tesT OF THE CUT - and there are now way much more than 50 characters here', 
+  '',//OPERATION ON A string of', 
+  '',//text across multiple -- and there are now way more than 50 characters here', 
+  '',//lines in an', 'array',
   '',
   '',
   '',
   '',
   '',
   '',
-  '', // +1
-  '', // +1
-  '', // +1
-  '', // +1
-  '', // +1
+  '',
+  '',
+  '',
+  '',
+  '', 
+  '', 
 ]
 
 const CURSOR_HOME = { row: 0, column: 0 }
@@ -96,8 +96,8 @@ class App extends Component {
   constructor (props) {
     super(props)
 
-    this.renderLogin = this.renderLogin.bind(this)
-    this.authenticate = this.authenticate.bind(this)
+    // this.renderLogin = this.renderLogin.bind(this)
+    // this.authenticate = this.authenticate.bind(this)
     this.onClickCloseMenuItem = this.onClickCloseMenuItem.bind(this)
     this.onMainMenuClick = this.onMainMenuClick.bind(this)
     this.onNotepadMouseDown = this.onNotepadMouseDown.bind(this)
@@ -229,7 +229,8 @@ class App extends Component {
       viewMenu,
       helpMenu,
       uid: null,
-      user: null,
+      // user: null,
+      username: '',
       token: '',
       documentFileName: 'Untitled.txt',
       documentCursor: CURSOR_HOME,
@@ -293,82 +294,7 @@ class App extends Component {
     //   return confirmationMessage             // Gecko, WebKit, Chrome <34
     // })
   }
-
-  renderLogin() {
-    return (
-      <div>
-        <nav className="login">
-        Login Buttons
-        <button className="github" onClick={() => this.authenticate('github')}>Log in with GitHub
-        </button>
-        </nav>
-      </div>
-    )
-  }
-
-  authenticate(provider) {
-    console.log(`Trying to login with ${provider}`)
-    // TODO: WIP and needs cleanup
-    // https://firebase.google.com/docs/auth/web/github-auth
-    // firebaseApp.authWithOAuthPopup(provider,this.authHandler)
-    const MYprovider = new firebase.auth.GithubAuthProvider();
-    MYprovider.addScope('gist')
-    console.log('what is this:')
-    console.log(MYprovider)
-    MYprovider.setCustomParameters({
-      'allow_signup': 'false'
-    });
-    // firebaseApp.auth().signInWithRedirect(MYprovider).then;    
-    firebaseApp.auth().signInWithPopup(MYprovider).then(function(result) {
-    // firebaseApp.auth().getRedirectResult(MYprovider).then(function(result) {
-      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-      console.log("result:")
-      // this is the user's username
-      const username = result.additionalUserInfo.login
-      // console.log(JSON.stringify(result,null,2))
-      console.log('username:')
-      console.log(username)
-
-      const basicProfile = result.user.providerData
-      console.log("basicProfile:")
-      console.log(JSON.stringify(basicProfile,null,2))
-      
-      const token = result.credential.accessToken;
-      // The signed-in user info.
-      console.log(`token: ${JSON.stringify(token,null,2)}`)
-      const user = result.user;
-      console.log('user:')
-      console.log(JSON.stringify(user,null,2))
-      return {user, token}
-      // ...
-    })
-    .then(({user,token}) => {
-      console.log('in promise chain')
-      console.log('user')
-      console.log(user)
-      console.log('token')
-      console.log(token)
-      this.setState({user:user,token:token})
-
-      // TODO: maybe put the initial GitHub API request here
-      // instead of in componentDidMount?
-      
-    })
-    .catch(function(error) {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      const credential = error.credential;
-      // ...
-    })
-  }
-
-  authHandler(err, authData) {
-    console.log(authData)
-  }
+  
   renderModal() {
     const dialogBox = this[this.state.dialogBoxType]
     return (              
@@ -584,12 +510,7 @@ class App extends Component {
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
-    // console.log(row)
-    // successfully passing which column is selected and which row is selected
-    // on click
-    // console.log('column + 1')
-    // console.log(column + 1)
-    // NOTE: use column for the cursor but column + 1 for data stuff
+
     documentCursor.column = column 
     documentCursor.row = row
     documentSelection.selectionStart.column = column 
@@ -631,10 +552,8 @@ class App extends Component {
       documentSelection.selectionEnd.row = row
       // change css class here or some kind of flag
       // also move the cursor here
-      this.setState({documentCursor})
-      
+      this.setState({documentCursor})  
     }
-    
   }
 
   onNotepadMouseLeave () {
@@ -666,8 +585,6 @@ class App extends Component {
       return false
     }
 
-    // FIXME: needs work, but I think I'm on the right track
-    // because now, only content is selected
     if (documentContent[row][column] === undefined) {
       return false
     }
@@ -699,10 +616,6 @@ class App extends Component {
     const currentIndex = indexOfPosition(documentContent, column, row)
     const endIndex = indexOfPosition(documentContent,end.column, end.row)
 
-    // console.log('startIndex: ' + startIndex)
-    // console.log('curentIndex: ' + currentIndex)
-    // console.log('endIndex: ' + endIndex)
-
     return documentSelection.isSelected && !startEndAreSame(start,end) && (
       (currentIndex >= startIndex && currentIndex <= endIndex) || (
         (startIndex >= endIndex) && (currentIndex <= startIndex && currentIndex >= endIndex)
@@ -716,7 +629,6 @@ class App extends Component {
     const formatMenu = {...this.state.formatMenu}
     const viewMenu = {...this.state.viewMenu}
     const helpMenu = {...this.state.helpMenu}
-    console.log(fileMenu)
     this.setState((prevState) => {
       helpMenu.visible = false
       viewMenu.visible = false
@@ -725,7 +637,6 @@ class App extends Component {
       fileMenu.visible = !prevState.fileMenu.visible
       return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
-    console.log('hey, this runs inside toggleFileMenu!')
   }
 
   toggleEditMenu () {
@@ -742,7 +653,6 @@ class App extends Component {
       editMenu.visible = !prevState.editMenu.visible
       return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
-    //console.log('hey, this runs inside toggleEditMenu!')
   }
 
   toggleFormatMenu () {
@@ -759,7 +669,6 @@ class App extends Component {
       formatMenu.visible = !prevState.formatMenu.visible
       return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
-    console.log('hey, this runs inside toggleFormatMenu!')
   }
 
   toggleViewMenu () {
@@ -777,7 +686,6 @@ class App extends Component {
       viewMenu.visible = !prevState.viewMenu.visible
       return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
-    console.log('hey, this runs inside toggleViewMenu!')
   }
 
   toggleHelpMenu () {
@@ -795,11 +703,9 @@ class App extends Component {
       helpMenu.visible = !prevState.helpMenu.visible
       return {fileMenu, editMenu, formatMenu, viewMenu, helpMenu}
     })
-    console.log('hey, this runs inside toggleHelpMenu!')
   }
 
   onClickSaveYes () {
-    console.log('onClickSaveYes was clicked!')
     const showModal = true
     let dialogBoxType = ''
     this.setState((prevState) => {
@@ -814,9 +720,7 @@ class App extends Component {
   }
   
   onClickSaveNo () {
-    console.log('onClickSaveNo was clicked!')
-    const fileMenu = {...this.state.fileMenu}
-    
+    const fileMenu = {...this.state.fileMenu} 
     const warningFromMenuItem = this.state.warningFromMenuItem
     const saved = true
     let fileOpenControl = new Promise((resolve, reject) => {
@@ -844,7 +748,6 @@ class App extends Component {
           break
         case 'exitNotepad':
           this.setState({saved:true}, this.exitNotepad)
-          // this.exitNotepad()
           break
         default:
           throw new Error('unknown menu item clicked')
@@ -864,8 +767,6 @@ class App extends Component {
   fileNewMenu () {
     // pop up dialog    
     // set document content to empty
-    console.log(`fileNewMenu is clicked here`)
-
     const documentContent = this.state.documentContent.slice()
     const documentCursor = {...this.state.documentCursor}
     const saved = this.state.saved
@@ -873,13 +774,11 @@ class App extends Component {
     
     
     if (!documentContent.every(line => line === '') && !saved) {
-      console.log('need to save file!')
         this.setState((prevState) => {
           const warningFromMenuItem = 'fileNewMenu'
           fileMenu.visible = false
           const showModal = true
           const dialogBoxType = 'renderNotSavedWarningBox'   
-          console.log(dialogBoxType)       
           return {fileMenu, showModal, dialogBoxType, warningFromMenuItem}
         })
       return
@@ -887,7 +786,7 @@ class App extends Component {
     
     const nextState = {}
     // just to keep 13 lines for a full textarea
-    const resetDocumentContent = ['','','','','','','','','','','','','']
+    const resetDocumentContent = ['','','','','','','','','','','','','','','','','']
     const showModal = false
 
     documentCursor.row = 0
@@ -914,11 +813,9 @@ class App extends Component {
     const saved = this.state.saved
     const showModal = true
 
-    console.log(`fileOpenMenu is clicked here`)
     if (documentContent.every(line => line === '') || saved) {
       this.openModal()
 
-      console.log('need to save file!')
         this.setState((prevState) => {
           const dialogBoxType = 'renderOpenFileDialog'
           fileMenu.visible = false
@@ -966,12 +863,7 @@ class App extends Component {
 
   openFileHandleChange (event) {
     const userGists = this.state.userGists.slice()
-    //console.log('will find:')
-    // const result = {...typeAhead(event.target.value.toString(), userGists)}
     const result = typeAhead(event.target.value.toString(), userGists)
-    console.log(result)
-    // console.log(result.name)
-    // console.log(result.url)
     this.setState({
       openFileName: event.target.value,
       openFileOptions: result,
@@ -980,8 +872,6 @@ class App extends Component {
   }
 
   openFileHandleSubmit (event) {
-    // const fileMenu = {...this.state.fileMenu}    
-    console.log(`openFile input value is: ${this.state.openFileOptions.name}`)
     const gist = this.state.openFileOptions
     event.preventDefault()
     const documentCursor = {...this.state.documentCursor}
@@ -1015,10 +905,10 @@ class App extends Component {
   fileSaveMenu (menuItem) {
     // save to your gists
     const fileMenu = {...this.state.fileMenu}
+    const token = this.state.token
     const hasSaved = this.state.hasSaved
     const saved = true
     const showModal = true 
-    console.log(`fileSaveMenu is clicked here`)
     if (hasSaved) {
       const documentFileName = this.state.documentFileName
       const documentContent = this.state.documentContent.slice()
@@ -1038,12 +928,11 @@ class App extends Component {
         }
       }
 
-      console.log(JSON.stringify(patchContent))
 
       const patchOptions = {
         method: 'PATCH',
         headers: {
-          'Authorization': `token ${myInfo.TestToken}`
+          'Authorization': `token ${token}`
         },
         body: JSON.stringify(patchContent)
       }
@@ -1082,7 +971,9 @@ class App extends Component {
   saveAsHandleSubmit (event) {
     event.preventDefault()  
     const gistType = this.state.gistType  
-    const fileMenu = {...this.state.fileMenu}    
+    const fileMenu = {...this.state.fileMenu}   
+    const token =  this.state.token
+    const username = this.state.username
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
     const documentContent = this.state.documentContent.slice()
@@ -1094,7 +985,7 @@ class App extends Component {
     const getOptions = {
       method: 'GET',
       headers: {
-        'Authorization': `token ${myInfo.TestToken}`
+        'Authorization': `token ${token}`
       }
     }
 
@@ -1115,18 +1006,17 @@ class App extends Component {
     const postOptions = {
       method: 'POST',
       headers: {
-        'Authorization': `token ${myInfo.TestToken}`
+        'Authorization': `token ${token}`        
       },
       body: JSON.stringify(postContent)
     }
 
-    const userGistsUrl = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
+    const userGistsUrl = `https://api.github.com/users/${username}/gists?per_page=100`
 
     this.setState((prevState) => {
       return {documentFileName, hasSaved,saved, showModal}     
     })
 
-    // TODO: handle OAuth, this works right now because this is my personal access token
     const updateGists = () => {
       return Api.getGists(userGistsUrl, getOptions, (filesArray) => {
         this.setState((prevState) => {
@@ -1157,12 +1047,9 @@ class App extends Component {
   }
 
   findInFileHandleChange (event) {
-    // console.log(event.target.name)
-    // const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
     const findInFile = event.target.value.toString()
     const matchCase = this.state.matchCase
-    // console.log(`matchCase: ${matchCase}`)
     const foundInFileArray = selectFindText(findInFile,documentContent,matchCase)
     this.setState({
       [event.target.name]: event.target.value,
@@ -1177,7 +1064,6 @@ class App extends Component {
   }
 
   onCheckBoxChange (event) {
-    // TODO: call selectFindText here for selection updates to occur upon checkbox state change
     this.setState({matchCase: event.target.checked})
   }
 
@@ -1187,8 +1073,6 @@ class App extends Component {
     let findNextCounter = this.state.findNextCounter
     const documentSelection = {...this.state.documentSelection}
     const foundInFileArray = this.state.foundInFileArray.slice()
-
-    console.log('Find Box Submitted!') 
 
     if(!foundInFileArray.length) {
       documentSelection.selectionStart = {
@@ -1553,17 +1437,7 @@ class App extends Component {
           return afterUndoDoc      
 
         } else if (stackLayer[0].event === 'insertBackspace') {
-
-          // console.log(`UNDO - inside insertBackspace if block: 
-          //   ${JSON.stringify(stackLayer[0])}`)
-          const item = stackLayer[0]
-          const itemIndex = stackLayer[0].index
-          console.log('itemIndex:', itemIndex)
-          const left = text.substr(0, itemIndex)
-          const right = text.substr(itemIndex, text.length)
-          console.log('undoBackspace:', item.value)
-          // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
-          const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
+          const afterUndoDoc = stackLayer[0].original
           // documentCursor.column -= 1
           redoStack.push(undoStack.pop())
 
@@ -1571,14 +1445,15 @@ class App extends Component {
     
         } else if (stackLayer[0].event === 'insertDelete') {
           
-          const item = stackLayer[0]
-          const itemIndex = stackLayer[0].index
-          console.log('itemIndex:', itemIndex)
-          const left = text.substr(0, itemIndex - 1)
-          const right = text.substr(itemIndex - 1, text.length)
-          console.log('undoDelete:', item.value)
-          // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
-          const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
+          // const item = stackLayer[0]
+          // const itemIndex = stackLayer[0].index
+          // console.log('itemIndex:', itemIndex)
+          // const left = text.substr(0, itemIndex - 1)
+          // const right = text.substr(itemIndex - 1, text.length)
+          // console.log('undoDelete:', item.value)
+          // // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
+          // const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
+          const afterUndoDoc = stackLayer[0].original
           // documentCursor.column -= 1
           redoStack.push(undoStack.pop())
 
@@ -1586,18 +1461,18 @@ class App extends Component {
 
         } else if (stackLayer[0].event === 'editCut') {
 
-          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          // console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
           const afterUndoDoc = stackLayer[0].original
           redoStack.push(undoStack.pop())
           return afterUndoDoc
 
         } else if (stackLayer[0].event === 'editPaste') {
-          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          // console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
           const afterUndoDoc = stackLayer[0].original
           redoStack.push(undoStack.pop())
           return afterUndoDoc
         } else if (stackLayer[0].event === 'editDelete') {
-          console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
+          // console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
           const afterUndoDoc = stackLayer[0].original
           redoStack.push(undoStack.pop())
           return afterUndoDoc
@@ -1652,61 +1527,53 @@ class App extends Component {
       if (redoStack.length) {
         console.log("Redo - stackOps:")        
         if(stackLayer[0].event === 'insertCharacter') {
-          console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
+          const afterRedoDoc = stackLayer[0].postDocument
 
-          const addBackChar = documentContent[stackLayer[0].index.row].split('')
+          // console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
+
+          // console.warn(documentContent[stackLayer[0].index.row])
+          // const addBackChar = documentContent[stackLayer[0].index].split('')
           
-          addBackChar.splice(stackLayer[0].index.column - 1, 0, stackLayer[0].value)
-          console.log('after splice: ')
-          console.log(addBackChar)
+          // addBackChar.splice(stackLayer[0].index.column - 1, 0, stackLayer[0].value)
+          // console.log('after splice: ')
+          // console.log(addBackChar)
 
-          documentCursor.column += 1
-          documentContent[stackLayer[0].index.row] = addBackChar.join('')
+          // documentCursor.column += 1
+          // documentContent[stackLayer[0].index.row] = addBackChar.join('')
 
-          console.log ('new docContent:')
-          console.log(documentContent)
+          // console.log ('new docContent:')
+          // console.log(documentContent)
 
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          undoStack.push(redoStack.pop())
+          return afterRedoDoc
           
         } else if (stackLayer[0].event === 'insertBackspace') {
 
           console.log(`REDO - inside insertBackspace if block: 
             ${JSON.stringify(stackLayer[0])}`)
-          console.log(redoStack[redoStack.length - 2])
-          console.log(JSON.stringify(documentContent))
-          console.log(JSON.stringify(documentCursor))
-
-          const deleteBackCharArray = documentContent[stackLayer[0].index.row]
-            .split('')
-            .slice()
-
-          const removeChar = deleteBackCharArray.splice(stackLayer[0].index.column, 1)
-          console.log('deleteBackCharArray: ')
-          console.log(deleteBackCharArray)
-          console.log('removeChar: ')
-          console.log(removeChar)
-          
-          documentContent[stackLayer[0].index.row] = deleteBackCharArray.join('')
-
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          
+          const afterRedoDoc = stackLayer[0].postDocument
+          undoStack.push(redoStack.pop())
+          return afterRedoDoc
 
         } else if (stackLayer[0].event === 'insertDelete') {
           // TODO: ditto (but maybe slightly opposite?) to 'undo' insertDelete
-          console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
-          const deleteBackCharArray = documentContent[stackLayer[0].index.row]
-            .split('')
-            .slice()
+          // console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
+          // const deleteBackCharArray = documentContent[stackLayer[0].index.row]
+          //   .split('')
+          //   .slice()
 
-          const removeChar = deleteBackCharArray.splice(stackLayer[0].index.column, 1)
-          console.log('deleteBackCharArray: ')
-          console.log(deleteBackCharArray)
-          console.log('removeChar: ')
-          console.log(removeChar)
+          // const removeChar = deleteBackCharArray.splice(stackLayer[0].index.column, 1)
+          // console.log('deleteBackCharArray: ')
+          // console.log(deleteBackCharArray)
+          // console.log('removeChar: ')
+          // console.log(removeChar)
 
-          documentContent[stackLayer[0].index.row] = deleteBackCharArray.join('')
+          // documentContent[stackLayer[0].index.row] = deleteBackCharArray.join('')
                     
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          // redoStack.length !== 0 && undoStack.push(redoStack.pop())
+          const afterRedoDoc = stackLayer[0].postDocument
+          undoStack.push(redoStack.pop())
+          return afterRedoDoc
           
         } else if (stackLayer[0].event === 'editCut') {
 
@@ -1731,23 +1598,24 @@ class App extends Component {
           redoStack.push(undoStack.pop())
           // return afterUndoDoc   
         }
+        return
       }
     }
-    stackOps(topLayer)
-    
-    let updateCursor = true
-    let updateDocument = true
 
+    const afterRedoDoc = stackOps(topLayer)
+    
+    // let updateCursor = true
+    // let updateDocument = true
     const nextState = {}
-    if (updateDocument) {
-      nextState.documentContent = documentContent
+    // if (updateDocument) {
+      nextState.documentContent = afterRedoDoc //documentContent
       nextState.undoStack = undoStack
       nextState.redoStack = redoStack
-    }
+    // }
 
-    if (updateCursor) {
+    // if (updateCursor) {
       nextState.documentCursor = documentCursor
-    }
+    // }
 
     this.setState(nextState)
 
@@ -2260,7 +2128,6 @@ class App extends Component {
   editGoTo () {
     // goes to specific line number 
     // TODO: if word wrap NOT selected
-    console.log('editGoTo clicked here')     
     const editMenu = {...this.state.editMenu}        
     this.setState((prevState) => {
       const showModal = true
@@ -2295,7 +2162,6 @@ class App extends Component {
 
   editTimeDate () {
     // inputs current time stamp at current cursor position
-    console.log('editTimeDate clicked here')  
     // const documentCursor = {...this.state.documentCursor}
     const date = new Date()
 
@@ -2391,39 +2257,6 @@ class App extends Component {
 
   }
 
-  // formatWordWrap () {
-  //   // TODO: wraps text to fit inside current viewable area
-  //   // var str = 'abcdefghijkl';
-  //   // console.log(str.match(/.{1,3}/g));
-  //   // > (4) ["abc", "def", "ghi", "jkl"]
-  //   // instead of '3' try 55
-
-  //   const documentContent = this.state.documentContent.slice()
-  //   const docIsWrapped = this.state.docIsWrapped
-
-  //   if (!docIsWrapped) {
-  //     const previousDocLengths = this.state.previousDocLengths.slice()      
-  //     for (let row in documentContent) {
-  //       // console.log(documentContent[row].length)
-  //       previousDocLengths.push(documentContent[row].length + 1)
-  //     }
-  //     // break the long rows into say 55 character line lengths,
-  //     // then set the documentContent to that new array of shorter
-  //     // strings, and set the previousDocLengths to the immediately
-  //     // prior documentContent's lengths, so the editor remembers where
-  //     // to put back the strings, from say a concatenated temp documentContent
-      
-      
-  //     console.log(previousDocLengths)
-  //     console.log('formatWordWrap clicked here')  
-  //   } else {
-  //     // unwrap here, by restoring the the previous documentContent's
-  //     // line lengths, with the corresponding element of previousDocLengths
-  //     // and reset the previousDocLengths to an empty array here
-  //   }
-
-  // }
-
   formatFont  () {
     // change font of entire text including font type, font style type, and font size 
     // also includes "Script Type:", which includes "Western", "Greek", "Turkish", etc.,
@@ -2452,7 +2285,6 @@ class App extends Component {
 
   viewHelp () {
     // opens up new searchable help tab 
-    console.log('viewHelp clicked here')   
     const helpMenu = {...this.state.helpMenu}
     this.setState((prevState) => {
       helpMenu.visible = false
@@ -2464,7 +2296,6 @@ class App extends Component {
 
   helpAboutNotepad () {
     // basic about this application stuff
-    console.log('helpAboutNotepad clicked here')
     const helpMenu = {...this.state.helpMenu}        
     this.setState((prevState) => {
       const showModal = true
@@ -2474,101 +2305,41 @@ class App extends Component {
     })
   }
 
-  componentWillMount () {
-    console.log('will mount')
-    // this.ref = firebaseApp.syncState('gists', {
-    //   context: this,
-    //   state: 'gists'
-    // })
-  }
 
   componentDidMount () {
-    // this.topLevel.focus()
-    // const getOptions = {
-    //   method: 'GET',
-    //   headers: {
-    //     'Authorization': `token ${myInfo.TestToken}`
+    
+    this.topLevel.focus()
+
+    // const gitHubProvider = new firebase.auth.GithubAuthProvider();
+    // gitHubProvider.addScope('gist')
+    // gitHubProvider.setCustomParameters({
+    //   'allow_signup': 'false'
+    // });
+    // firebaseApp.auth().signInWithPopup(gitHubProvider).then(function(result) {
+    //   const username = result.additionalUserInfo.username
+    //   // const basicProfile = result.user.providerData
+    //   const token = result.credential.accessToken;
+    //   return {username, token}
+    // })
+    // .then(({username, token}) => {
+
+    //   const getOptions = {
+    //     method: 'GET',
+    //     headers: {
+    //       'Authorization': `token ${token}`
+    //     }
     //   }
-    // }
 
-    const MYprovider = new firebase.auth.GithubAuthProvider();
-    MYprovider.addScope('gist')
-    // MYprovider.addScope('user')
-    console.log('what is this:')
-    console.log(MYprovider)
-    MYprovider.setCustomParameters({
-      'allow_signup': 'false'
-    });
-    // firebaseApp.auth().signInWithRedirect(MYprovider).then;    
-    firebaseApp.auth().signInWithPopup(MYprovider).then(function(result) {
-    // firebaseApp.auth().getRedirectResult(MYprovider).then(function(result) {
-      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-      console.log("result:")
-      // this is the user's username
-      const username = result.additionalUserInfo.username
-      console.log(JSON.stringify(result,null,2))
-      console.log('username:')
-      console.log(username)
-
-      const basicProfile = result.user.providerData
-      console.log("basicProfile:")
-      console.log(JSON.stringify(basicProfile,null,2))
-      
-      const token = result.credential.accessToken;
-      // The signed-in user info.
-      console.log(`token: ${JSON.stringify(token,null,2)}`)
-      const user = result.user;
-      console.log('user:')
-      console.log(JSON.stringify(user,null,2))
-      return {username, user, token}
-      // ...
-    })
-    .then(({username, user, token}) => {
-      console.log('in promise chain')
-      console.log('user')
-      console.log(user)
-      console.log('token')
-      console.log(token)
-
-      const getOptions = {
-        method: 'GET',
-        headers: {
-          'Authorization': `token ${token}`
-        }
-      }
-
-      const url = `https://api.github.com/users/${username}/gists?per_page=100`
-      console.log('test url: ', url)
-      Api.getGists(url, getOptions, (filesArray) => {
-        this.setState((prevState) => {
-          const userGists = filesArray
-          return {userGists}
-        })
-      })
-      // this.setState({user:user,token:token})
-
-      // TODO: maybe put the initial GitHub API request here
-      // instead of in componentDidMount?
-      
-    })
-    .catch(function(error) {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      const credential = error.credential;
-      // ...
-    })
-
-    // const url = `https://api.github.com/users/${myInfo.username}/gists?per_page=100`
-
-    // Api.getGists(url, getOptions, (filesArray) => {
-    //   this.setState((prevState) => {
-    //     const userGists = filesArray
-    //     return {userGists}
+    //   const url = `https://api.github.com/users/${username}/gists?per_page=100`
+    //   Api.getGists(url, getOptions, (filesArray) => {
+    //     this.setState((prevState) => {
+    //       const userGists = filesArray
+    //       return {userGists, username, token}
+    //     })
     //   })
+    // })
+    // .catch(function(err) {
+    //   console.error(err)
     // })
   }
 
@@ -2704,22 +2475,12 @@ class App extends Component {
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
     const pre = rowContent.slice(0, documentCursor.column)
-    console.log('pre')
-    console.log(pre)
     const post = rowContent.slice(documentCursor.column + 1)
-    console.log('post')
-    console.log(post)
-    // console.log('${pre}${post}')
-    console.log(`${pre}${post}`)
 
-    // TODO: this if statement seems to be preventing correct delete events,
-    // check to see if null values for 'post' don't mess anything up!
     changeRow(`${pre}${post}`)
   }
 
   insertCharacter (character, documentCursor, documentContent) {
-    console.log('inside insertCharacter')
-    console.log(documentCursor)
     const rowContent = documentContent[documentCursor.row]
     const changeRow = changes => { documentContent[documentCursor.row] = changes }
 
@@ -2777,6 +2538,7 @@ class App extends Component {
     }
 
     const nextStackItem = {}
+    nextStackItem.original = documentContent.slice()
 
     if (isKey(KEY.BACKSPACE)) {
       event.preventDefault()
@@ -2789,6 +2551,7 @@ class App extends Component {
           documentContent,
           {column, row})            
         nextStackItem.event = 'insertBackspace' 
+        nextStackItem.postDocument = documentContent        
         if (nextStackItem.value) {
           undoStack.push(nextStackItem)
         }          
@@ -2803,10 +2566,11 @@ class App extends Component {
       if (start.column === end.column && start.row === end.row) {
         nextStackItem.value = documentContent[documentCursor.row][documentCursor.column]      
         this.insertDelete(documentCursor, documentContent)
+        nextStackItem.postDocument = documentContent.slice()
         updateCursor = true
         updateDocument = true
         nextStackItem.index = getIndexOfPosition(documentContent,{...this.state.documentCursor})    
-        nextStackItem.event = 'insertDelete'                   
+        nextStackItem.event = 'insertDelete'  
         if (nextStackItem.value) {
           undoStack.push(nextStackItem)
         }
@@ -2894,7 +2658,6 @@ class App extends Component {
     // const moveToStartOfLine = () => this.moveToStartOfLine(documentCursor, documentContent)
 
     if (charCode === KEY.ENTER) {
-      console.warn('KEY: ENTER is pressed here')
       updateDocument = true
       this.insertCarriageReturn(documentCursor, documentContent)
       this.setState({documentContent,documentCursor, undoStack, saved})      
@@ -2908,6 +2671,7 @@ class App extends Component {
             documentCursor, documentContent)
           const nextStackItem = {}
           nextStackItem.original = original
+          nextStackItem.postDocument = documentContent
           nextStackItem.index = getIndexOfPosition(documentContent,documentCursor) 
           nextStackItem.event = 'insertCharacter'  
           undoStack.push(nextStackItem)         
@@ -2923,9 +2687,6 @@ class App extends Component {
       } else {
         this.editCut().then((myObject) => {
           const {postCutDocument, documentCursor} = {...myObject}
-          // console.log('test')
-          // console.log(postCutDocument.modified)
-          // console.log(documentCursor)
           insert(postCutDocument.modified,documentCursor, postCutDocument.original)
         })
         return
@@ -2940,9 +2701,6 @@ class App extends Component {
   }
 
   render () {
-    // const logOut = <button>Log Out</button>
-    // check if logged in
-
     return (
       <div 
         className="top-level-window"
@@ -2952,7 +2710,6 @@ class App extends Component {
         onClick={this.onClickCloseMenuItem}
         ref={(element) => {this.topLevel = element}}
         >
-        {/*logOut*/}
         <div className='app__header'>{`React Notepad - ${this.state.documentFileName}`}</div>
         <div className='app__main-container'>
           <div className='app__menu-bar-container'>
@@ -2998,14 +2755,14 @@ class App extends Component {
               }
             />
           </div>
-          {/*<div className="dev__stack-view-container">
+          {<div className="dev__stack-view-container">
               <UndoStackView
                 undoStackObject={this.state.undoStack}
               />
               <RedoStackView
                 redoStackObject={this.state.redoStack}
               />
-            </div>*/}
+            </div>}
         </div>
         {this.state.showModal && this.renderModal()}
       </div>
