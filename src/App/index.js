@@ -1152,7 +1152,7 @@ class App extends Component {
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1,pasteData.length)
+      const data = text.substr(startIndex - 1,pasteData.length + offset)
       const replaceModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
       console.log('REPLACE: left', JSON.stringify(left, null, 2))
       console.log('data: ', data)
@@ -1164,6 +1164,12 @@ class App extends Component {
     }
 
     function replaceOp (documentContent,foundItem) {
+      // to account for length differences of found string and
+      // replace string
+      if (!foundItem) {
+        return documentContent
+      }
+      const offset = replaceInFile.length - foundItem.data.length
       // console.table(foundItem)
       const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
       // console.log("TEMPfoundInFileArray")
@@ -1183,7 +1189,7 @@ class App extends Component {
           }),
           // 'JACK ATTACK',
           replaceInFile.toString(),
-          0
+          offset
         )
       return afterReplace
     }
@@ -1230,7 +1236,7 @@ class App extends Component {
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1,pasteData.length)
+      const data = text.substr(startIndex - 1,pasteData.length + offset)
       const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
       console.log('REPLACE: left', JSON.stringify(left, null, 2))
       console.log('data: ', data)
@@ -1242,10 +1248,12 @@ class App extends Component {
 
     console.log('Find Box Submitted!') 
 
-    
-
     function replaceOp (documentContent,foundItem) {
       // console.table(foundItem)
+      if (!foundItem) {
+        return documentContent
+      }
+      const offset = replaceInFile.length - foundItem.data
       const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
       // console.log("TEMPfoundInFileArray")
       // console.log(TEMPfoundInFileArray[0])
@@ -1262,9 +1270,8 @@ class App extends Component {
             row: TEMPfoundInFileArray[0].row
             // row: foundItem.row
           }),
-          // 'JACK ATTACK',
           replaceInFile.toString(),
-          0
+          offset
         )
       return afterReplace
     }
@@ -1275,6 +1282,9 @@ class App extends Component {
     console.log('------------------------------before for replaceAll-----------------------')   
     let postReplaceDoc = documentContent
     // for (let foundItem in foundInFileArray) {
+    if (!foundInFileArray[replaceCounter]) {
+      return
+    }
       postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[replaceCounter])
     // }
 
