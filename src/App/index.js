@@ -1654,7 +1654,7 @@ class App extends Component {
       const text = content.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
+      const data = text.substr(startIndex - 1, 1+ endIndex - startIndex)
       // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
       const modified = `${left}${right}`.split(joiner)
 
@@ -1675,15 +1675,15 @@ class App extends Component {
 
       undoStack.push(nextStackItem)
 
-      // console.log('Cut:')
-      // console.log('-'.repeat(50))
-      // console.log('original', JSON.stringify(content, null, 2))
-      // console.log('original', JSON.stringify(result.content, null, 2))
-      // console.log('left', JSON.stringify(left, null, 2))
-      // console.log('right', JSON.stringify(right, null, 2))
-      // console.log('data', JSON.stringify(data, null, 2))
-      // console.log('modified', JSON.stringify(result.modified, null, 2))
-      // console.log('-'.repeat(50))
+      console.log('Cut:')
+      console.log('-'.repeat(50))
+      console.log('original', JSON.stringify(content, null, 2))
+      console.log('original', JSON.stringify(result.content, null, 2))
+      console.log('left', JSON.stringify(left, null, 2))
+      console.log('right', JSON.stringify(right, null, 2))
+      console.log('data', JSON.stringify(data, null, 2))
+      console.log('modified', JSON.stringify(result.modified, null, 2))
+      console.log('-'.repeat(50))
 
       // console.log('original', JSON.stringify(content, null, 2))
       // console.log('original', JSON.stringify(result.content, null, 2))
