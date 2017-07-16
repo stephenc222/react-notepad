@@ -22,7 +22,6 @@ describe('OpenFileBox Component', () => {
     openFileHandleSubmit: sinon.spy(),
     openFileHandleChange: sinon.spy(),
     handleCancel: sinon.spy(),
-    openFileName: ''
   }
   it('renders with props passed to it', function () {
     const wrapper = mount(<OpenFileBox {...props}/>)

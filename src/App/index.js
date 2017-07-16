@@ -7,6 +7,7 @@ import {
   Api, 
   typeAhead, 
   getIndexOfPosition,
+  scramble,
   selectFindText
 } from './helpers'
 import MainMenu from './MainMenu'
@@ -36,21 +37,6 @@ import UndoStackView from './UndoStackView'
 // import myInfo from './mySecretStuff.js'
 import './index.css'
 
-// const startData = [
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-//   '',
-// ]
 const startData = [
   '',//this is a', 
   '',//tesT OF THE CUT - and there are now way much more than 50 characters here', 
@@ -205,23 +191,7 @@ class App extends Component {
     this.insertBackspace = this.insertBackspace.bind(this)
     this.insertDelete = this.insertDelete.bind(this)
     this.insertCharacter = this.insertCharacter.bind(this)
-    // // audio object
-    // this.audioContext = new window.AudioContext()
-    // this.audioGainNode = this.audioContext.createGain()
-    // this.audioGainNode.connect(this.audioContext.destination)
-    // this.audioGainNode.gain.value = 0.15
 
-    // // beep sound effect when backspace is pressed and cursor at
-    // // the beginning of a line
-    // this.beep = () => {
-    //   const oscillator = this.audioContext.createOscillator()
-    //   oscillator.type = 'square'
-    //   oscillator.frequency.value = 120
-    //   oscillator.connect(this.audioGainNode)
-    //   oscillator.start()
-    //   oscillator.stop(this.audioContext.currentTime + 0.15)
-    // }
-    
     this.state = {
       fileMenu,
       editMenu,
@@ -229,7 +199,6 @@ class App extends Component {
       viewMenu,
       helpMenu,
       uid: null,
-      // user: null,
       username: '',
       token: '',
       documentFileName: 'Untitled.txt',
@@ -238,9 +207,7 @@ class App extends Component {
       documentSelection: {
         result: {},
         isSelected: false,
-        // TODO: figure out if this second flag, "isSelectedChanging", is actually necessary
         isSelectedChanging: false,
-        // selection: null,
         selectionStart: {
           row: 0,
           column: 0
@@ -294,7 +261,45 @@ class App extends Component {
     //   return confirmationMessage             // Gecko, WebKit, Chrome <34
     // })
   }
-  
+
+  componentDidMount () {
+    
+    this.topLevel.focus()
+
+    const gitHubProvider = new firebase.auth.GithubAuthProvider();
+    gitHubProvider.addScope('gist')
+    gitHubProvider.setCustomParameters({
+      'allow_signup': 'false'
+    });
+    firebaseApp.auth().signInWithPopup(gitHubProvider).then(function(result) {
+      const username = result.additionalUserInfo.username
+      // const basicProfile = result.user.providerData
+      const token = result.credential.accessToken;
+      return {username, token}
+    })
+    .then(({username, token}) => {
+
+      const getOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${token}`
+        }
+      }
+
+      const url = `https://api.github.com/users/${username}/gists?per_page=100`
+      Api.getGists(url, getOptions, (filesArray) => {
+        this.setState((prevState) => {
+          const userGists = filesArray
+          // scramble is a HOC function with private, immutable state itself
+          return {userGists, username, token: scramble(token)(true)}
+        })
+      })
+    })
+    .catch(function(err) {
+      console.error(err)
+    })
+  } 
+
   renderModal() {
     const dialogBox = this[this.state.dialogBoxType]
     return (              
@@ -408,6 +413,7 @@ class App extends Component {
     const handlers = {
       onChange: this.findInFileHandleChange,
       replaceHandleChange: this.replaceHandleChange,
+      onCheckBoxChange: this.onCheckBoxChange,      
       onSubmit: this.replaceHandleSubmit,
       onCancel: this.handleCancel,
       replaceAll: this.replaceAll
@@ -520,9 +526,6 @@ class App extends Component {
     documentSelection.isSelected = true
     documentSelection.isSelectedChanging = true
     
-    // console.log('row')
-    // console.log(row)
-
     let updateCursor = true
     let updateDocument = true
 
@@ -540,7 +543,7 @@ class App extends Component {
   }
 
   onNotepadMouseEnter (event, column, row) {
-    // *hint* this seems to miss the first item to be captured by the selection object    
+    // TODO: this seems to miss the first item to be captured by the selection object    
     event.stopPropagation()    
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
@@ -557,7 +560,6 @@ class App extends Component {
   }
 
   onNotepadMouseLeave () {
-    // *hint* this seems to non-duplicately capture all items that are supposed to be selected   
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
       //console.log ('Leave - isSelected true and event.target is: ')
@@ -785,7 +787,7 @@ class App extends Component {
     }
     
     const nextState = {}
-    // just to keep 13 lines for a full textarea
+    // just to keep 17 lines for a full textarea look
     const resetDocumentContent = ['','','','','','','','','','','','','','','','','']
     const showModal = false
 
@@ -806,8 +808,7 @@ class App extends Component {
   }
 
   fileOpenMenu (menuItem = null) {
-    // display all of your gists
-    // possibly also invoke local file system
+    // display names of all of your gists
     const documentContent = this.state.documentContent.slice()
     const fileMenu = {...this.state.fileMenu}
     const saved = this.state.saved
@@ -850,7 +851,7 @@ class App extends Component {
       nextState.documentContent = newDocumentContent
       nextState.openFileGistID = gist.id
       nextState.openFileGistType = gist.public
-      nextState.saved = true // MIGHT need to change...
+      nextState.saved = true
       nextState.hasSaved = true
       nextState.showModal = false
       this.setState(nextState)
@@ -905,7 +906,8 @@ class App extends Component {
   fileSaveMenu (menuItem) {
     // save to your gists
     const fileMenu = {...this.state.fileMenu}
-    const token = this.state.token
+    // const token = this.state.token
+    const token = scramble(false)
     const hasSaved = this.state.hasSaved
     const saved = true
     const showModal = true 
@@ -954,8 +956,8 @@ class App extends Component {
   fileSaveAsMenu (menuItem) {
     // ask you for different name and where to save it
     const fileMenu = {...this.state.fileMenu}
-    
     const showModal = true
+
     console.log(`fileSaveAsMenu is clicked here`)
     this.setState((prevState) => {
       const dialogBoxType = "renderSaveAsBox"
@@ -972,7 +974,7 @@ class App extends Component {
     event.preventDefault()  
     const gistType = this.state.gistType  
     const fileMenu = {...this.state.fileMenu}   
-    const token =  this.state.token
+    const token =  scramble(false) //this.state.token
     const username = this.state.username
     const documentFileName = this.state.saveAsFormFileName   
     const newFileDescription = this.state.saveAsFormFileDescription;
@@ -1134,11 +1136,15 @@ class App extends Component {
   }
 
   replaceAll (event) {
-    //FIXME: replaceAll fails when user already clicked replace
-    // fix this
     event.preventDefault()
-    const documentContent = this.state.documentContent.slice()
     const foundInFileArray = this.state.foundInFileArray.slice()
+
+    if (!foundInFileArray.length) {
+      console.log('return...')
+      return
+    }
+
+    const documentContent = this.state.documentContent.slice()
     const replaceInFile = this.state.replaceInFile
     const undoStack = this.state.undoStack.slice()
     const editMenu = this.state.editMenu
@@ -1171,20 +1177,20 @@ class App extends Component {
       }
       const offset = replaceInFile.length - foundItem.data.length
       // console.table(foundItem)
-      const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
-      // console.log("TEMPfoundInFileArray")
-      // console.log(TEMPfoundInFileArray[0])
+      const foundInFileArray = selectFindText(foundItem.data,documentContent,false)
+      // console.log("foundInFileArray")
+      // console.log(foundInFileArray[0])
       const afterReplace = replace(documentContent, 
           getIndexOfPosition(documentContent,{
-            column: TEMPfoundInFileArray[0].startColumn,
-            // column: foundItem.startColumn,
-            row: TEMPfoundInFileArray[0].row
+            column: foundInFileArray[0].startColumn,
+            // column: foundItem.startColumn,_crypto_createhmac_algorithm_key
+            row: foundInFileArray[0].row
             // row: foundItem.row
           }),
           getIndexOfPosition(documentContent,{ 
-            column: TEMPfoundInFileArray[0].endColumn,
+            column: foundInFileArray[0].endColumn,
             // column: foundItem.endColumn,
-            row: TEMPfoundInFileArray[0].row
+            row: foundInFileArray[0].row
             // row: foundItem.row
           }),
           // 'JACK ATTACK',
@@ -1194,17 +1200,17 @@ class App extends Component {
       return afterReplace
     }
 
-    console.log('ReplaceAll clicked!')
-    console.log(replaceInFile)
-    console.table(foundInFileArray)
-    console.log('------------------------------before for replaceAll-----------------------')   
+    // console.log('ReplaceAll clicked!')
+    // console.log(replaceInFile)
+    // console.table(foundInFileArray)
+    // console.log('------------------------------before for replaceAll-----------------------')   
     let postReplaceDoc = documentContent
     for (let foundItem in foundInFileArray) {
       postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[foundItem])
     }
 
-    console.log("postReplaceDoc")      
-    console.log(postReplaceDoc)     
+    // console.log("postReplaceDoc")      
+    // console.log(postReplaceDoc)     
     const nextStackItem = {}
     nextStackItem.event = 'replaceAll'
     nextStackItem.original = documentContent
@@ -1213,20 +1219,29 @@ class App extends Component {
     undoStack.push(nextStackItem)
 
     // this.setState({undoStack})
-    this.setState({documentContent: postReplaceDoc, editMenu, undoStack})
+    this.setState({
+      editMenu, 
+      undoStack, 
+      documentContent: postReplaceDoc, 
+      replaceInFile: '',
+      foundInFileArray: []
+    })
 
   }
   
   replaceHandleSubmit (event) {
     // TODO: clean up, prevent errors from being logged to the console
-    // and correspondingly prevent when neccessary undoStack pushes
+    // and correspondingly prevent unneccessary undoStack pushes
     event.preventDefault()
-    console.log('ReplaceBox Submit!')
+    // console.log('ReplaceBox Submit!')
     // const editMenu = {...this.state.editMenu} 
     let replaceCounter = this.state.replaceCounter
     const documentContent = this.state.documentContent.slice()
     const replaceInFile = this.state.replaceInFile
     const foundInFileArray = this.state.foundInFileArray.slice()
+    if (!foundInFileArray.length) {
+      return
+    }
     const undoStack = this.state.undoStack.slice()
     const replace = (documentContent, startIndex,endIndex, pasteData, offset) => {
       // console.log(documentContent)
@@ -1236,17 +1251,17 @@ class App extends Component {
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1,pasteData.length + offset)
+      // const data = text.substr(startIndex - 1,pasteData.length + offset)
       const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
-      console.log('REPLACE: left', JSON.stringify(left, null, 2))
-      console.log('data: ', data)
-      console.log('REPLACE: right', JSON.stringify(right, null, 2))
+      // console.log('REPLACE: left', JSON.stringify(left, null, 2))
+      // console.log('data: ', data)
+      // console.log('REPLACE: right', JSON.stringify(right, null, 2))
       
-      console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
+      // console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
       return pasteModifiedDoc
     }
 
-    console.log('Find Box Submitted!') 
+    // console.log('Find Box Submitted!') 
 
     function replaceOp (documentContent,foundItem) {
       // console.table(foundItem)
@@ -1254,20 +1269,20 @@ class App extends Component {
         return documentContent
       }
       const offset = replaceInFile.length - foundItem.data
-      const TEMPfoundInFileArray = selectFindText(foundItem.data,documentContent,false)
-      // console.log("TEMPfoundInFileArray")
-      // console.log(TEMPfoundInFileArray[0])
+      const foundInFileArray = selectFindText(foundItem.data,documentContent,false)
+      // console.log("foundInFileArray")
+      // console.log(foundInFileArray[0])
       const afterReplace = replace(documentContent, 
           getIndexOfPosition(documentContent,{
-            column: TEMPfoundInFileArray[0].startColumn,
+            column: foundInFileArray[0].startColumn,
             // column: foundItem.startColumn,
-            row: TEMPfoundInFileArray[0].row
+            row: foundInFileArray[0].row
             // row: foundItem.row
           }),
           getIndexOfPosition(documentContent,{ 
-            column: TEMPfoundInFileArray[0].endColumn,
+            column: foundInFileArray[0].endColumn,
             // column: foundItem.endColumn,
-            row: TEMPfoundInFileArray[0].row
+            row: foundInFileArray[0].row
             // row: foundItem.row
           }),
           replaceInFile.toString(),
@@ -1276,10 +1291,10 @@ class App extends Component {
       return afterReplace
     }
 
-    console.log('ReplaceAll clicked!')
-    console.log(replaceInFile)
-    console.table(foundInFileArray)
-    console.log('------------------------------before for replaceAll-----------------------')   
+    // console.log('ReplaceAll clicked!')
+    // console.log(replaceInFile)
+    // console.table(foundInFileArray)
+    // console.log('------------------------------before for replaceAll-----------------------')   
     let postReplaceDoc = documentContent
     // for (let foundItem in foundInFileArray) {
     if (!foundInFileArray[replaceCounter]) {
@@ -1303,7 +1318,12 @@ class App extends Component {
     console.log(postReplaceDoc)   
     console.log("documentContent")  
     console.log(documentContent)  
-    this.setState({documentContent: postReplaceDoc, replaceCounter,undoStack})
+    this.setState({
+      documentContent: postReplaceDoc, 
+      replaceCounter,
+      undoStack,
+      replaceInFile: '',
+    })
     
   }
 
@@ -1418,7 +1438,7 @@ class App extends Component {
     // undo last action
     console.log('editUndo clicked here')
     const documentCursor = {...this.state.documentCursor}
-    const documentContent = this.state.documentContent.slice()
+    // const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
     const topLayer = undoStack.slice(undoStack.length - 1)
@@ -1427,8 +1447,8 @@ class App extends Component {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
-      const joiner = String.fromCharCode(0xbb)  
-      const text = documentContent.join(joiner)          
+      // const joiner = String.fromCharCode(0xbb)  
+      // const text = documentContent.join(joiner)          
       
       if (undoStack.length) {
         console.log("Undo - stackOps:")        
@@ -1525,7 +1545,7 @@ class App extends Component {
 
     console.log('editRedo called here')    
     const documentCursor = {...this.state.documentCursor}
-    let documentContent = this.state.documentContent.slice()
+    // let documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
     const topLayer = redoStack.slice(redoStack.length - 1)
@@ -1598,13 +1618,13 @@ class App extends Component {
         } else if (stackLayer[0].event === 'editDelete') {
           console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
           redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          documentContent = stackLayer[0].modified
+          // documentContent = stackLayer[0].modified
         } else if (stackLayer[0].event === 'replace') {
-          documentContent = stackLayer[0].modified
+          // documentContent = stackLayer[0].modified
           redoStack.push(undoStack.pop())
           // return afterUndoDoc    
         } else if (stackLayer[0].event === 'replaceAll') {
-          documentContent = stackLayer[0].modified
+          // documentContent = stackLayer[0].modified
           redoStack.push(undoStack.pop())
           // return afterUndoDoc   
         }
@@ -2316,42 +2336,7 @@ class App extends Component {
   }
 
 
-  componentDidMount () {
-    
-    this.topLevel.focus()
 
-    // const gitHubProvider = new firebase.auth.GithubAuthProvider();
-    // gitHubProvider.addScope('gist')
-    // gitHubProvider.setCustomParameters({
-    //   'allow_signup': 'false'
-    // });
-    // firebaseApp.auth().signInWithPopup(gitHubProvider).then(function(result) {
-    //   const username = result.additionalUserInfo.username
-    //   // const basicProfile = result.user.providerData
-    //   const token = result.credential.accessToken;
-    //   return {username, token}
-    // })
-    // .then(({username, token}) => {
-
-    //   const getOptions = {
-    //     method: 'GET',
-    //     headers: {
-    //       'Authorization': `token ${token}`
-    //     }
-    //   }
-
-    //   const url = `https://api.github.com/users/${username}/gists?per_page=100`
-    //   Api.getGists(url, getOptions, (filesArray) => {
-    //     this.setState((prevState) => {
-    //       const userGists = filesArray
-    //       return {userGists, username, token}
-    //     })
-    //   })
-    // })
-    // .catch(function(err) {
-    //   console.error(err)
-    // })
-  }
 
   moveToStartOfLine (documentCursor, documentContent) {
     documentCursor.column = 0
