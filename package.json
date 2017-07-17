@@ -1,6 +1,7 @@
 {
   "name": "react-notepad",
   "version": "0.1.0",
+  "homepage": "https://stephenc222.github.io/react-notepad/",
   "private": true,
   "devDependencies": {
     "chai": "^3.5.0",
