@@ -1144,7 +1144,6 @@ class App extends Component {
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      const data = text.substr(startIndex - 1,pasteData.length + offset)
       const replaceModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
       return replaceModifiedDoc
     }
