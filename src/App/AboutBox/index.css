@@ -1,6 +1,6 @@
 .aboutBox {
   visibility: visible;
-  border: red solid 2px;
+  border: darkblue solid 2px;
   border-radius: 20px;
   background-color: #e6fff7;
   padding: 20px;
@@ -35,7 +35,7 @@
 }
 
 .dialog-title--item-X:hover {
-  background-color: red;
+  background-color: darkblue;
   color: white;
   
 }

@@ -1,6 +1,6 @@
 .notSavedWarningBox {
   visibility: visible;
-  border: red solid 2px;
+  border: darkblue solid 2px;
   border-radius: 20px;
   background-color: #cdebf9;
   padding: 20px;

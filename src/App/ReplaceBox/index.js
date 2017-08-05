@@ -18,7 +18,7 @@ class ReplaceBox extends Component {
           <form className="ReplaceForm" onSubmit={this.props.handlers.onSubmit}>
             <div className="ReplaceBox-input--text">
               <label>
-                Find What:
+                Find What:&nbsp;&nbsp;
                 <input 
                   type="text" 
                   name="findInFile"
@@ -31,11 +31,10 @@ class ReplaceBox extends Component {
             </div>
             <div className="ReplaceBox-input--text">
               <label>
-                Replace:
+                Replace:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <input 
                   type="text" 
                   name="replaceInFile"
-                  // ref={(input) => { this.findInput = input }}
                   value={this.props.replaceInFile} 
                   onChange={this.props.handlers.replaceHandleChange}
                   autoComplete="off"

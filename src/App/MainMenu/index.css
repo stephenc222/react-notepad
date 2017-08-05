@@ -27,7 +27,6 @@ li {
 .subMenu {
   visibility: visible;
   border: solid 1px black;
-  /*border-color: black;*/
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -43,9 +42,6 @@ li {
   background-color:white;
 }
 
-/*.mainFileItem :hover {
-  background-color: black;
-}*/
 .mainEditItem {
   background-color:white;
 }

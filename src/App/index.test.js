@@ -9,6 +9,7 @@ import {Api} from './helpers'
 describe('App Component', () => {
   beforeAll( () => {
     sinon.stub(window, 'fetch')
+    sinon.stub(window.console,'error')
     sinon.stub(Api, 'getGists')
     const res = new window.Response('{"test":"data"}', {
       status: 200,

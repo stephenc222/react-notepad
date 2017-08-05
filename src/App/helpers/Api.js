@@ -39,7 +39,7 @@ function getGists (url, options, callback) {
         throw new Error('problem with network response...')
     })
     .catch( error => {
-      console.log(`problem with fetch of url: ${url} and error message: ${error.message}`)
+      console.error(`problem with fetch of url: ${url} and error message: ${error.message}`)
     })
   return Promise.resolve(getRequest)  
 }
@@ -50,7 +50,7 @@ function saveAsGist (url, postOptions) {
     return response.json()
   })
   .then(function(data) {
-    console.log('saved Gist as:', data.html_url)
+    return data
   })
   .catch ( error => {
     console.error(`SAVE AS gist fetch error: ${error}`)

@@ -1,6 +1,6 @@
 .findBox {
   visibility: visible;
-  border: red solid 1px;
+  border: darkblue solid 1px;
   border-radius: 20px;
   background-color: #e6fff7;
   padding: 10px;
@@ -46,7 +46,7 @@
 }
 
 .dialog-title--item-X:hover {
-  background-color: red;
+  background-color: darkblue;
   color: white;
   
 }

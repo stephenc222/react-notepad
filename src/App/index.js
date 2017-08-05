@@ -186,6 +186,7 @@ class App extends Component {
     this.insertBackspace = this.insertBackspace.bind(this)
     this.insertDelete = this.insertDelete.bind(this)
     this.insertCharacter = this.insertCharacter.bind(this)
+    this.switchDevMode = this.switchDevMode.bind(this)
 
     this.state = {
       fileMenu,
@@ -244,7 +245,8 @@ class App extends Component {
       gistType: 'secret',
       openFileGistID: '',
       openFileGistType: '',
-      userGists: []
+      userGists: [],
+      showDevMode: false
     }
 
     //TODO: customize the confirm dialog to prevent or enable reload of browser tab
@@ -293,7 +295,11 @@ class App extends Component {
     .catch(function(err) {
       console.error(err)
     })
-  } 
+  }
+  
+  switchDevMode() {
+    this.setState({showDevMode:!this.state.showDevMode})
+  }
 
   renderModal() {
     const dialogBox = this[this.state.dialogBoxType]
@@ -343,7 +349,6 @@ class App extends Component {
   }
 
   renderNotSavedWarningBox () {
-    // TODO: change this component to use this handlers object
     const handlers = {
       onSaveYes: this.onClickSaveYes,
       onSaveNo: this.onClickSaveNo,
@@ -444,7 +449,6 @@ class App extends Component {
   
   renderFontBox () {
     const handlers = {
-      // handlers go here
       onCancel: this.handleCancel,
       handleStyleChange: this.handleFontStyleChange,
       handleTypeChange: this.handleFontTypeChange,
@@ -536,12 +540,10 @@ class App extends Component {
   }
 
   onNotepadMouseEnter (event, column, row) {
-    // TODO: this seems to miss the first item to be captured by the selection object    
     event.stopPropagation()    
     const documentSelection = {...this.state.documentSelection}
     const documentCursor = {...this.state.documentCursor}
     if (documentSelection.isSelected && documentSelection.isSelectedChanging) {
-      // console.log ('Enter - isSelected true')
       documentCursor.column = column 
       documentCursor.row = row
       documentSelection.selectionEnd.column = column
@@ -553,7 +555,6 @@ class App extends Component {
   onNotepadMouseLeave () {
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
-      //console.log ('Leave - isSelected true and event.target is: ')
       documentSelection.isSelectedChanging = false
       this.setState({documentSelection})
     }
@@ -562,7 +563,6 @@ class App extends Component {
   onNotepadMouseUp () {
     const documentSelection = {...this.state.documentSelection}
     if (documentSelection.isSelected) {
-      // console.log ('Leave - isSelected true and event.target is: ')
       documentSelection.isSelectedChanging = false
       this.setState({documentSelection})
     }
@@ -749,7 +749,6 @@ class App extends Component {
   } 
   
   onClickSaveCancel () {
-    console.log('onClickSaveCancel was clicked!')
     this.setState((prevState) => {
       const showModal = false
       const saved = true
@@ -949,7 +948,6 @@ class App extends Component {
     const fileMenu = {...this.state.fileMenu}
     const showModal = true
 
-    console.log(`fileSaveAsMenu is clicked here`)
     this.setState((prevState) => {
       const dialogBoxType = "renderSaveAsBox"
       fileMenu.visible = false
@@ -1082,8 +1080,6 @@ class App extends Component {
 
     if(!foundInFileArray[findNextCounter]) {
       (findNextCounter = 0) 
-      // console.log('findNextCounter: ', findNextCounter)      
-      // console.log('reset findNextCounter!')
       const found = foundInFileArray[findNextCounter]
 
       documentSelection.selectionStart = {
@@ -1100,8 +1096,6 @@ class App extends Component {
       documentSelection.isSelectedChanging = true
       findNextCounter++
     } else {
-      // console.log('findNextCounter: ', findNextCounter)      
-      // console.log(foundInFileArray[findNextCounter])
       const found = foundInFileArray[findNextCounter]
 
       documentSelection.selectionStart = {
@@ -1129,7 +1123,6 @@ class App extends Component {
     const foundInFileArray = this.state.foundInFileArray.slice()
 
     if (!foundInFileArray.length) {
-      console.log('return...')
       return
     }
 
@@ -1155,24 +1148,17 @@ class App extends Component {
         return documentContent
       }
       const offset = replaceInFile.length - foundItem.data.length
-      // console.table(foundItem)
       const foundInFileArray = selectFindText(foundItem.data,documentContent,false)
-      // console.log("foundInFileArray")
-      // console.log(foundInFileArray[0])
+
       const afterReplace = replace(documentContent, 
           getIndexOfPosition(documentContent,{
             column: foundInFileArray[0].startColumn,
-            // column: foundItem.startColumn,_crypto_createhmac_algorithm_key
             row: foundInFileArray[0].row
-            // row: foundItem.row
           }),
           getIndexOfPosition(documentContent,{ 
             column: foundInFileArray[0].endColumn,
-            // column: foundItem.endColumn,
             row: foundInFileArray[0].row
-            // row: foundItem.row
           }),
-          // 'JACK ATTACK',
           replaceInFile.toString(),
           offset
         )
@@ -1187,14 +1173,15 @@ class App extends Component {
     const nextStackItem = {}
     nextStackItem.event = 'replaceAll'
     nextStackItem.original = documentContent
-    nextStackItem.postReplaceDoc = postReplaceDoc
+    nextStackItem.postDocument = postReplaceDoc
 
     undoStack.push(nextStackItem)
 
     this.setState({
       editMenu, 
       undoStack, 
-      documentContent: postReplaceDoc, 
+      documentContent: postReplaceDoc,
+      findInFile: '',
       replaceInFile: '',
       foundInFileArray: []
     })
@@ -1202,59 +1189,41 @@ class App extends Component {
   }
   
   replaceHandleSubmit (event) {
-    // TODO: clean up, prevent errors from being logged to the console
-    // and correspondingly prevent unneccessary undoStack pushes
     event.preventDefault()
 
     let replaceCounter = this.state.replaceCounter
     const documentContent = this.state.documentContent.slice()
     const replaceInFile = this.state.replaceInFile
     const foundInFileArray = this.state.foundInFileArray.slice()
+    
     if (!foundInFileArray.length) {
       return
     }
     const undoStack = this.state.undoStack.slice()
     const replace = (documentContent, startIndex,endIndex, pasteData, offset) => {
-      // console.log(documentContent)
-      // console.log('startIndex',startIndex)
-      // console.log('endIndex', endIndex)
       const joiner = String.fromCharCode(0xbb)
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
-      // const data = text.substr(startIndex - 1,pasteData.length + offset)
       const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
-      // console.log('REPLACE: left', JSON.stringify(left, null, 2))
-      // console.log('data: ', data)
-      // console.log('REPLACE: right', JSON.stringify(right, null, 2))
-      
-      // console.log('pasteModifiedDoc ', JSON.stringify(pasteModifiedDoc,null,2))
       return pasteModifiedDoc
     }
 
-    // console.log('Find Box Submitted!') 
 
     function replaceOp (documentContent,foundItem) {
-      // console.table(foundItem)
       if (!foundItem) {
         return documentContent
       }
-      const offset = replaceInFile.length - foundItem.data
+      const offset = replaceInFile.length - foundItem.data.length
       const foundInFileArray = selectFindText(foundItem.data,documentContent,false)
-      // console.log("foundInFileArray")
-      // console.log(foundInFileArray[0])
       const afterReplace = replace(documentContent, 
           getIndexOfPosition(documentContent,{
             column: foundInFileArray[0].startColumn,
-            // column: foundItem.startColumn,
             row: foundInFileArray[0].row
-            // row: foundItem.row
           }),
           getIndexOfPosition(documentContent,{ 
             column: foundInFileArray[0].endColumn,
-            // column: foundItem.endColumn,
             row: foundInFileArray[0].row
-            // row: foundItem.row
           }),
           replaceInFile.toString(),
           offset
@@ -1262,17 +1231,12 @@ class App extends Component {
       return afterReplace
     }
 
-    // console.log('ReplaceAll clicked!')
-    // console.log(replaceInFile)
-    // console.table(foundInFileArray)
-    // console.log('------------------------------before for replaceAll-----------------------')   
     let postReplaceDoc = documentContent
-    // for (let foundItem in foundInFileArray) {
+    
     if (!foundInFileArray[replaceCounter]) {
       return
     }
       postReplaceDoc = replaceOp(postReplaceDoc,foundInFileArray[replaceCounter])
-    // }
 
     replaceCounter++
 
@@ -1283,17 +1247,10 @@ class App extends Component {
 
     undoStack.push(nextStackItem)
 
-    // this.setState({undoStack})
-
-    // console.log("postReplaceDoc")      
-    // console.log(postReplaceDoc)   
-    // console.log("documentContent")  
-    // console.log(documentContent)  
     this.setState({
       documentContent: postReplaceDoc, 
       replaceCounter,
       undoStack,
-      replaceInFile: '',
     })
     
   }
@@ -1303,7 +1260,6 @@ class App extends Component {
       this.setState({[event.target.name]: ''})
       return
     } else {
-      console.log('rowNum: ', event.target.value)
       this.setState({[event.target.name]: parseInt(event.target.value,10)})
     }
   }
@@ -1360,7 +1316,6 @@ class App extends Component {
     this.setState({fontSize: parseInt(event.target.value,10)})    
   }
   printMenu (menuItem) {
-    console.log(`printMenu is clicked here`)
     const fileMenu = {...this.state.fileMenu}    
     window.print()
     this.setState((prevState) => {
@@ -1398,9 +1353,8 @@ class App extends Component {
 
   editUndo (menuItem){
     // undo last action
-    console.log('editUndo clicked here')
     const documentCursor = {...this.state.documentCursor}
-    // const documentContent = this.state.documentContent.slice()
+    const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
     const redoStack = this.state.redoStack.slice()   
     const topLayer = undoStack.slice(undoStack.length - 1)
@@ -1411,189 +1365,55 @@ class App extends Component {
       */        
       
       if (undoStack.length) {
-        console.log("Undo - stackOps:")        
-        if(stackLayer[0].event === 'insertCharacter') {
+        const afterUndoDoc = stackLayer[0].original
 
-          // const itemIndex = stackLayer[0].index
-
-          // const left = text.substr(0, itemIndex - 1)
-          // const right = text.substr(itemIndex, text.length)
-          // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
-          // const afterUndoDoc = `${left}${right}`.split(joiner)
-          const afterUndoDoc = stackLayer[0].original
-          // documentCursor.column -= 1
-          redoStack.push(undoStack.pop())  
-
-          return afterUndoDoc      
-
-        } else if (stackLayer[0].event === 'insertBackspace') {
-          const afterUndoDoc = stackLayer[0].original
-          // documentCursor.column -= 1
-          redoStack.push(undoStack.pop())
-
-          return afterUndoDoc
-    
-        } else if (stackLayer[0].event === 'insertDelete') {
-          
-          // const item = stackLayer[0]
-          // const itemIndex = stackLayer[0].index
-          // console.log('itemIndex:', itemIndex)
-          // const left = text.substr(0, itemIndex - 1)
-          // const right = text.substr(itemIndex - 1, text.length)
-          // console.log('undoDelete:', item.value)
-          // // const data = text.substr(itemIndex - 1, 1 + itemIndex - itemIndex)
-          // const afterUndoDoc = `${left}${item.value}${right}`.split(joiner)
-          const afterUndoDoc = stackLayer[0].original
-          // documentCursor.column -= 1
-          redoStack.push(undoStack.pop())
-
-          return afterUndoDoc
-
-        } else if (stackLayer[0].event === 'editCut') {
-
-          // console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
-          const afterUndoDoc = stackLayer[0].original
-          redoStack.push(undoStack.pop())
-          return afterUndoDoc
-
-        } else if (stackLayer[0].event === 'editPaste') {
-          // console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
-          const afterUndoDoc = stackLayer[0].original
-          redoStack.push(undoStack.pop())
-          return afterUndoDoc
-        } else if (stackLayer[0].event === 'editDelete') {
-          // console.log(`undoStack layer Event is: ${stackLayer[0].event}`)
-          const afterUndoDoc = stackLayer[0].original
-          redoStack.push(undoStack.pop())
-          return afterUndoDoc
-        } else if (stackLayer[0].event === 'replace') {
-          const afterUndoDoc = stackLayer[0].original
-          redoStack.push(undoStack.pop())
-          return afterUndoDoc    
-        } else if (stackLayer[0].event === 'replaceAll') {
-          const afterUndoDoc = stackLayer[0].original
-          redoStack.push(undoStack.pop())
-          return afterUndoDoc   
-        }
-        undoStack.length !== 0 && redoStack.push(undoStack.pop())
-        // return documentContent
-        return
+        redoStack.push(undoStack.pop())
+        return afterUndoDoc   
       } 
+      
+      return documentContent
     }
 
     const afterUndoDoc = stackOps(topLayer)
-    
-    let updateCursor = true
-    let updateDocument = true
 
-    const nextState = {}
-    if (updateDocument) {
-      nextState.documentContent = afterUndoDoc
-      nextState.undoStack = undoStack
-      nextState.redoStack = redoStack
-    }
-
-    if (updateCursor) {
-      nextState.documentCursor = documentCursor
-    }
-
-    this.setState(nextState)
-
+    this.setState({
+      documentContent: afterUndoDoc,
+      undoStack,
+      redoStack,
+      documentCursor
+    })
   }
 
   editRedo (menuItem) {
 
-    // console.log('editRedo called here')    
     const documentCursor = {...this.state.documentCursor}
-    // let documentContent = this.state.documentContent.slice()
+    const documentContent = this.state.documentContent.slice()
     const undoStack = this.state.undoStack.slice() 
-    const redoStack = this.state.redoStack.slice()   
+    const redoStack = this.state.redoStack.slice() 
     const topLayer = redoStack.slice(redoStack.length - 1)
+
     function stackOps (stackLayer) {
       /**
       * @param {Array} stackLayer - stack of layer to perform ops on
       */
 
       if (redoStack.length) {
-        // console.log("Redo - stackOps:")        
-        if(stackLayer[0].event === 'insertCharacter') {
-          const afterRedoDoc = stackLayer[0].postDocument
+        const afterRedoDoc = stackLayer[0].postDocument
 
-          // console.log(`stack value: ${JSON.stringify(stackLayer[0])}`)
-
-          // console.warn(documentContent[stackLayer[0].index.row])
-          // const addBackChar = documentContent[stackLayer[0].index].split('')
-          
-          // addBackChar.splice(stackLayer[0].index.column - 1, 0, stackLayer[0].value)
-          // console.log('after splice: ')
-          // console.log(addBackChar)
-
-          // documentCursor.column += 1
-          // documentContent[stackLayer[0].index.row] = addBackChar.join('')
-
-          // console.log ('new docContent:')
-          // console.log(documentContent)
-
-          undoStack.push(redoStack.pop())
-          return afterRedoDoc
-          
-        } else if (stackLayer[0].event === 'insertBackspace') {
-
-          // console.log(`REDO - inside insertBackspace if block: 
-          // ${JSON.stringify(stackLayer[0])}`)
-          const afterRedoDoc = stackLayer[0].postDocument
-          undoStack.push(redoStack.pop())
-          return afterRedoDoc
-
-        } else if (stackLayer[0].event === 'insertDelete') {
-          const afterRedoDoc = stackLayer[0].postDocument
-          undoStack.push(redoStack.pop())
-          return afterRedoDoc
-          
-        } else if (stackLayer[0].event === 'editCut') {
-
-          // console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())          
-          
-        } else if (stackLayer[0].event === 'editPaste') {
-          
-          // console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          
-        } else if (stackLayer[0].event === 'editDelete') {
-          // console.log(`redoStack layer Event is: ${stackLayer[0].event}`)
-          redoStack.length !== 0 && undoStack.push(redoStack.pop())
-          // documentContent = stackLayer[0].modified
-        } else if (stackLayer[0].event === 'replace') {
-          // documentContent = stackLayer[0].modified
-          redoStack.push(undoStack.pop())
-          // return afterUndoDoc    
-        } else if (stackLayer[0].event === 'replaceAll') {
-          // documentContent = stackLayer[0].modified
-          redoStack.push(undoStack.pop())
-          // return afterUndoDoc   
-        }
-        return
-      }
+        undoStack.push(redoStack.pop())
+        return afterRedoDoc         
+      } 
+      
+      return documentContent
     }
+      const afterRedoDoc = stackOps(topLayer)
 
-    const afterRedoDoc = stackOps(topLayer)
-    
-    // let updateCursor = true
-    // let updateDocument = true
-    const nextState = {
-      documentContent: afterRedoDoc,
-      undoStack,
-      redoStack,
-      documentCursor
-    }
-      // nextState.documentContent = afterRedoDoc //documentContent
-      // nextState.undoStack = undoStack
-      // nextState.redoStack = redoStack
-      // nextState.documentCursor = documentCursor
-
-    this.setState(nextState)
-
+      this.setState({
+        documentContent: afterRedoDoc,
+        undoStack,
+        redoStack,
+        documentCursor
+      })
   }
 
   editCut (){
@@ -1630,42 +1450,23 @@ class App extends Component {
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
       const data = text.substr(startIndex - 1, 1+ endIndex - startIndex)
-      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
-      const modified = `${left}${right}`.split(joiner)
+      const postDocument = `${left}${right}`.split(joiner)
 
       const result = {
         original: content,
-        // startIndex,
-        // endIndex,
         data,
-        modified
+        postDocument
       }
 
       const nextStackItem = {
         startIndex,
         endIndex,
+        postDocument,
         original:content,
         event: 'editCut'
       }
 
       undoStack.push(nextStackItem)
-
-      // console.log('Cut:')
-      // console.log('-'.repeat(50))
-      // console.log('original', JSON.stringify(content, null, 2))
-      // console.log('original', JSON.stringify(result.content, null, 2))
-      // console.log('left', JSON.stringify(left, null, 2))
-      // console.log('right', JSON.stringify(right, null, 2))
-      // console.log('data', JSON.stringify(data, null, 2))
-      // console.log('modified', JSON.stringify(result.modified, null, 2))
-      // console.log('-'.repeat(50))
-
-      // console.log('original', JSON.stringify(content, null, 2))
-      // console.log('original', JSON.stringify(result.content, null, 2))
-      // console.log('left', JSON.stringify(left, null, 2))
-      // console.log('right', JSON.stringify(right, null, 2))
-      // console.log('data', JSON.stringify(data, null, 2))
-      // console.log('modified', JSON.stringify(result.modified, null, 2))
 
       return result
     }
@@ -1674,7 +1475,7 @@ class App extends Component {
 
     this.setState((prevState) => {
       editMenu.visible = false
-      const documentContent = postCutDocument.modified
+      const documentContent = postCutDocument.postDocument
       documentSelection.result = postCutDocument
       documentSelection.selectionStart = {
         row: 0,
@@ -1699,9 +1500,7 @@ class App extends Component {
   }
 
   editCopy (){
-    // virtual clipboard copy 
-    // ditto
-    // console.log('editCopy clicked here')   
+    // virtual clipboard copy   
     const documentSelection = {...this.state.documentSelection}
     const documentContent = this.state.documentContent.slice()
     const start = documentSelection.selectionStart
@@ -1727,7 +1526,7 @@ class App extends Component {
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
       const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
-      const modified = `${left}${right}`.split(joiner)
+      const postDocument = `${left}${right}`.split(joiner)
 
       const result = {
         original: content,
@@ -1735,15 +1534,8 @@ class App extends Component {
         end: endIndex,
         length: data.length,
         data,
-        modified
+        postDocument
       }
-
-      // console.log('original', JSON.stringify(content, null, 2))
-      // console.log('original', JSON.stringify(result.content, null, 2))
-      // console.log('left', JSON.stringify(left, null, 2))
-      // console.log('right', JSON.stringify(right, null, 2))
-      // console.log('data', JSON.stringify(data, null, 2))
-      // console.log('modified', JSON.stringify(result.modified, null, 2))
 
       return result
     }
@@ -1772,8 +1564,8 @@ class App extends Component {
     const undoStack = this.state.undoStack.slice()
     let start = documentSelection.selectionStart    
     let end = documentSelection.selectionEnd 
-    let startIndex // = getIndexOfPosition(documentContent, start)
-    let endIndex // = getIndexOfPosition(documentContent, end)
+    let startIndex
+    let endIndex
     if (start.row === end.row && start.column === end.column) {
       startIndex = endIndex = getIndexOfPosition(documentContent, documentCursor)
     } else {
@@ -1786,7 +1578,6 @@ class App extends Component {
       const text = documentContent.join(joiner)
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex - 1, text.length)
-      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
       const pasteModifiedDoc = `${left}${pasteData}${right}`.split(joiner)
       return pasteModifiedDoc
     }
@@ -1795,7 +1586,7 @@ class App extends Component {
 
     const nextStackItem = {
       original: documentContent,
-      pasteModifiedDoc,
+      postDocument:pasteModifiedDoc,
       startIndex,
       endIndex,
       pasteData,
@@ -1862,8 +1653,7 @@ class App extends Component {
       const left = text.substr(0, startIndex - 1)
       const right = text.substr(endIndex, text.length)
       const data = text.substr(startIndex - 1, 1 + endIndex - startIndex)
-      // const data = text.substr(startIndex - 1, 1 + endIndex - startIndex).split(joiner).join('')
-      const modified = `${left}${right}`.split(joiner)
+      const postDocument = `${left}${right}`.split(joiner)
 
       const result = {
         original: content,
@@ -1871,12 +1661,12 @@ class App extends Component {
         end: endIndex,
         length: data.length,
         data,
-        modified
+        postDocument
       }
 
       const nextStackItem = {
         original: content,    
-        modified,    
+        postDocument,    
         result: {...result},
         event: 'editDelete'
       }
@@ -1890,7 +1680,7 @@ class App extends Component {
 
     this.setState((prevState) => {
       editMenu.visible = false
-      const documentContent = postCutDocument.modified
+      const documentContent = postCutDocument.postDocument
       documentSelection.selectionStart = {
         row: 0,
         column: 0
@@ -2001,8 +1791,6 @@ class App extends Component {
 
   editReplace () {
     // open up find and replace dialog
-    // TODO: eitReplace needs to be added to the undo and redo stacks    
-    console.log('editReplace clicked here')  
     const editMenu = {...this.state.editMenu}
     this.setState((prevState) => {
       const showModal = true
@@ -2060,10 +1848,8 @@ class App extends Component {
     let endIndex
     
     if (start.row === end.row && start.column === end.column) {
-      console.log('yes')
       startIndex = endIndex = getIndexOfPosition(documentContent, documentCursor)
     } else {
-      console.log('no')
       startIndex = getIndexOfPosition(documentContent, start)
       endIndex = getIndexOfPosition(documentContent, end)
     }
@@ -2485,7 +2271,7 @@ class App extends Component {
       } else {
         this.editCut().then((myObject) => {
           const {postCutDocument, documentCursor} = {...myObject}
-          insert(postCutDocument.modified,documentCursor, postCutDocument.original)
+          insert(postCutDocument.postDocument,documentCursor, postCutDocument.original)
         })
         return 
       }      
@@ -2551,7 +2337,8 @@ class App extends Component {
               }
             />
           </div>
-          {<div className="dev__stack-view-container">
+          {/* conditional render for performance boost when not in dev mode*/}
+          {this.state.showDevMode && <div className="dev__stack-view-container">
               <UndoStackView
                 undoStackObject={this.state.undoStack}
               />

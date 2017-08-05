@@ -60,25 +60,6 @@
   font-size: 22px
 }
 
-/*.notepadArea::-webkit-scrollbar {
-    width: 12px;
-    cursor: pointer;
-}
-
-.notepadArea::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-    border-radius: 10px;
-    cursor:pointer;
-}
-
-.notepadArea::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-    cursor:pointer;
-}*/
-
 .notepadArea__line-number {
   width: 30px;
   height: 28px;
@@ -98,17 +79,13 @@
 .notepadArea__row {
   display: flex;
   height: 34px;
-  /*width: calc(100vw);*/
   width: 100%;
   flex-direction: row;
   min-height: 34px;
   max-height: 34px;
   line-height: 1.5;
-  /*TODO: making this 'nowrap' will let the overflow-x go beyond*/
   flex-wrap: nowrap; 
   flex-shrink: 0;
-  /*overflow-x: hidden;*/
-  /*border: 1px solid red;*/
 
 }
 
@@ -117,17 +94,12 @@
 }
 
 .notepadArea__column {
-  /*box-sizing: border-box;*/
-  /*width: 100%;*/
   display: flex;
   justify-content: center;
   align-items: center;
-  /*border: 1px solid red;*/
-  border-left: 1px solid red;
 }
 
 .notepadArea__column--selected {
-  /*TODO: this css rule will govern the appearance of selected text*/
   background-color: darkviolet;
   box-sizing: border-box;
   display: flex;

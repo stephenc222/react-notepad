@@ -1,15 +1,13 @@
 .goToBox {
   visibility: visible;
-  border: red solid 1px;
   border-radius: 20px;
   background-color: #e6fff7;
+  border: 1px solid darkblue;
   padding: 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   position: absolute;
   flex-grow:1;
-  /*height: 65px;
-  width: 250px;*/
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);

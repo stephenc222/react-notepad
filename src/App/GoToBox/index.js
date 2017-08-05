@@ -12,7 +12,8 @@ class GoToBox extends Component {
     return (
       <div className='goToBox'>
         <form onSubmit={this.props.handlers.onSubmit}>
-        <div>Go To</div>
+        <label>Go To:</label>
+        &nbsp;
         <input 
           type="text" 
           name='goToRowNumber'

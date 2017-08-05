@@ -7,6 +7,10 @@ const ViewMenu = {
     {
       label: 'Status Bar',
       onClick: 'viewStatusBar'
+    },
+    {
+      label: 'toggle Dev Mode',
+      onClick: 'switchDevMode'
     }
   ]
 }

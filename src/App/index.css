@@ -27,7 +27,6 @@
   display: flex;
   justify-content: space-between;
   padding: 0 32px;
-  /*box-sizing: border-box;*/
 }
 
 .app__main-container {
@@ -41,7 +40,6 @@
 .app__document-container {
   display: flex;
   flex-grow: 1;
-  /*justify-content: flex-start;*/
   flex-direction: row;
   overflow-x: auto;
 }

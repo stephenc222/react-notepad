@@ -1,6 +1,6 @@
 .replaceBox {
   visibility: visible;
-  border: red solid 1px;
+  border: darkblue solid 1px;
   border-radius: 20px;
   background-color: #e6fff7;
   padding: 10px;
@@ -8,8 +8,6 @@
   flex-direction: column;
   position: absolute;
   flex-grow:1;
-  /*height: 65px;
-  width: 250px;*/
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -45,7 +43,7 @@
 }
 
 .dialog-title--item-X:hover {
-  background-color: red;
+  background-color: darkblue;
   color: white;
   
 }
