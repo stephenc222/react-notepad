@@ -19,7 +19,7 @@ class MainMenu extends Component {
 
   topLevelMenu (menu, index) {
     return (
-      <li className={'menuItem'} key={menu.label} onClick={(event) => this.props.onMainMenuClick(event, menu)}> {menu.label}
+      <li className={'menuItem'} key={index} onClick={(event) => this.props.onMainMenuClick(event, menu)}> {menu.label}
           <ul className={`subMenu ${menu.visible ? menu.cssClass : menu.cssClass + 'Hidden'}`}>
             {menu.items.map((subItem, index) => this.renderSubLevelMenu(subItem,index))}
           </ul>

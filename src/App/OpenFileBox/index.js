@@ -65,7 +65,9 @@ OpenFileBox.propTypes = {
   userGists: PropTypes.array.isRequired,
   openFileOptions: PropTypes.array.isRequired,
   handleCancel: PropTypes.func.isRequired,
-  onGistClick: PropTypes.func.isRequired
+  onGistClick: PropTypes.func.isRequired,
+  openFileHandleChange: PropTypes.func.isRequired,
+  openFileHandleSubmit: PropTypes.func.isRequired
 }
 
 export default OpenFileBox

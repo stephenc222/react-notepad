@@ -285,7 +285,7 @@ class App extends Component {
 
       const url = `https://api.github.com/users/${username}/gists?per_page=100`
       Api.getGists(url, getOptions, (filesArray) => {
-        this.setState((prevState) => {
+        this.setState(() => {
           const userGists = filesArray
           // scramble is a higher order function with private, immutable state itself
           return {userGists, username, token: scramble(token)(true)}
@@ -293,6 +293,7 @@ class App extends Component {
       })
     })
     .catch(function(err) {
+      // eslint-disable-next-line no-console
       console.error(err)
     })
   }
@@ -491,7 +492,7 @@ class App extends Component {
     const helpMenu = {...this.state.helpMenu}
 
     if (!(event.target).closest('.app__menu-bar-container')) {
-      this.setState((prevState) => {
+      this.setState(() => {
         helpMenu.visible = false
         viewMenu.visible = false
         formatMenu.visible = false
@@ -701,7 +702,7 @@ class App extends Component {
   onClickSaveYes () {
     const showModal = true
     let dialogBoxType = ''
-    this.setState((prevState) => {
+    this.setState(() => {
       if (!this.state.hasSaved) {
         dialogBoxType = 'renderSaveAsBox'        
       } else {
@@ -717,19 +718,25 @@ class App extends Component {
     const warningFromMenuItem = this.state.warningFromMenuItem
     const saved = true
     let fileOpenControl = new Promise((resolve, reject) => {
-      this.setState((prevState) => {
+      this.setState(() => {
         fileMenu.visible = false
         const dialogBoxType = 'renderNotSavedWarningBox'        
         return {fileMenu, saved, dialogBoxType}
       })
+      if (warningFromMenuItem === null) {
+        return reject('warningFromMenuItem is null')
+      }
       resolve(warningFromMenuItem)
     })
+    // eslint-disable-next-line no-console
+    .catch( (err) => console.error({err}))
+
 
     fileOpenControl.then((priorMenuItem) => {
 
       switch (priorMenuItem) {
         case 'fileOpenMenu':
-          this.setState((prevState) => {
+          this.setState(() => {
             fileMenu.visible = false
             const dialogBoxType = 'renderOpenFileDialog' 
             const showModal = true             
@@ -749,7 +756,7 @@ class App extends Component {
   } 
   
   onClickSaveCancel () {
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = false
       const saved = true
       return {showModal, saved}
@@ -766,7 +773,7 @@ class App extends Component {
     
     
     if (!documentContent.every(line => line === '') && !saved) {
-        this.setState((prevState) => {
+        this.setState(() => {
           const warningFromMenuItem = 'fileNewMenu'
           fileMenu.visible = false
           const showModal = true
@@ -797,7 +804,7 @@ class App extends Component {
     return
   }
 
-  fileOpenMenu (menuItem = null) {
+  fileOpenMenu () {
     // display names of all of your gists
     const documentContent = this.state.documentContent.slice()
     const fileMenu = {...this.state.fileMenu}
@@ -807,13 +814,13 @@ class App extends Component {
     if (documentContent.every(line => line === '') || saved) {
       this.openModal()
 
-        this.setState((prevState) => {
+        this.setState(() => {
           const dialogBoxType = 'renderOpenFileDialog'
           fileMenu.visible = false
           return {fileMenu, showModal, dialogBoxType}
         })
     } else if (!saved) {
-      this.setState((prevState) => {
+      this.setState(() => {
         const warningFromMenuItem = 'fileOpenMenu'          
         fileMenu.visible = false
         const dialogBoxType = 'renderNotSavedWarningBox'          
@@ -848,6 +855,7 @@ class App extends Component {
     })
     .then (this.closeModal())
     .catch ( error => {
+      // eslint-disable-next-line no-console
       console.error(`gist fetch error: ${error}`)
     })
   }
@@ -888,12 +896,13 @@ class App extends Component {
     })
     .then (this.closeModal())
     .catch ( error => {
+      // eslint-disable-next-line no-console
       console.error(`gist fetch error: ${error}`)
     })
     
   }
 
-  fileSaveMenu (menuItem) {
+  fileSaveMenu () {
     // save to your gists
     const fileMenu = {...this.state.fileMenu}
     // const token = this.state.token
@@ -931,24 +940,24 @@ class App extends Component {
 
       Api.saveGist(url, patchOptions)
 
-      this.setState((prevState) => {
+      this.setState(() => {
         fileMenu.visible =  false
         return {fileMenu, saved}
       })
     } else {
-      this.setState((prevState) => {
+      this.setState(() => {
         const dialogBoxType = "renderSaveAsBox"
         fileMenu.visible = false
         return {fileMenu, showModal, dialogBoxType}
       })
     }
   }
-  fileSaveAsMenu (menuItem) {
+  fileSaveAsMenu () {
     // ask you for different name and where to save it
     const fileMenu = {...this.state.fileMenu}
     const showModal = true
 
-    this.setState((prevState) => {
+    this.setState(() => {
       const dialogBoxType = "renderSaveAsBox"
       fileMenu.visible = false
       return {fileMenu, showModal, dialogBoxType}
@@ -1002,13 +1011,13 @@ class App extends Component {
 
     const userGistsUrl = `https://api.github.com/users/${username}/gists?per_page=100`
 
-    this.setState((prevState) => {
+    this.setState(() => {
       return {documentFileName, hasSaved,saved, showModal}     
     })
 
     const updateGists = () => {
       return Api.getGists(userGistsUrl, getOptions, (filesArray) => {
-        this.setState((prevState) => {
+        this.setState(() => {
           const newSavedGistID = filesArray[0][0].id
           const userGists = filesArray
           fileMenu.visible = false
@@ -1112,7 +1121,7 @@ class App extends Component {
       documentSelection.isSelectedChanging = true
       findNextCounter++
     }
-    this.setState((prevState) => {
+    this.setState(() => {
       editMenu.visible = false
       return {editMenu, findNextCounter, documentSelection}
     })
@@ -1275,7 +1284,7 @@ class App extends Component {
     if (!goToRowNumber) {
       goToRowNumber = documentCursor.row
     }
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = false
       documentCursor.row = goToRowNumber
       documentCursor.column = 0
@@ -1315,23 +1324,23 @@ class App extends Component {
   handleFontSizeChange (event) {
     this.setState({fontSize: parseInt(event.target.value,10)})    
   }
-  printMenu (menuItem) {
+  printMenu () {
     const fileMenu = {...this.state.fileMenu}    
     window.print()
-    this.setState((prevState) => {
+    this.setState(() => {
       fileMenu.visible = false
       return {fileMenu}
     })
   }
 
-  exitNotepad (menuItem) {
+  exitNotepad () {
     // navigate to user's homepage or google.com if IE
     const fileMenu = {...this.state.fileMenu}    
     const documentContent = this.state.documentContent.slice()
     const saved = this.state.saved
 
     if (!documentContent.every(line => line === '') && !saved) {
-        this.setState((prevState) => {
+        this.setState(() => {
           const warningFromMenuItem = 'exitNotepad'
           fileMenu.visible = false
           const showModal = true
@@ -1342,7 +1351,7 @@ class App extends Component {
       return
     }
 
-    if (!!window.chrome) {
+    if (window.chrome) {
       window.open('https://www.google.com/_/chrome/newtab', '_self')
     } else if (typeof InstallTrigger !== undefined) {
       window.open('about:home', '_self')
@@ -1351,7 +1360,7 @@ class App extends Component {
     }
   }
 
-  editUndo (menuItem){
+  editUndo (){
     // undo last action
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
@@ -1384,7 +1393,7 @@ class App extends Component {
     })
   }
 
-  editRedo (menuItem) {
+  editRedo () {
 
     const documentCursor = {...this.state.documentCursor}
     const documentContent = this.state.documentContent.slice()
@@ -1473,7 +1482,7 @@ class App extends Component {
 
     const postCutDocument = cut(documentContent, {start, end})
 
-    this.setState((prevState) => {
+    this.setState(() => {
       editMenu.visible = false
       const documentContent = postCutDocument.postDocument
       documentSelection.result = postCutDocument
@@ -1542,7 +1551,7 @@ class App extends Component {
 
     const postCopyDocument = copy(documentContent, {start, end})
 
-    this.setState((prevState) => {
+    this.setState(() => {
       editMenu.visible = false
       documentSelection.result = postCopyDocument
       documentSelection.data = postCopyDocument.data
@@ -1595,7 +1604,7 @@ class App extends Component {
 
     undoStack.push(nextStackItem)
 
-    this.setState((prevState) => {
+    this.setState(() => {
       const documentContent = pasteModifiedDoc
       editMenu.visible = false      
       documentSelection.selectionStart = {
@@ -1678,7 +1687,7 @@ class App extends Component {
 
     const postCutDocument = deleteContent(documentContent, {start, end})
 
-    this.setState((prevState) => {
+    this.setState(() => {
       editMenu.visible = false
       const documentContent = postCutDocument.postDocument
       documentSelection.selectionStart = {
@@ -1705,7 +1714,7 @@ class App extends Component {
     // open up Find dialog, then finds character sequence 
     const editMenu = {...this.state.editMenu}
     
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = true
       const dialogBoxType = "renderFindBox"
       editMenu.visible = false
@@ -1783,7 +1792,7 @@ class App extends Component {
       documentSelection.isSelectedChanging = true
       findNextCounter++
     }
-    this.setState((prevState) => {
+    this.setState(() => {
       editMenu.visible = true
       return {editMenu, findNextCounter, documentSelection, foundInFileArray}
     })
@@ -1792,7 +1801,7 @@ class App extends Component {
   editReplace () {
     // open up find and replace dialog
     const editMenu = {...this.state.editMenu}
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = true
       const dialogBoxType = "renderReplaceBox"
       editMenu.visible = false
@@ -1803,7 +1812,7 @@ class App extends Component {
   editGoTo () {
     // go to specific line number 
     const editMenu = {...this.state.editMenu}        
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = true
       const dialogBoxType = "renderGoToBox"
       editMenu.visible = false
@@ -1876,7 +1885,7 @@ class App extends Component {
 
     undoStack.push(nextStackItem)
 
-    this.setState((prevState) => {
+    this.setState(() => {
       const documentContent = insertDateDoc
       documentCursor.column += date.toLocaleString().length
       editMenu.visible = false      
@@ -1905,7 +1914,7 @@ class App extends Component {
   formatFont  () {
     // change font of entire text including font type, font style type, and font size 
     const formatMenu = {...this.state.formatMenu}
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = true
       const dialogBoxType = "renderFontBox"
       formatMenu.visible = false
@@ -1925,7 +1934,7 @@ class App extends Component {
   viewHelp () {
     // directs to the project repo site
     const helpMenu = {...this.state.helpMenu}
-    this.setState((prevState) => {
+    this.setState(() => {
       helpMenu.visible = false
       return {helpMenu}
     })     
@@ -1936,7 +1945,7 @@ class App extends Component {
   helpAboutNotepad () {
     // basic about this application stuff
     const helpMenu = {...this.state.helpMenu}        
-    this.setState((prevState) => {
+    this.setState(() => {
       const showModal = true
       const dialogBoxType = "renderAboutBox"
       helpMenu.visible = false

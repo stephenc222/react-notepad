@@ -91,7 +91,8 @@ class Notepad extends Component {
     const {content} = this.props
 
     return (
-      <div className="notepadArea"
+      <div 
+        className="notepadArea"
         onMouseLeave={() => this.props.onMouseLeave()}
         onClick={(event) => (event.target)}>
           {content.map(this.renderContentRow)}
@@ -106,7 +107,12 @@ Notepad.propTypes = {
   onMouseDown: PropTypes.func.isRequired,
   onMouseEnter: PropTypes.func.isRequired,
   onMouseUp: PropTypes.func.isRequired,
-  isSelected: PropTypes.func.isRequired
+  isSelected: PropTypes.func.isRequired,
+  cursor: PropTypes.object.isRequired,
+  fontSize: PropTypes.string.isRequired,
+  fontStyle: PropTypes.string.isRequired,
+  fontType: PropTypes.string.isRequired,
+  showModal: PropTypes.bool
 }
 
 export default Notepad
